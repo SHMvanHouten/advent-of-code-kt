@@ -49,9 +49,9 @@ class Day01Test {
 
         @Test
         internal fun `part 1`() {
-            val input = readFile("/input-day01.txt").lines().map { it.toLong() }
+            val depths = input.lines().map { it.toLong() }
             assertThat(
-                countNumberOfIncreases(input),
+                countNumberOfIncreases(depths),
                 equalTo(1696)
             )
         }
@@ -61,7 +61,7 @@ class Day01Test {
     inner class Part_2 {
         @Test
         internal fun `example 2`() {
-            val input = listOf(
+            val depths = listOf(
                 199L,
                 200,
                 208,
@@ -74,19 +74,21 @@ class Day01Test {
                 263
             )
             assertThat(
-                countNumberOfIncreasesFor3SlidingWindow(input),
+                countNumberOfIncreasesFor3SlidingWindow(depths),
                 equalTo(5)
             )
         }
 
         @Test
         internal fun `part 2`() {
-            val input = readFile("/input-day01.txt").lines().map { it.toLong() }
+            val depths = input.lines().map { it.toLong() }
             assertThat(
-                countNumberOfIncreasesFor3SlidingWindow(input),
+                countNumberOfIncreasesFor3SlidingWindow(depths),
                 equalTo(1737)
             )
         }
     }
+
+    private val input by lazy {readFile("/input-day01.txt")}
 
 }
