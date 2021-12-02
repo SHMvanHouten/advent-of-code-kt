@@ -43,12 +43,28 @@ forward 2"""
 
         @Test
         internal fun `fixme`() {
-            assertThat(1, equalTo(1) )
+            val input = """forward 5
+down 5
+forward 8
+up 3
+down 8
+forward 2"""
+            val instructions = parseInstructions(input)
+            val result = steer2(instructions)
+            assertThat(
+                result.x * result.y,
+                equalTo(900)
+            )
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1, equalTo(1) )
+            val instructions = parseInstructions(input)
+            val result = steer2(instructions)
+            assertThat(
+                result.x * result.y,
+                equalTo(1956047400)
+            )
         }
     }
 
