@@ -17,6 +17,44 @@ fun findGammaRate(lines: List<String>): Int {
         .toInt(2)
 }
 
-fun findEpsilonRate(lines: List<String>): Int {
-    return -1
+fun findOxygenGeneratorAndCO2Scrubber(lines: List<String>): Pair<Int, Int> {
+    return findOxygenGeneratorRate(lines) to findC02ScrubberRate(lines)
+}
+
+fun findOxygenGeneratorRate(lines: List<String>): Int {
+    var i = 0
+    var remainingLines = lines
+    while (remainingLines.size > 1) {
+        val bit = findMostCommonBitAtIndex(remainingLines, i)
+        remainingLines = remainingLines.filter { it[i] == bit }
+        i++
+    }
+    return remainingLines[0].toInt(2)
+}
+
+fun findMostCommonBitAtIndex(lines: List<String>, index: Int) : Char {
+    val ones = lines.count { it[index] == '1' }
+    val zeroes = lines.count { it[index] == '0' }
+
+    return if(ones >= zeroes) '1'
+    else '0'
+}
+
+fun findC02ScrubberRate(lines: List<String>): Int {
+    var i = 0
+    var remainingLines = lines
+    while (remainingLines.size > 1) {
+        val bit = findLeastCommonBitAtIndex(remainingLines, i)
+        remainingLines = remainingLines.filter { it[i] == bit }
+        i++
+    }
+    return remainingLines[0].toInt(2)
+}
+
+fun findLeastCommonBitAtIndex(lines: List<String>, index: Int) : Char {
+    val ones = lines.count { it[index] == '1' }
+    val zeroes = lines.count { it[index] == '0' }
+
+    return if(ones < zeroes) '1'
+    else '0'
 }
