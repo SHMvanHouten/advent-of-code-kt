@@ -37,7 +37,7 @@ class Day04Test {
  6 10  3 18  5
  1 12 20 15 19"""
                 val bingoBoard = toBingoBoard(input)
-                bingoBoard.flip(22)
+                bingoBoard.mark(22)
                 assertThat(bingoBoard.cells[22]?.isMarked, equalTo(true))
             }
         }
