@@ -20,9 +20,9 @@ up 3
 down 8
 forward 2"""
             val instructions = parseInstructions(input)
-            val result = steer(instructions)
+            val destination = SimpleSubmarine().navigate(instructions).location
             assertThat(
-                result.x * result.y,
+                destination.x * destination.y,
                 equalTo(150)
             )
         }
@@ -30,9 +30,9 @@ forward 2"""
         @Test
         internal fun `part 1`() {
             val instructions = parseInstructions(input)
-            val result = steer(instructions)
+            val destination = SimpleSubmarine().navigate(instructions).location
             assertThat(
-                result.x * result.y,
+                destination.x * destination.y,
                 equalTo(1654760)
             )
         }
@@ -42,7 +42,7 @@ forward 2"""
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
+        internal fun `example part 2`() {
             val input = """forward 5
 down 5
 forward 8
@@ -50,9 +50,9 @@ up 3
 down 8
 forward 2"""
             val instructions = parseInstructions(input)
-            val result = steer2(instructions)
+            val destination = AimingSubmarine().navigate(instructions).location
             assertThat(
-                result.x * result.y,
+                destination.x * destination.y,
                 equalTo(900)
             )
         }
@@ -60,9 +60,9 @@ forward 2"""
         @Test
         internal fun `part 2`() {
             val instructions = parseInstructions(input)
-            val result = steer2(instructions)
+            val destination = AimingSubmarine().navigate(instructions).location
             assertThat(
-                result.x * result.y,
+                destination.x * destination.y,
                 equalTo(1956047400)
             )
         }
