@@ -24,24 +24,24 @@ fun findOxygenGeneratorAndCO2Scrubber(lines: List<String>): Pair<Int, Int> {
 }
 
 private fun findOxygenGeneratorRate(lines: List<String>): Int {
-    return filterBinaryStringForCriteria(lines) { bit, i, remainingLines ->
-        bit == findMostCommonBitAtIndex(remainingLines, i)
+    return filterBinaryStringForCriteria(lines) { bit, bits ->
+        bit == findMostCommonBitAtIndex(bits)
     }
 }
 
 private fun findC02ScrubberRate(lines: List<String>): Int {
-    return filterBinaryStringForCriteria(lines) { bit, i, remainingLines ->
-        bit == findLeastCommonBitAtIndex(remainingLines, i)
+    return filterBinaryStringForCriteria(lines) { bit, bits ->
+        bit == findLeastCommonBitAtIndex(bits)
     }
 }
 
 private fun filterBinaryStringForCriteria(
     lines: List<String>,
-    bitMatchesCriteria: (bit: Char, index: Int, lines: List<String>) -> Boolean
+    bitMatchesCriteria: (bit: Char, bits: List<Char>) -> Boolean
 ): Int {
     var remainingLines = lines
     0.until(lines[0].length).forEach { i ->
-        remainingLines = remainingLines.filter { bitMatchesCriteria(it[i], i, remainingLines) }
+        remainingLines = remainingLines.filter { bitMatchesCriteria(it[i], listBitsAtIndex(remainingLines, i)) }
         if (remainingLines.size == 1) {
             return remainingLines.first().toInt(2)
         }
@@ -49,25 +49,21 @@ private fun filterBinaryStringForCriteria(
     error("Something went wrong, no line won: remaining lines: $remainingLines")
 }
 
-private fun findMostCommonBitAtIndex(lines: List<String>, index: Int): Char {
-    val (ones, zeroes) = countOnesAndZeroes(lines, index)
+private fun listBitsAtIndex(
+    remainingLines: List<String>,
+    i: Int
+) = remainingLines.map { it[i] }
 
-    return if (ones >= zeroes) '1'
-    else '0'
+private fun findMostCommonBitAtIndex(bits: List<Char>): Char {
+    val (ones, zeroes) = countOnesAndZeroes(bits)
+
+    return boolToBit(ones >= zeroes)
 }
 
-private fun findLeastCommonBitAtIndex(lines: List<String>, index: Int): Char {
-    val (ones, zeroes) = countOnesAndZeroes(lines, index)
+private fun findLeastCommonBitAtIndex(bits: List<Char>): Char {
+    val (ones, zeroes) = countOnesAndZeroes(bits)
 
-    return if (ones < zeroes) '1'
-    else '0'
-}
-
-private fun countOnesAndZeroes(
-    lines: List<String>,
-    index: Int
-): Pair<Int, Int> {
-    return countOnesAndZeroes(lines.map { it[index] })
+    return boolToBit(ones < zeroes)
 }
 
 private fun countOnesAndZeroes(bits: List<Char>) =
