@@ -1,7 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.day02
 
 import com.github.shmvanhouten.adventofcode2020.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode2020.coordinate.Direction
 import com.github.shmvanhouten.adventofcode2020.coordinate.Direction.*
 
 fun steer(instructions: List<Instruction>): Coordinate {
@@ -11,20 +10,36 @@ fun steer(instructions: List<Instruction>): Coordinate {
 }
 
 fun steer2(instructions: List<Instruction>): Coordinate {
-    var coordinate = Coordinate(0,0)
-    var aim = 0
-    for (instruction in instructions) {
-        when(instruction.direction) {
-            NORTH -> aim -= instruction.steps
-            SOUTH -> aim += instruction.steps
-            EAST -> {
-                coordinate = coordinate
-                    .move(instruction.direction, instruction.steps)
-                    .move(SOUTH, instruction.steps * aim)
-
-            }
-            else -> error("unknown direction ${instruction.direction}")
-        }
-    }
-    return coordinate
+    return instructions.fold(Coordinate(0,0) to 0) { (coordinate, aim), instruction ->
+        performMove(instruction, coordinate, aim)
+    }.first
 }
+
+private fun performMove(
+    instruction: Instruction,
+    coordinate: Coordinate,
+    aim: Int
+) = when (instruction.direction) {
+    NORTH -> coordinate to aimUp(aim, instruction.steps)
+    SOUTH -> coordinate to aimDown(aim, instruction.steps)
+    EAST -> move(coordinate, instruction, aim) to aim
+    else -> error("unknown direction ${instruction.direction}")
+}
+
+private fun move(
+    coordinate: Coordinate,
+    instruction: Instruction,
+    aim: Int
+) = coordinate
+    .move(instruction.direction, instruction.steps)
+    .move(SOUTH, instruction.steps * aim)
+
+private fun aimDown(
+    aim: Int,
+    amount: Int
+) = aim + amount
+
+private fun aimUp(
+    aim: Int,
+    amount: Int
+) = aim - amount
