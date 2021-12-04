@@ -21,11 +21,11 @@ data class SimpleSubmarine(override val location: Coordinate = Coordinate(0, 0))
     }
 }
 
-data class AimingSubmarine(override val location: Coordinate = Coordinate(0, 0), val aim: Int = 0) : Submarine {
+data class AimingSubmarine(override val location: Coordinate = Coordinate(0, 0), val aim: Aim = 0) : Submarine {
     override fun move(instruction: Instruction): Submarine {
         return when (instruction.direction) {
-            UP -> this.copy(aim = aimUp(aim, instruction.steps))
-            DOWN -> this.copy(aim = aimDown(aim, instruction.steps))
+            UP -> this.copy(aim = aim.up(instruction.steps))
+            DOWN -> this.copy(aim = aim.down(instruction.steps))
             FORWARD -> this.copy(location = relocate(instruction))
         }
     }
@@ -36,13 +36,14 @@ data class AimingSubmarine(override val location: Coordinate = Coordinate(0, 0),
         .move(instruction.direction, instruction.steps)
         .move(DOWN, instruction.steps * aim)
 
-    private fun aimDown(
-        aim: Int,
-        amount: Int
-    ) = aim + amount
-
-    private fun aimUp(
-        aim: Int,
-        amount: Int
-    ) = aim - amount
 }
+
+private fun Aim.down(amount: Int): Aim {
+    return this + amount
+}
+
+private fun Aim.up(amount: Int): Aim {
+    return this - amount
+}
+
+private typealias Aim = Int
