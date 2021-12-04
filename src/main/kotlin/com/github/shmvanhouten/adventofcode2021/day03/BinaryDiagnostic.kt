@@ -39,14 +39,12 @@ private fun filterBinaryStringForCriteria(
     lines: List<String>,
     bitMatchesCriteria: (bit: Char, bits: List<Char>) -> Boolean
 ): Int {
-    var remainingLines = lines
-    0.until(lines[0].length).forEach { i ->
-        remainingLines = remainingLines.filter { bitMatchesCriteria(it[i], listBitsAtIndex(remainingLines, i)) }
-        if (remainingLines.size == 1) {
-            return remainingLines.first().toInt(2)
-        }
-    }
-    error("Something went wrong, no line won: remaining lines: $remainingLines")
+    return 0.until(lines[0].length)
+        .runningFold(lines) { remainingLines, i ->
+            remainingLines.filter { bitMatchesCriteria(it[i], listBitsAtIndex(remainingLines, i)) }
+        }.asSequence()
+        .dropWhile { it.size > 1 }.first()
+        .first().toInt(2)
 }
 
 private fun listBitsAtIndex(
