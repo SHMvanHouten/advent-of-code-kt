@@ -1,6 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.day02
 
-import com.github.shmvanhouten.adventofcode2020.coordinate.Direction
+import com.github.shmvanhouten.adventofcode2021.depth.coordinate.Direction
 
 data class Instruction(val direction: Direction, val steps: Int)
 
@@ -16,14 +16,7 @@ fun toInstruction(line: String): Instruction {
 }
 
 fun toDirection(line: String): Direction {
-    return when(line) {
-        "forward" -> Direction.EAST
-        "down" -> Direction.SOUTH
-        "up" -> Direction.NORTH
-
-        else -> error("unkown direction $line")
-
-    }
+    return Direction.valueOf(line.uppercase())
 }
 
 private fun String.words(): List<String> {

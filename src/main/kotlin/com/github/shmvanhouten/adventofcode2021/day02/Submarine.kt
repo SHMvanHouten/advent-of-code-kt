@@ -1,7 +1,8 @@
 package com.github.shmvanhouten.adventofcode2021.day02
 
 import com.github.shmvanhouten.adventofcode2020.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode2020.coordinate.Direction.*
+import com.github.shmvanhouten.adventofcode2021.depth.coordinate.Direction.*
+import com.github.shmvanhouten.adventofcode2021.depth.coordinate.move
 
 interface Submarine {
     fun navigate(instructions: List<Instruction>): Submarine {
@@ -9,22 +10,23 @@ interface Submarine {
             submarine.move(instruction)
         }
     }
+
     val location: Coordinate
     fun move(instruction: Instruction): Submarine
 }
-data class SimpleSubmarine(override val location: Coordinate = Coordinate(0, 0)): Submarine {
+
+data class SimpleSubmarine(override val location: Coordinate = Coordinate(0, 0)) : Submarine {
     override fun move(instruction: Instruction): Submarine {
         return SimpleSubmarine(location = location.move(instruction.direction, instruction.steps))
     }
 }
 
-data class AimingSubmarine(override val location: Coordinate = Coordinate(0, 0), val aim: Int = 0): Submarine {
+data class AimingSubmarine(override val location: Coordinate = Coordinate(0, 0), val aim: Int = 0) : Submarine {
     override fun move(instruction: Instruction): Submarine {
         return when (instruction.direction) {
-            NORTH -> this.copy(aim = aimUp(aim, instruction.steps))
-            SOUTH -> this.copy(aim = aimDown(aim, instruction.steps))
-            EAST -> this.copy(location = relocate(instruction))
-            else -> error("unrecognized direction ${instruction.direction}")
+            UP -> this.copy(aim = aimUp(aim, instruction.steps))
+            DOWN -> this.copy(aim = aimDown(aim, instruction.steps))
+            FORWARD -> this.copy(location = relocate(instruction))
         }
     }
 
@@ -32,7 +34,7 @@ data class AimingSubmarine(override val location: Coordinate = Coordinate(0, 0),
         instruction: Instruction,
     ) = location
         .move(instruction.direction, instruction.steps)
-        .move(SOUTH, instruction.steps * aim)
+        .move(DOWN, instruction.steps * aim)
 
     private fun aimDown(
         aim: Int,
