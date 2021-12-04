@@ -91,13 +91,26 @@ class Day04Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1, equalTo(1) )
+        internal fun `find losing board for test input`() {
+            val (winningNumbers, bingoGame) = toBingoGame(testInput)
+            val (losingBoard, winningNumber) = bingoGame.findLoser(winningNumbers)
+
+            assertThat(
+                losingBoard.score(winningNumber),
+                equalTo(1924)
+            )
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1, equalTo(1) )
+            val (winningNumbers, bingoGame) = toBingoGame(input)
+            val (losingBoard, winningNumber) = bingoGame.findLoser(winningNumbers)
+
+
+            assertThat(
+                losingBoard.score(winningNumber),
+                equalTo(23042L)
+            )
         }
     }
 
