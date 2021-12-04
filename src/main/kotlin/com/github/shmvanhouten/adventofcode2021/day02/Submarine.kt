@@ -10,29 +10,10 @@ fun steer(instructions: List<Instruction>): Coordinate {
 }
 
 fun steer2(instructions: List<Instruction>): Coordinate {
-    return instructions.fold(Coordinate(0,0) to 0) { (coordinate, aim), instruction ->
-        performMove(instruction, coordinate, aim)
-    }.first
+    return instructions.fold(Submarine()) { submarine, instruction ->
+        submarine.move(instruction)
+    }.location
 }
-
-private fun performMove(
-    instruction: Instruction,
-    coordinate: Coordinate,
-    aim: Int
-) = when (instruction.direction) {
-    NORTH -> coordinate to aimUp(aim, instruction.steps)
-    SOUTH -> coordinate to aimDown(aim, instruction.steps)
-    EAST -> move(coordinate, instruction, aim) to aim
-    else -> error("unknown direction ${instruction.direction}")
-}
-
-private fun move(
-    coordinate: Coordinate,
-    instruction: Instruction,
-    aim: Int
-) = coordinate
-    .move(instruction.direction, instruction.steps)
-    .move(SOUTH, instruction.steps * aim)
 
 private fun aimDown(
     aim: Int,
@@ -43,3 +24,20 @@ private fun aimUp(
     aim: Int,
     amount: Int
 ) = aim - amount
+
+private data class Submarine(val location: Coordinate = Coordinate(0, 0), val aim: Int = 0) {
+    fun move(instruction: Instruction): Submarine {
+        return when (instruction.direction) {
+            NORTH -> this.copy(aim = aimUp(aim, instruction.steps))
+            SOUTH -> this.copy(aim = aimDown(aim, instruction.steps))
+            EAST -> this.copy(location = relocate(instruction))
+            else -> error("unknown direction ${instruction.direction}")
+        }
+    }
+
+    private fun relocate(
+        instruction: Instruction,
+    ) = location
+        .move(instruction.direction, instruction.steps)
+        .move(SOUTH, instruction.steps * aim)
+}
