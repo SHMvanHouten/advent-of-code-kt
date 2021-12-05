@@ -10,30 +10,30 @@ fun toCoordinate(input: String): Coordinate {
 
 operator fun Coordinate.rangeTo(otherCoordinate: Coordinate): List<Coordinate> {
     return when {
-        x == otherCoordinate.x -> {
-            (y..otherCoordinate.y)
-                .map { y -> Coordinate(x, y) }
-        }
-        y == otherCoordinate.y -> {
-            (x..otherCoordinate.x)
-                .map { x -> Coordinate(x, y) }
-        }
-        else -> {
-            val xRange = upOrDownProgression(x, otherCoordinate.x)
-            val yRange = upOrDownProgression(y, otherCoordinate.y)
-            if(xRange.toList().size != yRange.toList().size) error("Diagonal line is not 45 degrees! $xRange, $yRange")
-            xRange
-                .zip(yRange)
-                .map { (x, y) -> Coordinate(x, y) }
-        }
+        x == otherCoordinate.x -> generateVerticalRange(otherCoordinate)
+        y == otherCoordinate.y -> generateHorizontalRange(otherCoordinate)
+        else -> generateDiagonalRange(otherCoordinate)
     }
 }
 
-fun upOrDownProgression(n1: Int, n2: Int): IntProgression {
-    if (n1 <= n2) {
-        return (n1..n2)
-    } else {
-        return n1.downTo(n2)
-    }
+fun upOrDownProgression(n1: Int, n2: Int): IntProgression =
+    if (n1 <= n2) (n1..n2)
+    else n1.downTo(n2)
+
+private fun Coordinate.generateVerticalRange(otherCoordinate: Coordinate) =
+    upOrDownProgression(y, otherCoordinate.y)
+        .map { y -> Coordinate(x, y) }
+
+private fun Coordinate.generateHorizontalRange(otherCoordinate: Coordinate) =
+    upOrDownProgression(x, otherCoordinate.x)
+        .map { x -> Coordinate(x, y) }
+
+private fun Coordinate.generateDiagonalRange(otherCoordinate: Coordinate): List<Coordinate> {
+    val xRange = upOrDownProgression(x, otherCoordinate.x).toList()
+    val yRange = upOrDownProgression(y, otherCoordinate.y).toList()
+    if (xRange.size != yRange.size) error("Diagonal line is not 45 degrees! $xRange, $yRange")
+    return xRange
+        .zip(yRange)
+        .map { (x, y) -> Coordinate(x, y) }
 }
 

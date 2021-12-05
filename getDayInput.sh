@@ -54,7 +54,7 @@ class Day${DD}Test {
         }
     }
 
-    private val input by lazy {readFile(\"/input-day${DD}.txt\")}
+    private val input by lazy { readFile(\"/input-day${DD}.txt\")}
 
 }" > ./src/test/kotlin/com/github/shmvanhouten/adventofcode2021/day${DD}/Day${DD}Test.kt
 

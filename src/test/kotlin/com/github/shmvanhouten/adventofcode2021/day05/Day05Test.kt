@@ -14,16 +14,14 @@ class Day05Test {
         @Test
         internal fun `example 1`() {
             val coordinates = toNonDiagonalVentMap(exampleInput)
-            val overlapping = coordinates.filter { it.value > 1 }
-                .count()
+            val overlapping = countOverlappingLocations(coordinates)
             assertThat(overlapping, equalTo(5))
         }
 
         @Test
         internal fun `part 1`() {
             val coordinates = toNonDiagonalVentMap(input)
-            val overlapping = coordinates.filter { it.value > 1 }
-                .count()
+            val overlapping = countOverlappingLocations(coordinates)
             assertThat(overlapping, equalTo(4873))
         }
     }
@@ -34,22 +32,19 @@ class Day05Test {
         @Test
         internal fun `example 1`() {
             val coordinates = toVentMap(exampleInput)
-            val filter = coordinates.filter { it.value > 1 }
-            val overlapping = filter
-                .count()
+            val overlapping = countOverlappingLocations(coordinates)
             assertThat(overlapping, equalTo(12))
         }
 
         @Test
         internal fun `part 2`() {
             val coordinates = toVentMap(input)
-            val overlapping = coordinates.filter { it.value > 1 }
-                .count()
+            val overlapping = countOverlappingLocations(coordinates)
             assertThat(overlapping, equalTo(19472))
         }
     }
 
-    private val input by lazy {readFile("/input-day05.txt")}
+    private val input by lazy { readFile("/input-day05.txt") }
     private val exampleInput = """0,9 -> 5,9
 8,0 -> 0,8
 9,4 -> 3,4
