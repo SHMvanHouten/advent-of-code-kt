@@ -32,13 +32,20 @@ class Day05Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1, equalTo(1) )
+        internal fun `example 1`() {
+            val coordinates = toVentMap(exampleInput)
+            val filter = coordinates.filter { it.value > 1 }
+            val overlapping = filter
+                .count()
+            assertThat(overlapping, equalTo(12))
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1, equalTo(1) )
+            val coordinates = toVentMap(input)
+            val overlapping = coordinates.filter { it.value > 1 }
+                .count()
+            assertThat(overlapping, equalTo(19472))
         }
     }
 

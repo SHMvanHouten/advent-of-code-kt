@@ -15,6 +15,15 @@ fun toNonDiagonalVentMap(input: String): Map<Coordinate, Int> {
         .groupingBy { it }.eachCount()
 }
 
+fun toVentMap(input: String): Map<Coordinate, Int> {
+    return input.lines()
+        .map { toCoordinateRange(it) }
+        .map { it.sorted() }
+        .map{ (c1, c2) -> c1..c2 }
+        .flatten()
+        .groupingBy { it }.eachCount()
+}
+
 
 
 fun isVertical(c1: Coordinate, c2: Coordinate): Boolean {
