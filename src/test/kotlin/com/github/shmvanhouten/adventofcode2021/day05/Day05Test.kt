@@ -30,7 +30,7 @@ class Day05Test {
     inner class Part2 {
 
         @Test
-        internal fun `example 1`() {
+        internal fun `example 2`() {
             val coordinates = toVentMap(exampleInput)
             val overlapping = countOverlappingLocations(coordinates)
             assertThat(overlapping, equalTo(12))
