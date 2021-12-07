@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import kotlin.math.abs
+import kotlin.random.Random
 
 class Day07Test {
 
@@ -21,15 +21,22 @@ class Day07Test {
         }
 
         @Test
+        internal fun bestPositionIsAlwaysAtTheMedian() {
+            val random = Random.Default
+            val positions = generateSequence { random.nextInt(0, 300) }
+                .take(400).toList()
+            // sometimes multiple positions have the same fuel consumption, so first might differ
+            assertThat(
+                findFuelConsumptionOfAlignmentAtMedian(positions).second,
+                equalTo(findMostFuelEfficientAlignment(positions).second)
+            )
+        }
+
+        @Test
         internal fun `part 1`() {
             val positions = input.split(',').map { it.toInt() }
-            val mean = ((positions[positions.size / 2] + positions[(positions.size / 2) - 1]) / 2)
-            val sum = positions.sumOf { abs(mean - it) }
-            println(sum)
-            // 355989
 
-            assertThat(findMostFuelEfficientAlignment(positions).second, equalTo(355989))
-
+            assertThat(findFuelConsumptionOfAlignmentAtMedian(positions).second, equalTo(355989))
         }
     }
 
