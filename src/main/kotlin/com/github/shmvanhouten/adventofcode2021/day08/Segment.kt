@@ -12,7 +12,7 @@ enum class Segment {
     MIDDLE
 }
 
-val segmentsToDigitMapping: Map<Set<Segment>, Int> = listOf(
+val segmentsToNumberMapping: Map<Set<Segment>, Int> = listOf(
     (values().toList() - MIDDLE).toSet() to 0,
     setOf(TOP_RIGHT, BOTTOM_RIGHT) to 1,
     setOf(TOP, TOP_RIGHT, MIDDLE, BOTTOM_LEFT, BOTTOM) to 2,

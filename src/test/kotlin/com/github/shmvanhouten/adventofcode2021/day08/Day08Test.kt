@@ -14,12 +14,12 @@ class Day08Test {
 
         @Test
         internal fun `example 1`() {
-            assertThat(count1478digits(exampleInput), equalTo(26) )
+            assertThat(countUniquedigits(exampleInput), equalTo(26) )
         }
 
         @Test
         internal fun `part 1`() {
-            assertThat(count1478digits(input), equalTo(514) )
+            assertThat(countUniquedigits(input), equalTo(514) )
         }
     }
 
@@ -46,6 +46,14 @@ class Day08Test {
         internal fun `given we know the mappings, we decipher the four digit output`() {
             val signal = toSignal("acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf")
             assertThat(decipherOutput(signal), equalTo(5353))
+        }
+
+        @Test
+        internal fun `example 2`() {
+            assertThat(exampleInput.lines().map { toSignal(it) }
+                .sumOf { decipherOutput(it) },
+                equalTo(61229)
+            )
         }
 
         @Test
