@@ -132,6 +132,14 @@ data class Coordinate(val x: Int, val y: Int) {
     ) = direction == COUNTER_CLOCKWISE && degrees == D90
             || direction == CLOCKWISE && degrees == D270
 
+    /**
+     * Creates a progression of coordinates
+     * between this coordinate and the other coordinate provided
+     * Diagonals must be at 45 degrees, or this will fail.
+     */
+    operator fun rangeTo(otherCoordinate: Coordinate): CoordinateProgression {
+        return CoordinateProgression(this, otherCoordinate)
+    }
 }
 
 fun Int.negate(): Int {
