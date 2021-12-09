@@ -1,7 +1,7 @@
 package com.github.shmvanhouten.adventofcode2021.day04
 
-import com.github.shmvanhouten.adventofcode2020.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode2020.util.blocks
+import com.github.shmvanhouten.adventofcode.utility.blocks
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 
 fun toBingoGame(input: String): Pair<List<Long>, BingoGame> {
     val blocks = input.blocks()

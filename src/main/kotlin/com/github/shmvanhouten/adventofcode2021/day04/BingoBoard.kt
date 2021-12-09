@@ -1,6 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.day04
 
-import com.github.shmvanhouten.adventofcode2020.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 
 data class BingoBoard(val cells: Map<Long, Cell>) {
     private val cellsByCoordinate = cells.values.associateBy { it.location }

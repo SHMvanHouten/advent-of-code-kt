@@ -1,6 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.day02
 
-import com.github.shmvanhouten.adventofcode2020.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode2021.depth.coordinate.Direction.*
 import com.github.shmvanhouten.adventofcode2021.depth.coordinate.move
 

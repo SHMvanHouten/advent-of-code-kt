@@ -1,8 +1,8 @@
 package com.github.shmvanhouten.adventofcode2021.day09
 
-import com.github.shmvanhouten.adventofcode2020.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode2020.util.FileReader.readFile
-import com.github.shmvanhouten.adventofcode2021.coordinate.toIntByCoordinateMap
+import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.coordinate.toIntByCoordinateMap
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Nested

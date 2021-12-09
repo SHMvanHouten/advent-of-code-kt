@@ -18,7 +18,7 @@ curl --cookie "session=$cookie;" https://adventofcode.com/2021/day/${DAY}/input 
 
 echo "package com.github.shmvanhouten.adventofcode2021.day${DD}
 
-import com.github.shmvanhouten.adventofcode2020.util.FileReader.readFile
+import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Nested

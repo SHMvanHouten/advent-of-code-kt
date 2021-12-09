@@ -1,7 +1,7 @@
 package com.github.shmvanhouten.adventofcode2021.day09
 
-import com.github.shmvanhouten.adventofcode2020.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode2020.coordinate.Direction.*
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction.*
 import java.util.*
 
 fun locateBasins(heights: Map<Coordinate, Height>): Set<Set<Coordinate>> {

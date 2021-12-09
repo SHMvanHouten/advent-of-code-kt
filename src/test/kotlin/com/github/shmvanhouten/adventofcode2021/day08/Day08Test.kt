@@ -1,6 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.day08
 
-import com.github.shmvanhouten.adventofcode2020.util.FileReader.readFile
+import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode2021.day08.Segment.*
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo

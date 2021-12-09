@@ -1,9 +1,8 @@
 package com.github.shmvanhouten.adventofcode2021.day05
 
-import com.github.shmvanhouten.adventofcode2020.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode2021.coordinate.CoordinateProgression
-import com.github.shmvanhouten.adventofcode2021.coordinate.rangeTo
-import com.github.shmvanhouten.adventofcode2021.coordinate.toCoordinate
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.coordinate.CoordinateProgression
+import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinate
 
 fun toNonDiagonalVentMap(input: String): Map<Coordinate, Occurrence> {
     return input.lines()
