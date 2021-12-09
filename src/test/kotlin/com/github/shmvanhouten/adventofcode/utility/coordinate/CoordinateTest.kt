@@ -246,6 +246,7 @@ internal class CoordinateTest {
                 ...
                 .#.
             """.trimIndent().toCoordinateMap('#')
+            println(draw(coordinates))
             assertThat(
                 coordinates,
                 equalTo(setOf(Coordinate(0,0), Coordinate(2,0), Coordinate(1,2)))

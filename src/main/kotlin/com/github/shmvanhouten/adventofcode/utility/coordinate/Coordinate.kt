@@ -153,6 +153,20 @@ fun String.toCoordinateMap(targetChar: Char = '#'): Set<Coordinate> {
     }.flatten().toSet()
 }
 
+fun draw(coordinates: Collection<Coordinate>): String {
+    val ys = coordinates.map { it.y }
+    val xes = coordinates.map { it.x }
+    return (ys.minOrNull()!!..ys.maxOrNull()!!).joinToString("\n") { y ->
+        (xes.minOrNull()!!..xes.maxOrNull()!!).map { x ->
+            if (coordinates.contains(Coordinate(x, y))) {
+                '\u2591'
+            } else {
+                '\u2588'
+            }
+        }.joinToString("")
+    }
+}
+
 fun Set<Coordinate>.orientFromTopLeftMostCoordinate(): Set<Coordinate> {
     val topLeftMost = this.top().minByOrNull { it.x }!!
     return this.map { it.minus(topLeftMost) }.toSet()
