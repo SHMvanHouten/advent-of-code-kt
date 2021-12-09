@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.day09
 
+import com.github.shmvanhouten.adventofcode2020.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode2020.util.FileReader.readFile
 import com.github.shmvanhouten.adventofcode2021.coordinate.toCoordinateMap
 import com.natpryce.hamkrest.assertion.assertThat
@@ -35,15 +36,23 @@ class Day09Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1, equalTo(1))
+        internal fun `example 2`() {
+            val valuesByCoordinate = exampleInput.toCoordinateMap()
+            val basins = locateBasins(valuesByCoordinate)
+            assertThat(basins.size, equalTo(4))
+            assertThat(basins.map { it.size }.sorted(), equalTo(listOf(3, 9, 9, 14)))
+            assertThat(multiply3LargestBasins(basins), equalTo(1134))
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1, equalTo(1))
-
+            val valuesByCoordinate = input.toCoordinateMap()
+            val basins = locateBasins(valuesByCoordinate)
+            assertThat(multiply3LargestBasins(basins), equalTo(1075536))
         }
+
+        private fun multiply3LargestBasins(basins: Set<Set<Coordinate>>) =
+            basins.map { it.size }.sortedDescending().take(3).reduce(Int::times)
     }
 
     private val input by lazy { readFile("/input-day09.txt") }
