@@ -54,5 +54,5 @@ private val Pair<Wire, Segment>.wire: Wire
 
 private fun List<Int?>.joinInts(): Int = this.joinToString("").toInt()
 
-private typealias Wire = Char
+typealias Wire = Char
 typealias Digit = String
