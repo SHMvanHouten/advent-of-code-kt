@@ -8,11 +8,11 @@ fun decipherOutput(signal: Signal): Int {
         .joinToString("").toInt()
 }
 
-fun toDigit(hotWires: String, mapping: Map<Char, Segment>): Int {
+fun toDigit(hotWires: String, mapping: Map<Wire, Segment>): Int {
     return segmentsToDigitMapping[hotWires.map { mapping[it]!! }.toSet()]!!
 }
 
-fun findWireToSegmentMappings(input: List<String>): Map<Char, Segment> {
+fun findWireToSegmentMappings(input: List<String>): Map<Wire, Segment> {
 
     val one = input.single { it.length == 2 }
     val seven = input.single { it.length == 3 }
@@ -27,16 +27,14 @@ fun findWireToSegmentMappings(input: List<String>): Map<Char, Segment> {
     val twoThreeOfFive = input.filter { it.length == 5 }
     val three = twoThreeOfFive.single { it.containsAllSegmentsOf(one) }
 
-    val bottomLeftWire = eight.single { !nine.contains(it) } to BOTTOM_LEFT
-    val topRightWire = eight.single { !six.contains(it) } to TOP_RIGHT
-    val middleWire = eight.single { !zero.contains(it) } to MIDDLE
-    val topWire = seven.single { !one.contains(it) } to TOP
-    val topLeftWire = nine.single { !three.contains(it) } to TOP_LEFT
-    val bottomRightWire = one.single { it != topRightWire.first } to BOTTOM_RIGHT
-    val wiresNotBottom = listOf(topWire, bottomLeftWire, topLeftWire, middleWire, topRightWire, bottomRightWire)
-        .map { it.first }
-    val bottomWire = eight.single { !wiresNotBottom.contains(it) } to BOTTOM
-    return mapOf(topWire, bottomLeftWire, topLeftWire, middleWire, topRightWire, bottomRightWire, bottomWire)
+    val bottomLeft  = theOneWireIn(eight).that(nine).doesNotHaveIs(BOTTOM_LEFT)
+    val topRight    = theOneWireIn(eight).that(six).doesNotHaveIs(TOP_RIGHT)
+    val middle      = theOneWireIn(eight).that(zero).doesNotHaveIs(MIDDLE)
+    val top         = theOneWireIn(seven).that(one).doesNotHaveIs(TOP)
+    val topLeft     = theOneWireIn(nine).that(three).doesNotHaveIs(TOP_LEFT)
+    val bottom      = theOneWireIn(nine - top.wire).that(four).doesNotHaveIs(BOTTOM)
+    val bottomRight = theOneWireIn(one).thatIsNotThe(topRight.wire) to BOTTOM_RIGHT
+    return mapOf(top, bottomLeft, topLeft, middle, topRight, bottomRight, bottom)
 }
 
 fun count1478digits(input: String): Int {
@@ -45,7 +43,7 @@ fun count1478digits(input: String): Int {
         .sumOf { output -> output.count { signal -> isADigitWithUniqueSegmentCount(signal) } }
 }
 
-fun isADigitWithUniqueSegmentCount(signal: String): Boolean {
+private fun isADigitWithUniqueSegmentCount(signal: String): Boolean {
     val length = signal.length
     return length == 2 || length == 3 || length == 4 || length == 7
 }
@@ -60,3 +58,14 @@ data class Signal(val input: List<String>, val output: List<String>)
 private fun String.containsAllSegmentsOf(digit: String): Boolean {
     return digit.all { this.contains(it) }
 }
+
+private operator fun String.minus(char: Wire): String {
+    return this.filter { it != char }
+}
+
+private val Pair<Wire, Segment>.wire: Wire
+    get() {
+        return this.first
+    }
+
+typealias Wire = Char
