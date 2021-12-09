@@ -2,7 +2,7 @@ package com.github.shmvanhouten.adventofcode2021.day09
 
 import com.github.shmvanhouten.adventofcode2020.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode2020.util.FileReader.readFile
-import com.github.shmvanhouten.adventofcode2021.coordinate.toCoordinateMap
+import com.github.shmvanhouten.adventofcode2021.coordinate.toIntByCoordinateMap
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Nested
@@ -15,7 +15,7 @@ class Day09Test {
 
         @Test
         internal fun `example 1`() {
-            val valuesByCoordinate = exampleInput.toCoordinateMap()
+            val valuesByCoordinate = exampleInput.toIntByCoordinateMap()
             assertThat(
                 sumRiskLevelsOfLowPoints(valuesByCoordinate),
                 equalTo(15)
@@ -24,7 +24,7 @@ class Day09Test {
 
         @Test
         internal fun `part 1`() {
-            val valuesByCoordinate = input.toCoordinateMap()
+            val valuesByCoordinate = input.toIntByCoordinateMap()
             assertThat(
                 sumRiskLevelsOfLowPoints(valuesByCoordinate),
                 equalTo(491)
@@ -37,7 +37,7 @@ class Day09Test {
 
         @Test
         internal fun `example 2`() {
-            val valuesByCoordinate = exampleInput.toCoordinateMap()
+            val valuesByCoordinate = exampleInput.toIntByCoordinateMap()
             val basins = locateBasins(valuesByCoordinate)
             assertThat(basins.size, equalTo(4))
             assertThat(basins.map { it.size }.sorted(), equalTo(listOf(3, 9, 9, 14)))
@@ -46,7 +46,7 @@ class Day09Test {
 
         @Test
         internal fun `part 2`() {
-            val valuesByCoordinate = input.toCoordinateMap()
+            val valuesByCoordinate = input.toIntByCoordinateMap()
             val basins = locateBasins(valuesByCoordinate)
             assertThat(multiply3LargestBasins(basins), equalTo(1075536))
         }

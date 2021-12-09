@@ -1,42 +1,52 @@
 package com.github.shmvanhouten.adventofcode2021.day09
 
 import com.github.shmvanhouten.adventofcode2020.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode2020.coordinate.RelativePosition
+import com.github.shmvanhouten.adventofcode2020.coordinate.Direction.*
 import java.util.*
 
-fun locateBasins(heights: Map<Coordinate, Int>): Set<Set<Coordinate>> {
+fun locateBasins(heights: Map<Coordinate, Height>): Set<Set<Coordinate>> {
     val lowPoints = findLowPoints(heights)
     return lowPoints.map { mapOutBasin(it.key, heights) }.toSet()
 }
 
-fun mapOutBasin(lowPointLocation: Coordinate, heights: Map<Coordinate, Int>): Set<Coordinate> {
+fun sumRiskLevelsOfLowPoints(heights: Map<Coordinate, Height>) =
+    findLowPoints(heights)
+        .values.sumOf { it + 1 }
+
+private fun mapOutBasin(lowPointLocation: Coordinate, heights: Map<Coordinate, Height>): Set<Coordinate> {
     val basin = mutableSetOf(lowPointLocation)
     val possibleLocations = LinkedList(getNeighbours(lowPointLocation))
-    val visitedLocations = (possibleLocations + lowPointLocation).toMutableSet()
+    val checked = (possibleLocations + lowPointLocation).toMutableSet()
     while (possibleLocations.isNotEmpty()) {
         val possibleLocation = possibleLocations.poll()
         if (heights.containsKey(possibleLocation) && heights[possibleLocation]!! < 9) {
             basin += possibleLocation
-            val newLocations = getNeighbours(possibleLocation).filter { !visitedLocations.contains(it) }
+            val newLocations = getNeighbours(possibleLocation).filter { !checked.contains(it) }
             possibleLocations.addAll(newLocations)
-            visitedLocations.addAll(newLocations)
+            checked.addAll(newLocations)
         }
     }
     return basin
 }
 
-fun sumRiskLevelsOfLowPoints(heights: Map<Coordinate, Int>) =
-    findLowPoints(heights)
-        .values.sumOf { it + 1 }
+private fun findLowPoints(heights: Map<Coordinate, Height>) =
+    heights.filter { (coordinate, value) -> allNeighboursAreHigher(coordinate, value, heights)}
 
-private fun findLowPoints(heights: Map<Coordinate, Int>) =
-    heights.filter { (coordinate, value) -> getNeighbours(coordinate).all { neighbour -> value < heights[neighbour] ?: Int.MAX_VALUE } }
+private fun allNeighboursAreHigher(
+    coordinate: Coordinate,
+    value: Height,
+    heights: Map<Coordinate, Height>
+) = getNeighbours(coordinate)
+    .filter { heights.containsKey(it) }
+    .all { neighbour -> value < heights[neighbour]!! }
 
 private fun getNeighbours(coordinate: Coordinate): Set<Coordinate> {
     return setOf(
-        coordinate + RelativePosition.TOP.coordinate,
-        coordinate + RelativePosition.RIGHT.coordinate,
-        coordinate + RelativePosition.BOTTOM.coordinate,
-        coordinate + RelativePosition.LEFT.coordinate,
+        coordinate.move(NORTH),
+        coordinate.move(EAST),
+        coordinate.move(SOUTH),
+        coordinate.move(WEST)
     )
 }
+
+typealias Height = Int
