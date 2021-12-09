@@ -24,14 +24,3 @@ val segmentToDigitMapping: Map<List<Segment>, Int> = listOf(
     values().toList() to 8,
     values().toList() - BOTTOM_LEFT to 9
 ).associate { it.first.sorted() to it.second }
-
-//val zero = values().toList() - MIDDLE
-//val one = listOf(TOP_RIGHT, BOTTOM_RIGHT)
-//val two = listOf(TOP, TOP_RIGHT, MIDDLE, BOTTOM_LEFT, BOTTOM)
-//val three = listOf(TOP, TOP_RIGHT, MIDDLE, BOTTOM_RIGHT, BOTTOM)
-//val four = listOf(TOP_LEFT, TOP_RIGHT, MIDDLE, BOTTOM_RIGHT)
-//val five = listOf(TOP, TOP_LEFT, MIDDLE, BOTTOM_RIGHT, BOTTOM)
-//val six = values().toList() - TOP_RIGHT
-//val seven = listOf(TOP, TOP_RIGHT, BOTTOM_RIGHT)
-//val eight = values().toList()
-//val nine = values().toList() - BOTTOM_LEFT

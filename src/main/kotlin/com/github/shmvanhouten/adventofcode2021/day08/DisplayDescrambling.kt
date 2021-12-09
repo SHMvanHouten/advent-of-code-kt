@@ -1,6 +1,5 @@
 package com.github.shmvanhouten.adventofcode2021.day08
 
-import com.github.shmvanhouten.adventofcode2017.util.splitIntoTwo
 import com.github.shmvanhouten.adventofcode2021.day08.Segment.*
 
 fun decipherOutput(signal: Signal): Int {
@@ -59,7 +58,7 @@ fun isA1478(signal: String): Boolean {
 }
 
 fun toSignal(line: String): Signal {
-    val (input, output) = line.splitIntoTwo(" | ")
+    val (input, output) = line.split(" | ")
     return Signal(input.split(' '), output.split(' '))
 }
 
