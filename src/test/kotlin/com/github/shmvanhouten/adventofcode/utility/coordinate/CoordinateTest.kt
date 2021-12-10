@@ -237,21 +237,4 @@ internal class CoordinateTest {
         }
     }
 
-    @Nested
-    inner class To_coordinate_map {
-        @Test
-        internal fun `finds the coordinates for the char provided`() {
-            val coordinates = """
-                #.#
-                ...
-                .#.
-            """.trimIndent().toCoordinateMap('#')
-            println(draw(coordinates))
-            assertThat(
-                coordinates,
-                equalTo(setOf(Coordinate(0,0), Coordinate(2,0), Coordinate(1,2)))
-            )
-        }
-    }
-
 }
