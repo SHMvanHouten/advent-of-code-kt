@@ -2,6 +2,8 @@ package com.github.shmvanhouten.adventofcode2021.day09
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.coordinate.draw
+import com.github.shmvanhouten.adventofcode.utility.coordinate.increasedShadingChars
 import com.github.shmvanhouten.adventofcode.utility.coordinate.toIntByCoordinateMap
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
@@ -47,6 +49,7 @@ class Day09Test {
         @Test
         internal fun `part 2`() {
             val valuesByCoordinate = input.toIntByCoordinateMap()
+            println(valuesByCoordinate.mapValues { increasedShadingChars[it.value] }.draw())
             val basins = locateBasins(valuesByCoordinate)
             assertThat(multiply3LargestBasins(basins), equalTo(1075536))
         }
