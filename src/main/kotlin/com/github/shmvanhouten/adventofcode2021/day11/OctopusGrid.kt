@@ -14,33 +14,12 @@ fun findFirstTimeAllOctopusesFlash(octopusGrid: OctopusGrid): Int {
 }
 
 class OctopusGrid(val octopuses: Map<Coordinate, Octopus>, val flashes: Long = 0) {
-    constructor(input: String):
+    constructor(input: String) :
             this(
                 input.toCoordinateMap { c, location ->
                     Octopus(location, c.digitToInt())
                 }
             )
-
-    fun tick(): OctopusGrid {
-        octopuses.forEach { it.value.charge() }
-        while (octopuses.values.any{it.isReadyToFlash()}) {
-            octopuses.values.filter { it.isReadyToFlash() }
-                .forEach { flashy ->
-                    flashy.flash()
-                    flashy.location.getSurrounding()
-                        .mapNotNull { octopuses[it] }
-                        .filter { !it.flashedThisTick }
-                        .forEach { it.charge() }
-                }
-        }
-        val flashedThisTick = octopuses.count { it.value.flashedThisTick }
-        octopuses.values.filter { it.flashedThisTick }.forEach { it.reset() }
-        return OctopusGrid(octopuses, flashes + flashedThisTick);
-    }
-
-    fun  drawGrid(): String {
-        return octopuses.mapValues { it.value.energy.digitToChar() }.draw()
-    }
 
     fun tick(i: Int): OctopusGrid {
         return 0.until(i).fold(this) { grid, _ ->
@@ -48,4 +27,27 @@ class OctopusGrid(val octopuses: Map<Coordinate, Octopus>, val flashes: Long = 0
         }
     }
 
+    fun tick(): OctopusGrid {
+        octopuses.forEach { it.value.charge() }
+        while (octopuses.values.any { it.isReadyToFlash() }) {
+            octopuses.values.filter { it.isReadyToFlash() }
+                .forEach { flashy ->
+                    flashy.flash()
+                    getSurroundingOctopuses(flashy)
+                        .filter { !it.flashedThisTick }
+                        .forEach { it.charge() }
+                }
+        }
+        val flashedThisTick = octopuses.count { it.value.flashedThisTick }
+        octopuses.values.filter { it.flashedThisTick }.forEach { it.reset() }
+        return OctopusGrid(octopuses, flashes + flashedThisTick)
+    }
+
+    fun drawGrid(): String {
+        return octopuses.mapValues { it.value.energy.digitToChar() }.draw()
+    }
+
+    private fun getSurroundingOctopuses(flashy: Octopus) =
+        flashy.location.getSurrounding()
+            .mapNotNull { octopuses[it] }
 }
