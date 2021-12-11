@@ -2,14 +2,23 @@ package com.github.shmvanhouten.adventofcode2021.day11
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.draw
-import com.github.shmvanhouten.adventofcode.utility.coordinate.toIntByCoordinateMap
+import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
 
+fun findFirstTimeAllOctopusesFlash(octopusGrid: OctopusGrid): Int {
+    var i = 0
+    while (!octopusGrid.octopuses.values.all { it.energy == 0 }) {
+        octopusGrid.tick()
+        i++
+    }
+    return i
+}
 
 class OctopusGrid(val octopuses: Map<Coordinate, Octopus>, val flashes: Long = 0) {
     constructor(input: String):
             this(
-                input.toIntByCoordinateMap()
-                    .mapValues { (location, energyLevel) -> Octopus(location, energyLevel) }
+                input.toCoordinateMap { c, location ->
+                    Octopus(location, c.digitToInt())
+                }
             )
 
     fun tick(): OctopusGrid {

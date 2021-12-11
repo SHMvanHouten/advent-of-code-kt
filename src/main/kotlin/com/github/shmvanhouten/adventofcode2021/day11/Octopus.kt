@@ -14,7 +14,7 @@ data class Octopus(val location: Coordinate, var energy: EnergyLevel, var flashe
     }
 
     fun reset() {
-        if(energy != 0) error("flashed octupus should have an energy level of 0, not $energy")
+        if(energy != 0) error("flashed octopus should have an energy level of 0, not $energy")
         flashedThisTick = false
     }
 
