@@ -9,12 +9,16 @@ data class Path(val nodes: List<Node>, val hasVisitedSmallCaveTwice: Boolean = f
     fun canVisit(node: Node) = rules.canVisit(node, this)
 
     operator fun plus(node: Node): Path {
-        return if(!rules.canVisitSmallCavesTwice || node.isUpperCase() || hasVisitedSmallCaveTwice) {
-            this.copy(nodes = nodes + node)
-        } else {
-            this.copy(nodes = nodes + node, hasVisitedSmallCaveTwice = nodes.contains(node))
-        }
+        return this.copy(
+            nodes = nodes + node,
+            hasVisitedSmallCaveTwice = hasVisitedSmallCaveTwice
+                    || isVisitingSmallCaveForTheSecondTime(node)
+        )
+
     }
+
+    private fun isVisitingSmallCaveForTheSecondTime(cave: Node) =
+        rules.canVisitSmallCavesTwice && cave.isASmallCave() && nodes.contains(cave)
 
     fun isComplete() = nodes.last() == END
 
@@ -22,4 +26,11 @@ data class Path(val nodes: List<Node>, val hasVisitedSmallCaveTwice: Boolean = f
         return nodes.joinToString(",")
     }
 
+    fun hasNotVisitedCave(cave: Node) = !nodes.contains(cave)
+}
+
+private fun Node.isASmallCave(): Boolean = this.isLowerCase()
+
+private fun String.isLowerCase(): Boolean {
+    return this.all { it.isLowerCase() }
 }

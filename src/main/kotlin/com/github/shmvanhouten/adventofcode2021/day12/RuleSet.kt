@@ -4,14 +4,13 @@ enum class RuleSet(val canVisitSmallCavesTwice: Boolean) {
     PART_1(false),
     PART_2(true);
 
-    fun canVisit(node: Node, path: Path): Boolean {
-        return if(!canVisitSmallCavesTwice) {
-            node.isUpperCase() || !path.nodes.contains(node)
-        } else {
-            (node.isUpperCase()
-                    || (node != START && !(path.hasVisitedSmallCaveTwice && path.nodes.contains(node))))
-        }
+    fun canVisit(cave: Node, path: Path): Boolean {
+        return cave.isALargeCave()
+                || (!canVisitSmallCavesTwice && path.hasNotVisitedCave(cave))
+                || canVisitSmallCavesTwice && cave != START && (!path.hasVisitedSmallCaveTwice || path.hasNotVisitedCave(cave))
     }
+
 }
 
-internal fun String.isUpperCase(): Boolean = this.first().isUpperCase()
+private fun Node.isALargeCave() = this.isUpperCase()
+internal fun String.isUpperCase(): Boolean = this.all { it.isUpperCase() }
