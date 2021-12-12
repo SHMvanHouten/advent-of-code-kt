@@ -20,7 +20,8 @@ A-b
 b-d
 A-end
 b-end""".lines()
-            assertThat(findAllPathsThroughCave(input).size, equalTo(10))
+            val paths = findAllPathsThroughCave(input)
+            assertThat(paths.size, equalTo(36))
         }
 
         @Test
@@ -35,7 +36,9 @@ HN-end
 kj-sa
 kj-HN
 kj-dc""".lines()
-            assertThat(findAllPathsThroughCave(input).size, equalTo(19))
+            val findAllPathsThroughCave = findAllPathsThroughCave(input)
+            println(findAllPathsThroughCave)
+            assertThat(findAllPathsThroughCave.size, equalTo(103))
         }
 
         @Test
@@ -58,13 +61,13 @@ he-WI
 zg-he
 pj-fs
 start-RW""".lines()
-            assertThat(findAllPathsThroughCave(input).size, equalTo(226))
+            assertThat(findAllPathsThroughCave(input).size, equalTo(3509))
         }
 
         @Test
         internal fun `part 1`() {
             val input = input.lines()
-            assertThat(findAllPathsThroughCave(input).size, equalTo(4775))
+            assertThat(findAllPathsThroughCave(input).size, equalTo(152480))
         }
     }
 

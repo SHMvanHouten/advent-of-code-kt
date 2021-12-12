@@ -15,7 +15,7 @@ fun findAllPathsThroughCave(vectors: Set<Pair<Node, Node>>): List<Path> {
         val path = openPaths.poll()
         val nextPaths = vectors.filter { it.first == path.lastCave() }
             .map { it.second }
-            .filter { path.canVisitAgain(it) }
+            .filter { path.canVisit(it) }
             .map { path + it }
         completePaths += nextPaths.filter { it.isComplete() }
         openPaths += nextPaths.filter { !it.isComplete() }
@@ -29,17 +29,28 @@ fun listStartingPaths(vectors: Set<Pair<Node, Node>>): List<Path> {
 
 typealias Node = String
 
-data class Path(val nodes: List<Node>) {
+data class Path(val nodes: List<Node>, private val hasVisitedSmallCaveTwice: Boolean = false) {
     fun lastCave(): Node {
         return nodes.last()
     }
 
-    fun canVisitAgain(it: Node) = it.isUpperCase()
-            || !nodes.contains(it)
+    fun canVisit(it: Node) = it.isUpperCase()
+            || (it != START && !(hasVisitedSmallCaveTwice && nodes.contains(it)))
 
-    operator fun plus(node: Node): Path = Path(nodes + node)
+    operator fun plus(node: Node): Path {
+        return if(node.isUpperCase() || hasVisitedSmallCaveTwice) {
+            this.copy(nodes = nodes + node)
+        } else {
+            Path(nodes + node, nodes.contains(node))
+        }
+    }
 
     fun isComplete() = nodes.last() == END
+
+    override fun toString(): String {
+        return nodes.joinToString(",")
+    }
+
 }
 
 private fun String.isUpperCase(): Boolean = this.first().isUpperCase()
