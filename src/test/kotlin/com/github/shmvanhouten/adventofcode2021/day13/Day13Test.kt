@@ -74,7 +74,7 @@ class Day13Test {
             }
 //            folds.forEach { println(draw(it)) }
             println(draw(folds.last()))
-            "PZEHRAER"
+            //"PZEHRAER"
         }
     }
 
