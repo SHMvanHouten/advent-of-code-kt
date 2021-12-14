@@ -6,9 +6,9 @@ fun draw(coordinates: Collection<Coordinate>): String {
     return (minY..maxY).joinToString("\n") { y ->
         (minX..maxX).map { x ->
             if (coordinates.contains(Coordinate(x, y))) {
-                '\u2591'
+                '█'
             } else {
-                '\u2588'
+                ' '
             }
         }.joinToString("")
     }

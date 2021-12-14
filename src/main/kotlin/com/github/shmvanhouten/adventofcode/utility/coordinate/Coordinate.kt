@@ -146,21 +146,6 @@ fun Int.negate(): Int {
     return this * -1
 }
 
-/**
- * returns a set of coordinates for wherever the char is found in the string
- */
-fun String.toCoordinateMap(targetChar: Char = '#'): Set<Coordinate> {
-    return this.lines().mapIndexed { y, line ->
-        line.mapIndexed { x, c ->
-            if(c == targetChar) {
-                Coordinate(x, y)
-            } else {
-                null
-            }
-        }.filterNotNull()
-    }.flatten().toSet()
-}
-
 fun Set<Coordinate>.orientFromTopLeftMostCoordinate(): Set<Coordinate> {
     val topLeftMost = this.top().minByOrNull { it.x }!!
     return this.map { it.minus(topLeftMost) }.toSet()
