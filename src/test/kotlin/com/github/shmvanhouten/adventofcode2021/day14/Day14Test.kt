@@ -76,7 +76,8 @@ class Day14Test {
         internal fun `after one step NNCB becomes NCNBCHB`() {
             val (template, rules) = parse(exampleInput)
 
-            val (leastCommon, mostCommon) = countMostCommonAndLeastCommonElementAfterSynthesisRuns(template, rules, 1)
+            val elementCounts = countElementsAfterSynthesis(template, rules, 1)
+            val (leastCommon, mostCommon) = countMostAndLeastCommonElement(elementCounts.values)
             assertThat(mostCommon, equalTo(2))
             assertThat(leastCommon, equalTo(1))
         }
@@ -85,7 +86,8 @@ class Day14Test {
         internal fun `after two steps NNCB becomes NBCCNBBBCBHCB`() {
             val (template, rules) = parse(exampleInput)
 
-            val (leastCommon, mostCommon) = countMostCommonAndLeastCommonElementAfterSynthesisRuns(template, rules, 2)
+            val elementCounts = countElementsAfterSynthesis(template, rules, 2)
+            val (leastCommon, mostCommon) = countMostAndLeastCommonElement(elementCounts.values)
             assertThat(mostCommon, equalTo(6))
             assertThat(leastCommon, equalTo(1))
         }
@@ -94,7 +96,8 @@ class Day14Test {
         internal fun `after four steps NNCB becomes NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB`() {
             val (template, rules) = parse(exampleInput)
 
-            val (leastCommon, mostCommon) = countMostCommonAndLeastCommonElementAfterSynthesisRuns(template, rules, 4)
+            val elementCounts = countElementsAfterSynthesis(template, rules, 4)
+            val (leastCommon, mostCommon) = countMostAndLeastCommonElement(elementCounts.values)
             assertThat(mostCommon, equalTo(23))
             assertThat(leastCommon, equalTo(5))
         }
@@ -103,7 +106,8 @@ class Day14Test {
         internal fun example() {
             val (template, rules) = parse(exampleInput)
 
-            val (leastCommon, mostCommon) = countMostCommonAndLeastCommonElementAfterSynthesisRuns(template, rules, 40)
+            val elementCounts = countElementsAfterSynthesis(template, rules, 40)
+            val (leastCommon, mostCommon) = countMostAndLeastCommonElement(elementCounts.values)
             assertThat(mostCommon, equalTo(2192039569602))
             assertThat(leastCommon, equalTo(3849876073))
             assertThat(mostCommon - leastCommon, equalTo(2188189693529))
@@ -113,7 +117,8 @@ class Day14Test {
         internal fun `part 2`() {
             val (template, rules) = parse(input)
 
-            val (leastCommon, mostCommon) = countMostCommonAndLeastCommonElementAfterSynthesisRuns(template, rules, 40)
+            val elementCounts = countElementsAfterSynthesis(template, rules, 40)
+            val (leastCommon, mostCommon) = countMostAndLeastCommonElement(elementCounts.values)
             assertThat(mostCommon - leastCommon, equalTo(5208377027195))
         }
     }
