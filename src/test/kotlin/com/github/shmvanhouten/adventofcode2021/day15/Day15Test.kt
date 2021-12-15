@@ -28,12 +28,16 @@ class Day15Test {
 
         @Test
         internal fun example() {
-            assertThat(1, equalTo(1) )
+            val expand = expand(example1)
+            val expandedRiskMap = expand.toIntByCoordinateMap()
+            assertThat(findLowestRiskPath(expandedRiskMap), equalTo(315) )
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1, equalTo(1) )
+            val expand = expand(input)
+            val expandedRiskMap = expand.toIntByCoordinateMap()
+            assertThat(findLowestRiskPath(expandedRiskMap), equalTo(2874) )
         }
     }
 

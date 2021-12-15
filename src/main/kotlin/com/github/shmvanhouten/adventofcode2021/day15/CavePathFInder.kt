@@ -50,4 +50,8 @@ class NodeComparator: Comparator<Node> {
 
 }
 
-data class Node(val location: Coordinate, val pathLength: Int, val visitedCoordinates: Set<Coordinate> = setOf(location))
+data class Node(
+    val location: Coordinate,
+    val pathLength: Int,
+    val visitedCoordinates: Set<Coordinate> = setOf(location) // todo: use previous Node instead
+)
