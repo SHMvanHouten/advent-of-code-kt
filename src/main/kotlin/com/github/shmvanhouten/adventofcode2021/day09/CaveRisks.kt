@@ -40,7 +40,7 @@ private fun allNeighboursAreHigher(
     .filter { heights.containsKey(it) }
     .all { neighbour -> value < heights[neighbour]!! }
 
-private fun getNeighbours(coordinate: Coordinate): Set<Coordinate> {
+fun getNeighbours(coordinate: Coordinate): Set<Coordinate> {
     return setOf(
         coordinate.move(NORTH),
         coordinate.move(EAST),

@@ -19,7 +19,7 @@ class Day15Test {
 
         @Test
         internal fun `part 1`() {
-            assertThat(findLowestRiskPath(input.toIntByCoordinateMap()), equalTo(918) )
+            assertThat(findLowestRiskPath(input.toIntByCoordinateMap()), equalTo(562) )
         }
     }
 
