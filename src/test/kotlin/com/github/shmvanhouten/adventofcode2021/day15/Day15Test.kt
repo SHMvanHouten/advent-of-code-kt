@@ -14,12 +14,12 @@ class Day15Test {
 
         @Test
         internal fun example() {
-            assertThat(findLowestRiskPath(example1.toIntByCoordinateMap()), equalTo(40) )
+            assertThat(findLowestRiskPath(example1.toIntByCoordinateMap()).length, equalTo(40) )
         }
 
         @Test
         internal fun `part 1`() {
-            assertThat(findLowestRiskPath(input.toIntByCoordinateMap()), equalTo(562) )
+            assertThat(findLowestRiskPath(input.toIntByCoordinateMap()).length, equalTo(562) )
         }
     }
 
@@ -30,14 +30,18 @@ class Day15Test {
         internal fun example() {
             val expand = expand(example1)
             val expandedRiskMap = expand.toIntByCoordinateMap()
-            assertThat(findLowestRiskPath(expandedRiskMap), equalTo(315) )
+            val path = findLowestRiskPath(expandedRiskMap)
+//            println(draw(path.nodes.map { it.location }))
+            assertThat(path.length, equalTo(315) )
         }
 
         @Test
         internal fun `part 2`() {
             val expand = expand(input)
             val expandedRiskMap = expand.toIntByCoordinateMap()
-            assertThat(findLowestRiskPath(expandedRiskMap), equalTo(2874) )
+            val path = findLowestRiskPath(expandedRiskMap)
+//            println(draw(path.nodes.map { it.location }))
+            assertThat(path.length, equalTo(2874) )
         }
     }
 

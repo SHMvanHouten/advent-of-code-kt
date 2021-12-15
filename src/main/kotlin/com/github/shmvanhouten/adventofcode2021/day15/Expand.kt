@@ -1,20 +1,23 @@
 package com.github.shmvanhouten.adventofcode2021.day15
 
 fun expand(input: String): String {
-    val expandedLines = input.lines().map { expandLine(it) }
-    return expandDownwards(expandedLines)
-}
-
-fun expandDownwards(expandedLines: List<List<Int>>): String {
-    return 0.until(4).runningFold(expandedLines) { lines, _ ->
-        lines.map { it.map { risk -> transform(risk) } }
-    }.flatMap { transformedMap -> transformedMap.map { it.joinToString("") } }
+    return input.lines()
+        .map { it.map { it.digitToInt() } }
+        .map { expandRows(it) }
+        .let { expandColumns(it) }
+        .map { line -> line.joinToString("") }
         .joinToString("\n")
 }
 
-fun expandLine(line: String): List<Int> {
+fun expandColumns(expandedLines: List<List<Int>>): List<List<Int>> {
+    return 0.until(4).runningFold(expandedLines) { lines, _ ->
+        lines.map { it.map { risk -> transform(risk) } }
+    }.flatMap { transformedMap -> transformedMap.map { it } }
+}
+
+fun expandRows(line: List<Int>): List<Int> {
     return (0.until(5))
-        .flatMap { line.map { it.digitToInt() }.transform(it) }
+        .flatMap { line.transform(it) }
 }
 
 private fun List<Int>.transform(amount: Int): List<Int> {
