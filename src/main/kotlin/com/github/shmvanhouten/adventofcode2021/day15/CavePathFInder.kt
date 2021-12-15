@@ -6,35 +6,14 @@ import java.util.*
 
 val origin = Coordinate(0,0)
 
-//fun findLowestRiskPath(riskMap: Map<Coordinate, Int>): Long {
-//    val endpoint: Coordinate = riskMap.keys.maxByOrNull { it.x + it.y }!!
-//    val riskPathByCoordinate = mutableMapOf(origin to 0)
-//
-//    for (coordinate in riskMap.keys.minus(origin).sortedWith(CoordinateComparator())) {
-//
-//    }
-//}
-//
-//class CoordinateComparator : Comparator<Coordinate> {
-//    override fun compare(one: Coordinate?, other: Coordinate?): Int {
-//        if(one == other) return 0
-//        if(one == null) return 1
-//        if(other == null) return -1
-//        val compareTo = (one.x + one.y).compareTo(other.x + other.y)
-//        return if(compareTo == 0) one.x.compareTo(other.x)
-//        else compareTo
-//    }
-//
-//}
-
 fun findLowestRiskPath(riskMap: Map<Coordinate, Int>): Int {
     val endpoint: Coordinate = riskMap.keys.maxByOrNull { it.x + it.y }!!
-    val pathsSoFar = LinkedList(listOf(Node(origin, 0)))
+    val pathsSoFar = PriorityQueue(NodeComparator())
+    pathsSoFar.add(Node(origin, 0))
     val visitedCoordinates = mutableMapOf<Coordinate, Int>()
-    var shortestPath = 572
+    var shortestPath = Int.MAX_VALUE
     while (pathsSoFar.isNotEmpty()) {
-        pathsSoFar.sortWith(NodeComparator())
-        val (coordinate, pathLength, _) = pathsSoFar.pollLast()
+        val (coordinate, pathLength, _) = pathsSoFar.poll()
         val newPaths = getNeighbours(coordinate)
             .asSequence()
             .filter { riskMap.contains(it) }
@@ -46,7 +25,6 @@ fun findLowestRiskPath(riskMap: Map<Coordinate, Int>): Int {
 
         newPaths.find { it.location == endpoint }?.let {
             if(it.pathLength < shortestPath)
-            println(it.pathLength)
             shortestPath = it.pathLength
         }
 

@@ -27,7 +27,7 @@ class Day15Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
+        internal fun example() {
             assertThat(1, equalTo(1) )
         }
 
