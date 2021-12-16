@@ -1,6 +1,11 @@
 package com.github.shmvanhouten.adventofcode2021.day16
 
-fun evaluatePacket(hex: String): Packet = evaluatePacketAndSize(hex.toBigInteger(16).toString(2).padZeroStart()).first
+fun evaluatePacket(hex: String): Packet = evaluatePacketAndSize(
+    hex.toBigInteger(16)
+        .toString(2)
+        .padZeroStart()
+        .padLeadingZerosOfHex(hex)
+).first
 
 fun calculateVersionSum(packet: Packet): Int {
     return when(packet) {
@@ -8,10 +13,6 @@ fun calculateVersionSum(packet: Packet): Int {
         is OperatorPacket -> packet.version + packet.subPackets.sumOf { calculateVersionSum(it) }
         else -> error("unknown packet type $packet")
     }
-}
-
-fun calculateValueSum(packet: Packet): Long {
-    return packet.evaluate()
 }
 
 private fun evaluatePacketAndSize(bits: String): Pair<Packet, Int> {
@@ -71,11 +72,10 @@ fun evaluateInnerPackets(bits: String, expectedAmount: Int): Pair<List<Packet>, 
     return packets to i
 }
 
-fun evaluateInnerPackets(bits: String): MutableList<Packet> {
+private fun evaluateInnerPackets(bits: String): MutableList<Packet> {
     var i = 0
     val packets = mutableListOf<Packet>()
     while (i < bits.length) {
-//        if (bits.substring(i).toInt(2) == 0) error("put this in while!")
         val (packet, remaining) = evaluatePacketAndSize(bits.substring(i))
         packets += packet
         i += remaining
@@ -83,8 +83,13 @@ fun evaluateInnerPackets(bits: String): MutableList<Packet> {
     return packets
 }
 
-fun String.padZeroStart(): String {
+private fun String.padZeroStart(): String {
     val remainder = this.length % 4
     return if(remainder == 0) this
     else 0.until(4 - remainder).map { '0' }.joinToString("") + this
+}
+
+private fun String.padLeadingZerosOfHex(hex: String): String {
+    return hex.takeWhile { it == '0' }
+        .map { "0000" }.joinToString("") + this
 }

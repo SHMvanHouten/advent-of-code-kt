@@ -152,7 +152,7 @@ class Day16Test {
             expectedValueSum: Long
         ) {
             val packet = evaluatePacket(hex)
-            assertThat(calculateValueSum(packet), equalTo(expectedValueSum))
+            assertThat(packet.evaluate(), equalTo(expectedValueSum))
         }
 
         @Test
