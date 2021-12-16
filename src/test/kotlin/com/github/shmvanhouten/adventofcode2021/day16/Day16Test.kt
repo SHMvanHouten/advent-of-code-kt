@@ -12,27 +12,20 @@ import org.junit.jupiter.params.provider.CsvSource
 class Day16Test {
 
     @Nested
-    inner class PadZeroStart {
-
-    }
-
-    @Nested
     inner class Part1 {
-
         @Test
         internal fun `packets with ID 4 represent a literal value`() {
             val packet = evaluatePacket("D2FE28")
 
-            // todo: how to write Matcher?
-            assertThat(packet is LiteralPacket, equalTo(true))
+            assertThat(packet, isALiteralPacket)
         }
 
         @Test
         internal fun `packets with an ID other than 4 represent an operator packet`() {
             val packet = evaluatePacket("38006F45291200")
 
-            assertThat(packet is LiteralPacket, equalTo(false))
-            assertThat(packet is OperatorPacket, equalTo(true))
+            assertThat(packet, !isALiteralPacket)
+            assertThat(packet, isAnOperatorPacket)
         }
 
         @Nested

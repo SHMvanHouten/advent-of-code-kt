@@ -3,8 +3,7 @@ package com.github.shmvanhouten.adventofcode2021.day16
 fun evaluatePacket(hex: String): Packet = evaluatePacketAndSize(
     hex.toBigInteger(16)
         .toString(2)
-        .padZeroStart()
-        .padLeadingZerosOfHex(hex)
+        .reAttachLeadingZeros(hex)
 ).first
 
 fun calculateVersionSum(packet: Packet): Int {
@@ -89,7 +88,7 @@ private fun String.padZeroStart(): String {
     else 0.until(4 - remainder).map { '0' }.joinToString("") + this
 }
 
-private fun String.padLeadingZerosOfHex(hex: String): String {
-    return hex.takeWhile { it == '0' }
-        .map { "0000" }.joinToString("") + this
+private fun String.reAttachLeadingZeros(hex: String): String {
+    return 0.until(hex.length * 4 - this.length)
+        .map { '0' }.joinToString("") + this
 }

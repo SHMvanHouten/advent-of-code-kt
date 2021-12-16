@@ -38,7 +38,7 @@ data class OperatorPacket(
             5 -> subPackets.first().isGreaterThan(subPackets[1])
             6 -> subPackets.first().isLessThan(subPackets[1])
             7 -> subPackets.first().isEqualTo(subPackets[1])
-            else -> error("unknow version")
+            else -> error("unknown version")
         }
     }
 }
