@@ -2,12 +2,16 @@ package com.github.shmvanhouten.adventofcode2021.day16
 
 fun evaluatePacket(hex: String): Packet = evaluatePacketAndSize(hex.toBigInteger(16).toString(2).padZeroStart()).first
 
-fun calculatePacketSum(packet: Packet): Int {
+fun calculateVersionSum(packet: Packet): Int {
     return when(packet) {
         is LiteralPacket -> packet.version
-        is OperatorPacket -> packet.version + packet.subPackets.sumOf { calculatePacketSum(it) }
+        is OperatorPacket -> packet.version + packet.subPackets.sumOf { calculateVersionSum(it) }
         else -> error("unknown packet type $packet")
     }
+}
+
+fun calculateValueSum(packet: Packet): Long {
+    return packet.evaluate()
 }
 
 private fun evaluatePacketAndSize(bits: String): Pair<Packet, Int> {
@@ -33,7 +37,9 @@ private fun evaluateLiteralPacket(bits: String): Pair<LiteralPacket, Int> {
 private fun evaluatePacketOperatorPacket(bits: String): Pair<OperatorPacket, Int> {
     var i = 0
     val version = bits.substring(i, i + 3).toInt(2)
-    i += 6 // skip id
+    i += 3
+    val id = bits.substring(i, i + 3)
+    i += 3
     val lengthTypeId = bits[i]
     i++
     if (lengthTypeId == '0') {
@@ -41,13 +47,13 @@ private fun evaluatePacketOperatorPacket(bits: String): Pair<OperatorPacket, Int
         i += 15
         val packets = evaluateInnerPackets(bits.substring(i, i + expectedSize))
         i += expectedSize
-        return OperatorPacket(version, packets) to i
+        return OperatorPacket(id.toInt(2), version, packets) to i
     } else {
         val expectedAmount = bits.substring(i, i + 11).toInt(2)
         i += 11
         val (packets, remaining) = evaluateInnerPackets(bits.substring(i), expectedAmount)
         i += remaining
-        return OperatorPacket(version, packets) to i
+        return OperatorPacket(id.toInt(2), version, packets) to i
     }
 
 }

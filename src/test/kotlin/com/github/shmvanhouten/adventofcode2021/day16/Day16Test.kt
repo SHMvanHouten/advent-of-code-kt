@@ -121,27 +121,44 @@ class Day16Test {
             expectedVersionSum: Int
         ) {
             val packet = evaluatePacket(hex)
-            assertThat(calculatePacketSum(packet), equalTo(expectedVersionSum))
+            assertThat(calculateVersionSum(packet), equalTo(expectedVersionSum))
         }
 
         @Test
         internal fun `part 1`() {
             val packet = evaluatePacket(input)
-            assertThat(calculatePacketSum(packet), equalTo(875))
+            assertThat(calculateVersionSum(packet), equalTo(875))
         }
     }
 
     @Nested
     inner class Part2 {
 
-        @Test
-        internal fun `fixme`() {
-            assertThat(1, equalTo(1))
+        @ParameterizedTest
+        @CsvSource(
+            value = [
+                "C200B40A82, 3",
+                "04005AC33890, 54",
+                "880086C3E88112, 7",
+                "CE00C43D881120, 9",
+                "D8005AC2A8F0, 1",
+                "F600BC2D8F, 0",
+                "9C005AC2F8F0, 0",
+                "9C0141080250320F1802104A08, 1"
+            ]
+        )
+        internal fun `examples values equate to value sums`(
+            hex: String,
+            expectedValueSum: Long
+        ) {
+            val packet = evaluatePacket(hex)
+            assertThat(calculateValueSum(packet), equalTo(expectedValueSum))
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1, equalTo(1))
+            val packet = evaluatePacket(input)
+            assertThat(packet.evaluate(), equalTo(1264857437203))
         }
     }
 
