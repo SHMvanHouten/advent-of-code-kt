@@ -2,6 +2,25 @@ package com.github.shmvanhouten.adventofcode2021.day17
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 
+fun filterVelocitiesThatEndUpInRange(
+    minToMaxX: IntRange,
+    minToMaxY: IntRange,
+    xRange: IntRange,
+    yRange: IntRange
+): List<Coordinate> {
+    return minToMaxY.flatMap { y -> minToMaxX.map { x -> Coordinate(x, y) } }
+        .filter { it.endsUpInRange(xRange, yRange) }
+}
+
+private fun Coordinate.endsUpInRange(xRange: IntRange, yRange: IntRange): Boolean {
+    return generateSequence(Coordinate(0,0) to this) {(pos, velocity) ->
+        pos + velocity to velocity.decrease()
+    }
+        .map { it.first }
+        .takeWhile { it.x <= xRange.last && it.y >= yRange.first }
+        .any { it.x in xRange && it.y in yRange }
+}
+
 fun calculateMaxHeight(velocity: Int): Int {
     return ((1..velocity).toList().median() * velocity).toInt()
 }
@@ -10,27 +29,23 @@ fun calculateMaxAndMinYVelocityPossible(xRange: IntRange, yRange: IntRange): Pai
     return yRange.last.until(xRange.last).toList()
         .last { yVelocity ->
             wouldFallInRange(yVelocity, yRange)
-        } to yRange.last.until(xRange.last).toList()
+        } to yRange.first.until(xRange.last).toList()
         .first { yVelocity ->
             wouldFallInRange(yVelocity, yRange)
         }
 }
 
 fun wouldFallInRange(yVelocity: Int, yRange: IntRange): Boolean {
-    val last = generateSequence(0 to yVelocity) { (position, velocity) ->
+    return generateSequence(0 to yVelocity) { (position, velocity) ->
         position + velocity to velocity - 1
     }
         .takeWhile { (pos, vel) ->
-//            println(pos to vel)
             pos >= yRange.first
         }
         .map {
             it.first
         }
-        .last()
-    val any = last in yRange
-    println("$last is in range $yRange? $any")
-    return any
+        .last() in yRange
 }
 
 private fun Coordinate.decrease(): Coordinate {
@@ -49,15 +64,6 @@ private fun calculateMinXVelocity(minX: Int) =
         .mapIndexed{ i, x -> i to x}
         .first { (velocity, x) -> x >= minX }
         .first
-
-
-//fun wouldReachTheTarget(velocity: Int, minX: Int, maxX: Int): Boolean {
-//    return generateSequence(0, Int::inc).first { wouldReachTheTarget(it, minX, maxX) } to maxX
-//    return generateSequence(0 to velocity) {(pos, vel) -> pos + vel to vel - 1}
-//        .takeWhile { (pos, _) -> pos <= maxX }
-//        .map { it.first }
-//        .any { it in minX..maxX }
-//}
 
 fun List<Int>.median(): Float {
     val sorted = this.sorted()

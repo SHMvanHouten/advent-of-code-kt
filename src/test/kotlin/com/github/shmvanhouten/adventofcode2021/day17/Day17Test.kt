@@ -65,12 +65,17 @@ class Day17Test {
             val (xRange, yRange) = example.parse()
             val (minX, maxX) = calculateMinXVelocityAndMaxXVelocity(xRange.first, xRange.last)
             val (maxY, minY) = calculateMaxAndMinYVelocityPossible(xRange, yRange)
-            assertThat((minX..maxX).toList().size * (minY..maxY).toList().size, equalTo(112))
+            val trajectories = filterVelocitiesThatEndUpInRange(minX..maxX, minY..maxY, xRange, yRange)
+            assertThat(trajectories.size, equalTo(112))
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1, equalTo(1))
+            val (xRange, yRange) = input.parse()
+            val (minX, maxX) = calculateMinXVelocityAndMaxXVelocity(xRange.first, xRange.last)
+            val (maxY, minY) = calculateMaxAndMinYVelocityPossible(xRange, yRange)
+            val trajectories = filterVelocitiesThatEndUpInRange(minX..maxX, minY..maxY, xRange, yRange)
+            assertThat(trajectories.size, equalTo(4973))
         }
     }
 
