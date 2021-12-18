@@ -11,9 +11,14 @@ interface SnailFishNumber {
     fun addToLeftMost(value: Int): SnailFishNumber
     fun addToRightMost(value: Int): SnailFishNumber
     fun split(): SnailFishNumber
+    fun magnitude(): Long
 }
 
 data class RegularNumber(val value: Int): SnailFishNumber {
+    override fun magnitude(): Long {
+        return value.toLong()
+    }
+
     override fun split(): SnailFishNumber {
         return if(value >= 10) {
             SnumberPair(RegularNumber(value.floorDiv(2)), RegularNumber(value.ceilDiv(2)))
@@ -48,6 +53,10 @@ private fun Int.ceilDiv(divisor: Int): Int {
 }
 
 data class SnumberPair(val first: SnailFishNumber, val second: SnailFishNumber) : SnailFishNumber {
+    override fun magnitude(): Long {
+        return 3 * first.magnitude() + 2 * second.magnitude()
+    }
+
     override fun explode(): SnailFishNumber {
         return explode(0).first
     }

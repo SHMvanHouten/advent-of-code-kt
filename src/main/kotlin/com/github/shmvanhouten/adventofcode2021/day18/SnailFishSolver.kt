@@ -6,6 +6,14 @@ fun sum(snailFishNumbers: List<SnailFishNumber>): SnailFishNumber {
     }
 }
 
+fun findLargestSumOf2SnailNumbersPossible(unsolvedSum: List<SnailFishNumber>): Pair<SnailFishNumber, Long> {
+    return unsolvedSum
+        .flatMap { sfn -> (unsolvedSum - sfn).map { sfn + it } }
+        .map { resolveEntirely(it) }
+        .map { it to it.magnitude() }
+        .maxByOrNull { it.second }!!
+}
+
 fun resolveEntirely(unresolved: SnailFishNumber): SnailFishNumber {
     var snailFishNumber = unresolved
     while (true) {
@@ -18,3 +26,4 @@ fun resolveEntirely(unresolved: SnailFishNumber): SnailFishNumber {
         else snailFishNumber = exploded
     }
 }
+
