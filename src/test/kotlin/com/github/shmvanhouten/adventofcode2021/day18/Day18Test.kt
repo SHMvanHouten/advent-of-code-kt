@@ -67,7 +67,7 @@ class Day18Test {
             expected: String
         ) {
             val unexploded = parseSnailFishNumber(input).first()
-            assertThat(unexploded.resolve().toString(), equalTo(expected))
+            assertThat(unexploded.explode().toString(), equalTo(expected))
         }
 
         @ParameterizedTest
@@ -81,8 +81,8 @@ class Day18Test {
             input: String,
             expected: String
         ) {
-            val unexploded = parseSnailFishNumber(input).first()
-            assertThat(unexploded.resolve().toString(), equalTo(expected))
+            val unsplit = parseSnailFishNumber(input).first()
+            assertThat(unsplit.split().toString(), equalTo(expected))
         }
 
         @Test
