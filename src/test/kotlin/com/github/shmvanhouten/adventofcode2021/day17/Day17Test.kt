@@ -15,43 +15,57 @@ class Day17Test {
 
         @Nested
         inner class Calculate_min_x_and_max_x_velocity {
+
+            // max x velocity is always the max x
             @ParameterizedTest
             @CsvSource(
                 value = [
-                    "1, 2, 1",
-                    "2, 3, 2",
-                    "3, 4, 2",
-                    "18, 19, 6",
-                    "225, 247, 21",
-                    "207, 263, 20",  // actual input
-                    "20, 30, 6" // example
+                    "1, 1",
+                    "2, 2",
+                    "3, 2",
+                    "18, 6",
+                    "225, 21",
+                    "207, 20",  // actual input
+                    "20, 6", // example
+                    "39320, 280",
+                    "123123, 496"
                 ]
             )
             internal fun `reaching target in range 1--2 would require a minX velocity of 1`(
                 minX: Int,
-                maxX: Int,
                 expectedMinXVelocity: Int
             ) {
                 assertThat(
-                    calculateMinXVelocityAndMaxXVelocity(minX, maxX),
-                    equalTo(expectedMinXVelocity to maxX)
+                    calculateMinXVelocityAndMaxXVelocity(minX, Int.MAX_VALUE).first,
+                    equalTo(expectedMinXVelocity)
                 )
             }
         }
 
         @Test
         internal fun example_1() {
-            val (xRange, yRange) = example.parse()
-            val maxYVelocity = calculateMaxAndMinYVelocityPossible(xRange, yRange).first
+            val (_, yRange) = example.parse()
+            val (_, maxYVelocity) = calculateMinAndMaxYVelocityPossible(yRange)
             assertThat(maxYVelocity, equalTo(9))
             assertThat(calculateMaxHeight(maxYVelocity), equalTo(45))
+            assertThat(calculateMaxHeight(1), equalTo(1))
+            assertThat(calculateMaxHeight(2), equalTo(3))
+            assertThat(calculateMaxHeight(3), equalTo(6))
+            assertThat(calculateMaxHeight(4), equalTo(10))
+            assertThat(calculateMaxHeight(5), equalTo(15))
+            assertThat(calculateMaxHeight(6), equalTo(21))
+            assertThat(calculateMaxHeight(7), equalTo(28))
+            assertThat(calculateMaxHeight(8), equalTo(36))
+            assertThat(calculateMaxHeight(9), equalTo(45))
             assertThat(calculateMaxHeight(10), equalTo(55))
+            assertThat(calculateMaxHeight(11), equalTo(66))
+            assertThat(calculateMaxHeight(12), equalTo(78))
         }
 
         @Test
         internal fun `part 1`() {
             val (xRange, yRange) = input.parse()
-            val maxYVelocity = calculateMaxAndMinYVelocityPossible(xRange, yRange).first
+            val (_, maxYVelocity) = calculateMinAndMaxYVelocityPossible(yRange)
             assertThat(maxYVelocity, equalTo(114))
             assertThat(calculateMaxHeight(maxYVelocity), equalTo(6555))
         }
@@ -64,7 +78,7 @@ class Day17Test {
         internal fun example() {
             val (xRange, yRange) = example.parse()
             val (minX, maxX) = calculateMinXVelocityAndMaxXVelocity(xRange.first, xRange.last)
-            val (maxY, minY) = calculateMaxAndMinYVelocityPossible(xRange, yRange)
+            val (minY, maxY) = calculateMinAndMaxYVelocityPossible(yRange)
             val trajectories = filterVelocitiesThatEndUpInRange(minX..maxX, minY..maxY, xRange, yRange)
             assertThat(trajectories.size, equalTo(112))
         }
@@ -73,7 +87,7 @@ class Day17Test {
         internal fun `part 2`() {
             val (xRange, yRange) = input.parse()
             val (minX, maxX) = calculateMinXVelocityAndMaxXVelocity(xRange.first, xRange.last)
-            val (maxY, minY) = calculateMaxAndMinYVelocityPossible(xRange, yRange)
+            val (minY, maxY) = calculateMinAndMaxYVelocityPossible(yRange)
             val trajectories = filterVelocitiesThatEndUpInRange(minX..maxX, minY..maxY, xRange, yRange)
             assertThat(trajectories.size, equalTo(4973))
         }
