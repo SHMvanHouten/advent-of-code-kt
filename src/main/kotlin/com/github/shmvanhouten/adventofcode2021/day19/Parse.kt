@@ -14,7 +14,7 @@ fun parse(input: String): List<BeaconMap> {
             } else {
                 null
             }
-            BeaconMap(coordinates = list, position = position, beaconId = id)
+            BeaconMap(coordinates = list, position = position, id = id)
         }
 }
 

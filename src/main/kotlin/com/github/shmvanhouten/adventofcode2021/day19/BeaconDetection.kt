@@ -8,11 +8,13 @@ fun findBeaconPositions(beaconMaps: List<BeaconMap>): Set<Coordinate3d> {
     val currentScanners = LinkedList(listOf(beaconMaps[0]))
     val remainingScanners = (beaconMaps).toMutableList()
     val beaconsRelativeToScanner0 = beaconMaps[0].coordinates.toMutableSet()
+    val relativePositions = mutableListOf<Pair<Coordinate3d, String>>()
     while (currentScanners.isNotEmpty()) {
         val currentScanner = currentScanners.poll()
         remainingScanners -= currentScanner
 
         beaconsRelativeToScanner0 += currentScanner.coordinates
+        relativePositions += currentScanner.position!! to currentScanner.id
 
         val hits: List<Pair<BeaconMap, BeaconResult>> = remainingScanners
             .map { it to currentScanner.listOverlappingBeaconsWithOtherRotatedInAllDirections(it) }
@@ -25,11 +27,17 @@ fun findBeaconPositions(beaconMaps: List<BeaconMap>): Set<Coordinate3d> {
                 .map { c -> result.rotationFunctionUsed.invoke(c) }
                 .map { it + result.relativePosition!! }
             , rotationFunction = result.rotationFunctionUsed,
-            position = currentScanner.position!! + result.relativePosition!!
+            position = result.relativePosition!!
         ) }
 
     }
     if(remainingScanners.isNotEmpty()) error("did not finish all scanners!")
+
+    val maxOrNull = relativePositions
+        .map { it.first }
+        .flatMap { c -> relativePositions.map { it.first.manhattanDistanceTo(c) } }
+        .maxOrNull()
+    println(maxOrNull)
     return beaconsRelativeToScanner0
 }
 
@@ -44,7 +52,7 @@ data class BeaconMap(
     val coordinates: List<Coordinate3d>,
     val rotationFunction: RotationFunction = { (a,b,c) -> Coordinate3d(a,b,c)},
     val position: Coordinate3d? = null,
-    private val beaconId: String
+    val id: String
 ) {
 
     fun listOverlappingBeaconsWithOtherRotatedInAllDirections(other: BeaconMap): BeaconResult? {
@@ -85,13 +93,13 @@ data class BeaconMap(
 
         other as BeaconMap
 
-        if (beaconId != other.beaconId) return false
+        if (id != other.id) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return beaconId.hashCode()
+        return id.hashCode()
     }
 
 }
