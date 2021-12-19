@@ -6,7 +6,6 @@ import com.github.shmvanhouten.adventofcode2021.coordinate3d.Coordinate3d
 import com.github.shmvanhouten.adventofcode2021.coordinate3d.Coordinate3dComparator
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.greaterThan
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
@@ -182,8 +181,7 @@ class Day19Test {
         @Test
         internal fun `part 1`() {
             val beaconMap = findBeaconPositions(parse(input))
-            assertThat(beaconMap.size, greaterThan(315))
-            assertThat(beaconMap.size, equalTo(314) )
+            assertThat(beaconMap.size, equalTo(440) )
         }
     }
 

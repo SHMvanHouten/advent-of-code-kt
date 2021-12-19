@@ -20,8 +20,8 @@ val mappingInAllDirections: List<(Coordinate3d) -> Coordinate3d> =
         { (a, b, c) -> Coordinate3d(b, c, a) },
         { (a, b, c) -> Coordinate3d(b, c.negate(), a.negate()) },
 
-        { (a, b, c) -> Coordinate3d(b.negate(), a, c.negate()) },
-        { (a, b, c) -> Coordinate3d(b.negate(), a.negate(), c) },
+        { (a, b, c) -> Coordinate3d(b.negate(), a, c) },
+        { (a, b, c) -> Coordinate3d(b.negate(), a.negate(), c.negate()) },
         { (a, b, c) -> Coordinate3d(b.negate(), c, a.negate()) },
         { (a, b, c) -> Coordinate3d(b.negate(), c.negate(), a) },
 

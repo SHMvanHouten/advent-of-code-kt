@@ -66,7 +66,7 @@ data class BeaconMap(
         .flatMap { pairWithEachOf(it, othersCoordinates) }
         .groupBy { it.first - it.second }
         .entries
-        .find { (_, matchingCoordinates) -> matchingCoordinates.size >= 12 }
+        .find { (_, matchingCoordinates) -> matchingCoordinates.size >= 10 }
         ?.let { (relative, matchingCoordinates) ->
             BeaconResult(
                 beacons = matchingCoordinates.map { it.first },
