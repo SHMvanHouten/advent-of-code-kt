@@ -4,10 +4,6 @@ import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.negate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinate
 
-fun findBeaconPositions(beaconMaps: List<List<Coordinate>>): List<Coordinate> {
-    return emptyList()
-}
-
 fun List<Coordinate>.listOverlappingBeaconsWithOtherRotatedInAllDirections(other: List<Coordinate>): Pair<List<Coordinate>, Orientation2D>? {
     return rotatedInAllDirections(other)
         .map { (otherBeacons, rotation) -> this.listOverlappingBeaconsWith(otherBeacons) to rotation }
@@ -74,4 +70,4 @@ data class Orientation2D(
     val switchedXY: Boolean = false,
     val negatedX: Boolean = false,
     val negatedY: Boolean = false
-    )
+)

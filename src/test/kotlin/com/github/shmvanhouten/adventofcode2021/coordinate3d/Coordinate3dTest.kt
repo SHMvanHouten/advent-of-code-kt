@@ -14,9 +14,10 @@ class Coordinate3dTest {
         val map = scanners.map { it.coordinates.sortedWith(Coordinate3dComparator()) }
         val rotations = unRotatedScanner
             .facingEveryWhichWay()
-            .map { it.beacons }
+            .map { it.first }
             .map { it.sortedWith(Coordinate3dComparator()) }
-            .distinct()
+            .toSet()
+
         assertThat(
             rotations,
             hasSize(equalTo(24))

@@ -23,11 +23,7 @@ data class Coordinate3d(val x: Int, val y: Int, val z: Int) {
 
 class Coordinate3dComparator: Comparator<Coordinate3d> {
     override fun compare(c1: Coordinate3d?, c2: Coordinate3d?): Int {
-        if(c1 == null && c2 == null) error("null coordinates")
-        return compareNotNull(c1!!, c2!!)
-    }
-
-    private fun compareNotNull(c1: Coordinate3d, c2: Coordinate3d): Int {
+        if(c1 == null || c2 == null) error("null coordinates")
         val compareX = c1.x.compareTo(c2.x)
         if(compareX!= 0) return compareX
         val compareY = c1.y.compareTo(c2.y)

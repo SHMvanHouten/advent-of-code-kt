@@ -20,8 +20,8 @@ class Day19Test {
         @Test
         internal fun `there are 8 directions to turn in`() {
             val scanner = listOf(
-                Coordinate(2,1),
-                Coordinate(3,6)
+                Coordinate(2, 1),
+                Coordinate(3, 6)
             )
             val rotatedInAllDirections = rotatedInAllDirections(scanner)
             assertThat(
@@ -139,70 +139,59 @@ class Day19Test {
 
     }
 
-    @Nested
-    inner class Part1 {
-
-        @Test
-        internal fun `these the first 2 beacons of the example overlap`() {
-            val (scanner0, scanner1) = parse(example)
-            val overlappingBeacons = scanner0.listOverlappingBeaconsWithOtherRotatedInAllDirections(scanner1)!!
-            assertThat(
-                overlappingBeacons.beacons.size,
-                equalTo(12)
-            )
-            assertThat(
-                overlappingBeacons.relativePosition,
-                equalTo(Coordinate3d(68,-1246,-43))
-            )
-        }
-
-        @Test
-        internal fun `scanner 1 should overlap with scanner 4`() {
-            val scans = parse(example)
-            val scanner1 = scans[1]
-            val scanner4 = scans[4]
-            val overlappingBeacons = scanner1.listOverlappingBeaconsWithOtherRotatedInAllDirections(scanner4)!!
-            assertThat(
-                overlappingBeacons.beacons.size,
-                equalTo(12)
-            )
-        }
-
-        @Test
-        internal fun `example 1`() {
-            val beaconMap = findBeaconPositions(parse(example))
-            assertThat(beaconMap.size, equalTo(79) )
-            assertThat(
-                beaconMap.sortedWith(Coordinate3dComparator()),
-                equalTo(expectedResult.sortedWith(Coordinate3dComparator()))
-            )
-        }
-
-        @Test
-        internal fun `part 1`() {
-            val beaconMap = findBeaconPositions(parse(input))
-            assertThat(beaconMap.size, equalTo(440) )
-        }
+    @Test
+    internal fun `these the first 2 beacons of the example overlap`() {
+        val (scanner0, scanner1) = parse(example)
+        val overlappingBeacons = scanner0.listOverlappingBeaconsWithOtherRotatedInAllDirections(scanner1)!!
+        assertThat(
+            overlappingBeacons.beacons.size,
+            equalTo(12)
+        )
+        assertThat(
+            overlappingBeacons.relativePosition,
+            equalTo(Coordinate3d(68, -1246, -43))
+        )
     }
 
-
-
-    @Nested
-    inner class Part2 {
-
-        @Test
-        internal fun `fixme`() {
-            assertThat(1, equalTo(1) )
-        }
-
-        @Test
-        internal fun `part 2`() {
-            assertThat(1, equalTo(1) )
-            // 13382
-        }
+    @Test
+    internal fun `scanner 1 should overlap with scanner 4`() {
+        val scans = parse(example)
+        val scanner1 = scans[1]
+        val scanner4 = scans[4]
+        val overlappingBeacons = scanner1.listOverlappingBeaconsWithOtherRotatedInAllDirections(scanner4)!!
+        assertThat(
+            overlappingBeacons.beacons.size,
+            equalTo(12)
+        )
     }
 
-    private val input by lazy { readFile("/input-day19.txt")}
+    @Test
+    internal fun example() {
+        val (beaconMap, scannerPositions) = findBeaconPositions(parse(example))
+        assertThat(beaconMap.size, equalTo(79))
+        assertThat(
+            beaconMap.sortedWith(Coordinate3dComparator()),
+            equalTo(expectedResult.sortedWith(Coordinate3dComparator()))
+        )
+
+        assertThat(
+            calculateLongestDistance(scannerPositions),
+            equalTo(3621)
+        )
+    }
+
+    @Test
+    internal fun `part 1 and 2`() {
+        val (beaconMap, scannerPositions) = findBeaconPositions(parse(input))
+        assertThat(beaconMap.size, equalTo(440))
+
+        assertThat(
+            calculateLongestDistance(scannerPositions),
+            equalTo(13382)
+        )
+    }
+
+    private val input by lazy { readFile("/input-day19.txt") }
     private val example = """--- scanner 0 ---
 404,-588,-901
 528,-643,409
@@ -340,7 +329,7 @@ class Day19Test {
 -652,-548,-490
 30,-46,-14"""
 
-private val expectedResult = """-892,524,684
+    private val expectedResult = """-892,524,684
 -876,649,763
 -838,591,734
 -789,900,-551
