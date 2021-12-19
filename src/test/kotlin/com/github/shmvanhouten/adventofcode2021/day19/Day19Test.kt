@@ -2,8 +2,11 @@ package com.github.shmvanhouten.adventofcode2021.day19
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode2021.coordinate3d.Coordinate3d
+import com.github.shmvanhouten.adventofcode2021.coordinate3d.Coordinate3dComparator
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.greaterThan
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
@@ -145,29 +148,46 @@ class Day19Test {
             val (scanner0, scanner1) = parse(example)
             val overlappingBeacons = scanner0.listOverlappingBeaconsWithOtherRotatedInAllDirections(scanner1)!!
             assertThat(
-                overlappingBeacons.first.size,
+                overlappingBeacons.beacons.size,
+                equalTo(12)
+            )
+            assertThat(
+                overlappingBeacons.relativePosition,
+                equalTo(Coordinate3d(68,-1246,-43))
+            )
+        }
+
+        @Test
+        internal fun `scanner 1 should overlap with scanner 4`() {
+            val scans = parse(example)
+            val scanner1 = scans[1]
+            val scanner4 = scans[4]
+            val overlappingBeacons = scanner1.listOverlappingBeaconsWithOtherRotatedInAllDirections(scanner4)!!
+            assertThat(
+                overlappingBeacons.beacons.size,
                 equalTo(12)
             )
         }
 
         @Test
-        internal fun `scanner 0 and scanner 1 have 12 beacons in common`() {
-            val scans = parse(example)
-
-        }
-
-        @Test
         internal fun `example 1`() {
-            parse(example)
-
-            assertThat(1, equalTo(1) )
+            val beaconMap = findBeaconPositions(parse(example))
+            assertThat(beaconMap.size, equalTo(79) )
+            assertThat(
+                beaconMap.sortedWith(Coordinate3dComparator()),
+                equalTo(expectedResult.sortedWith(Coordinate3dComparator()))
+            )
         }
 
         @Test
         internal fun `part 1`() {
-            assertThat(1, equalTo(1) )
+            val beaconMap = findBeaconPositions(parse(input))
+            assertThat(beaconMap.size, greaterThan(315))
+            assertThat(beaconMap.size, equalTo(314) )
         }
     }
+
+
 
     @Nested
     inner class Part2 {
@@ -321,4 +341,83 @@ class Day19Test {
 -652,-548,-490
 30,-46,-14"""
 
+private val expectedResult = """-892,524,684
+-876,649,763
+-838,591,734
+-789,900,-551
+-739,-1745,668
+-706,-3180,-659
+-697,-3072,-689
+-689,845,-530
+-687,-1600,576
+-661,-816,-575
+-654,-3158,-753
+-635,-1737,486
+-631,-672,1502
+-624,-1620,1868
+-620,-3212,371
+-618,-824,-621
+-612,-1695,1788
+-601,-1648,-643
+-584,868,-557
+-537,-823,-458
+-532,-1715,1894
+-518,-1681,-600
+-499,-1607,-770
+-485,-357,347
+-470,-3283,303
+-456,-621,1527
+-447,-329,318
+-430,-3130,366
+-413,-627,1469
+-345,-311,381
+-36,-1284,1171
+-27,-1108,-65
+7,-33,-71
+12,-2351,-103
+26,-1119,1091
+346,-2985,342
+366,-3059,397
+377,-2827,367
+390,-675,-793
+396,-1931,-563
+404,-588,-901
+408,-1815,803
+423,-701,434
+432,-2009,850
+443,580,662
+455,729,728
+456,-540,1869
+459,-707,401
+465,-695,1988
+474,580,667
+496,-1584,1900
+497,-1838,-617
+527,-524,1933
+528,-643,409
+534,-1912,768
+544,-627,-890
+553,345,-567
+564,392,-477
+568,-2007,-577
+605,-1665,1952
+612,-1593,1893
+630,319,-379
+686,-3108,-505
+776,-3184,-501
+846,-3110,-434
+1135,-1161,1235
+1243,-1093,1063
+1660,-552,429
+1693,-557,386
+1735,-437,1738
+1749,-1800,1813
+1772,-405,1572
+1776,-675,371
+1779,-442,1789
+1780,-1548,337
+1786,-1538,337
+1847,-1591,415
+1889,-1729,1762
+1994,-1805,1792""".lines().map { toCoordinate3d(it) }
 }
