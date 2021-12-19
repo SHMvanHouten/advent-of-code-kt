@@ -95,7 +95,7 @@ class Day19Test {
                 overlappingBeacons.size,
                 equalTo(12)
             )
-            assertThat(rotation, equalTo(Orientation(switchedXY = false, negatedX = true, negatedY = true)))
+            assertThat(rotation, equalTo(Orientation2D(switchedXY = false, negatedX = true, negatedY = true)))
         }
 
 
@@ -132,7 +132,7 @@ class Day19Test {
                 overlappingBeacons.size,
                 equalTo(12)
             )
-            assertThat(rotation, equalTo(Orientation(switchedXY = true, negatedX = false, negatedY = false)))
+            assertThat(rotation, equalTo(Orientation2D(switchedXY = true, negatedX = false, negatedY = false)))
         }
 
     }
@@ -141,44 +141,12 @@ class Day19Test {
     inner class Part1 {
 
         @Test
-        internal fun `given scanner 0 is at 0,0,0 and scanner 1 is at 10,10,10 and a beacon at 1,1,1 2,2,2 3,3,3 etc match their beacons`() {
-            val scanner1 = """1,1,1
-                |2,2,2
-                |3,3,3
-                |4,4,4
-                |5,5,5
-                |6,6,6
-                |7,7,7
-                |8,8,8
-                |9,9,9
-            """.trimMargin().let { toBeaconList(it.lines()) }
-            val scanner2 = """-9,-9,-9
-                |-8,-8,-8
-                |-7,-7,-7
-                |-6,-6,-6
-                |-5,-5,-5
-                |-4,-4,-4
-                |-3,-3,-3
-                |-2,-2,-2
-                |-1,-1,-1
-            """.trimMargin().let { toBeaconList(it.lines()) }
+        internal fun `these the first 2 beacons of the example overlap`() {
+            val (scanner0, scanner1) = parse(example)
+            val overlappingBeacons = scanner0.listOverlappingBeaconsWithOtherRotatedInAllDirections(scanner1)!!
             assertThat(
-                listOverlappingBeacons(scanner1, scanner2).size,
-                equalTo(9)
-            )
-        }
-
-        @Test
-        internal fun `these 3 beacons from different perspective could be the same`() {
-            val beaconMap1 = """-618,-824,-621
--537,-823,-458
--447,-329,318""".let { toBeaconList(it.lines()) }
-            val beaconMap2 = """686,422,578
-605,423,415
-515,917,-361""".let { toBeaconList(it.lines()) }
-            assertThat(
-                listOverlappingBeacons(beaconMap1, beaconMap2).size,
-                equalTo(3)
+                overlappingBeacons.first.size,
+                equalTo(12)
             )
         }
 
