@@ -12,16 +12,20 @@ fun findBeaconPositions(beaconMaps: List<BeaconMap>): Set<Coordinate3d> {
         val currentScanner = currentScanners.poll()
         remainingScanners -= currentScanner
 
-        beaconsRelativeToScanner0 += currentScanner.coordinates.map { it + currentScanner.position!! }
+        beaconsRelativeToScanner0 += currentScanner.coordinates
 
         val hits: List<Pair<BeaconMap, BeaconResult>> = remainingScanners
             .map { it to currentScanner.listOverlappingBeaconsWithOtherRotatedInAllDirections(it) }
             .filter { it.second != null }
             .map { it.first to it.second!! }
-        currentScanners += hits.map { it.first.copy(
-            coordinates = it.first.coordinates.map { c -> it.second.rotationFunctionUsed.invoke(c) },
-            rotationFunction = it.second.rotationFunctionUsed,
-            position = currentScanner.position!! + it.second.relativePosition
+
+        currentScanners += hits.map { (hitBeaconMap, result) ->
+            hitBeaconMap.copy(
+            coordinates = hitBeaconMap.coordinates
+                .map { c -> result.rotationFunctionUsed.invoke(c) }
+                .map { it + result.relativePosition!! }
+            , rotationFunction = result.rotationFunctionUsed,
+            position = currentScanner.position!! + result.relativePosition!!
         ) }
 
     }
@@ -29,7 +33,7 @@ fun findBeaconPositions(beaconMaps: List<BeaconMap>): Set<Coordinate3d> {
     return beaconsRelativeToScanner0
 }
 
-fun rotatedInAllDirections(beacons: BeaconMap): List<Pair<BeaconMap, RotationFunction>> {
+fun rotatedInAllDirections(beacons: BeaconMap): List<BeaconResult> {
     return beacons
         .facingEveryWhichWay()
 }
@@ -40,7 +44,7 @@ data class BeaconMap(
     val coordinates: List<Coordinate3d>,
     val rotationFunction: RotationFunction = { (a,b,c) -> Coordinate3d(a,b,c)},
     val position: Coordinate3d? = null,
-    private val beaconId: UUID = UUID.randomUUID()
+    private val beaconId: String
 ) {
 
     fun listOverlappingBeaconsWithOtherRotatedInAllDirections(other: BeaconMap): BeaconResult? {
@@ -49,17 +53,17 @@ data class BeaconMap(
             .firstOrNull()
     }
 
-    fun facingEveryWhichWay(): List<Pair<BeaconMap, RotationFunction>> {
+    fun facingEveryWhichWay(): List<BeaconResult> {
         return mappingInAllDirections
             .map { f -> this.coordinates.map { f.invoke(it) } to f }
-            .map { BeaconMap(it.first) to it.second }
+            .map { BeaconResult(it.first, it.second, null) }
     }
 
     private fun listOverlappingBeaconsWith(
-        other: BeaconMap,
+        othersCoordinates: List<Coordinate3d>,
         rotationFunction: RotationFunction
     ) = this.coordinates.asSequence()
-        .flatMap { pairWithEachOf(it, other.coordinates) }
+        .flatMap { pairWithEachOf(it, othersCoordinates) }
         .groupBy { it.first - it.second }
         .entries
         .find { (_, matchingCoordinates) -> matchingCoordinates.size >= 12 }
@@ -96,5 +100,5 @@ data class BeaconMap(
 data class BeaconResult(
     val beacons: List<Coordinate3d>,
     val rotationFunctionUsed: RotationFunction,
-    val relativePosition: Coordinate3d
+    val relativePosition: Coordinate3d?
 )
