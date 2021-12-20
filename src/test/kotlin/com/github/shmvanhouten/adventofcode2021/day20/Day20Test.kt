@@ -50,11 +50,8 @@ class Day20Test {
         @Test
         internal fun `part 1`() {
             val (enhancementString, image) = parse(input)
-            val (enhancedImage, surroundingPixelsAreLit) = enhanceImage(image, enhancementString)
-            assertThat(surroundingPixelsAreLit, equalTo(true))
-            val (doubleEnhanced, surroundingPixelsAreLitAgain) = enhanceImage(enhancedImage, enhancementString, surroundingPixelsAreLit)
-            assertThat(surroundingPixelsAreLitAgain, equalTo(false))
-            assertThat(doubleEnhanced.size, equalTo(1))
+            val (doubleEnhanced, surroundingPixelsAreLit) = enhanceImage(image, enhancementString, 2)
+            assertThat(doubleEnhanced.size, equalTo(5461))
         }
     }
 
@@ -72,7 +69,7 @@ class Day20Test {
         internal fun `part 2`() {
             val (enhancementString, image) = parse(input)
             val (enhancedImage, surroundingPixelsAreLit) = enhanceImage(image, enhancementString, 50)
-            assertThat(enhancedImage.size, equalTo(3351))
+            assertThat(enhancedImage.size, equalTo(18226))
         }
     }
 
