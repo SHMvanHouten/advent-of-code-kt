@@ -3,6 +3,10 @@ package com.github.shmvanhouten.adventofcode.utility.compositenumber
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
 
 class PrimeFactorTest {
 
@@ -45,9 +49,25 @@ class PrimeFactorTest {
         assertThat(primeFactors(2 * 2 * 3 * 4 * 11 * 13 * 983), equalTo(listOf(2L, 2L, 2L, 2L, 3L, 11L, 13L, 983L)))
     }
 
-    @Test
-    internal fun `least common multiple of 3, 4 and 6 is 12`() {
-        assertThat(leastCommonMultiple(listOf(4L, 6L, 8L)), equalTo(2*2*2*3L))
-        assertThat(leastCommonMultiple(listOf(18L, 44L, 28L)), equalTo(2772L))
+
+    companion object {
+        @Suppress("unused")
+        @JvmStatic
+        fun commonMultiples(): Stream<Arguments> =
+            Stream.of(
+                Arguments.of(listOf(4L, 6L, 8L), 2*2*2*3L),
+                Arguments.of(listOf(18L, 44L, 28L), 2772L),
+                Arguments.of(listOf(140, 72), 2520),
+                Arguments.of(listOf(288, 420), 10080)
+            )
+    }
+
+    @ParameterizedTest
+    @MethodSource("commonMultiples")
+    internal fun `least common multiple of 3, 4 and 6 is 12`(
+        numbers: List<Long>,
+        expected: Long
+    ) {
+        assertThat(leastCommonMultiple(numbers), equalTo(expected))
     }
 }

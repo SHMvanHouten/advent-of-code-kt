@@ -1,5 +1,9 @@
 package com.github.shmvanhouten.adventofcode.utility.compositenumber
 
+import com.github.shmvanhouten.adventofcode.utility.collectors.toMap
+import java.math.BigInteger
+import kotlin.math.max
+
 fun primeFactors(number: Long): List<Long> {
     val factors = mutableListOf<Long>()
     var remainder = number
@@ -24,14 +28,11 @@ fun leastCommonMultiple(ns: List<Long>): Long {
 }
 
 fun removeDuplicates(primeFactorsPerNumber: List<List<Long>>): List<Long> {
-
-    var lists = primeFactorsPerNumber.map { it.toMutableList() }
-    val factors = mutableListOf<Long>()
-    while (lists.isNotEmpty()) {
-        val factor = lists.map { it.first() }.minOrNull()!!
-        factors += factor
-        lists.filter { it.contains(factor) }.forEach { it -= factor }
-        lists = lists.filter { it.isNotEmpty() }
-    }
-    return  factors
+    return primeFactorsPerNumber
+        .map { primes -> primes.groupBy { it }.entries }
+        .flatten()
+        .map { (key, value) -> key to value.size }
+        .toMap { one, other -> max(one, other) }
+        .map { (n, factor) -> BigInteger.valueOf(n).pow(factor) }
+        .map { it.toLong() }
 }
