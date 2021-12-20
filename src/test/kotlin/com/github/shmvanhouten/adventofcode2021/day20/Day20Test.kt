@@ -26,7 +26,7 @@ class Day20Test {
             val (enhancementString, image) = parse(example)
             val (enhancedImage, surroundingPixelsAreLit) = enhanceImage(image, enhancementString)
             assertThat(draw(enhancedImage, '#'), equalTo(expected))
-            assertThat(enhanceImage(image, enhancementString, 2).first.size, equalTo(35))
+            assertThat(enhanceImage(image, enhancementString, 2).size, equalTo(35))
         }
 
         @Test
@@ -43,7 +43,7 @@ class Day20Test {
                 #########
                 """.trimIndent()
             val (enhancementString, image) = parse(example)
-            val (enhancedImage, surroundingPixelsAreLit) = enhanceImage(image, enhancementString, true)
+            val (enhancedImage, _) = enhanceImage(image.copy(surroundingPixelsAreLit = true), enhancementString)
             assertThat(draw(enhancedImage, '#'), equalTo(expected))
         }
 
@@ -70,6 +70,7 @@ class Day20Test {
             val (enhancementString, image) = parse(input)
             val (enhancedImage, surroundingPixelsAreLit) = enhanceImage(image, enhancementString, 50)
             assertThat(enhancedImage.size, equalTo(18226))
+            assertThat(surroundingPixelsAreLit, equalTo(false))
         }
     }
 

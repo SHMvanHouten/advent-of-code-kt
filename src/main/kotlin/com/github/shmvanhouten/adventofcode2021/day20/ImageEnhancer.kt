@@ -3,57 +3,46 @@ package com.github.shmvanhouten.adventofcode2021.day20
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition.*
 
-fun enhanceImage(image: Set<Coordinate>, enhancementString: String, nrOfTimes: Int): Pair<Set<Coordinate>, Boolean> {
-    return generateSequence(image to false) { (enhancedImage, surroundingAreLit) ->
-        enhanceImage(enhancedImage, enhancementString, surroundingAreLit)
+fun enhanceImage(image: Image, enhancementString: String, nrOfTimes: Int): Image {
+    return generateSequence(image) { enhancedImage ->
+        enhanceImage(enhancedImage, enhancementString)
     }.drop(nrOfTimes)
         .first()
 }
 
-fun enhanceImage(image: Set<Coordinate>, enhancementString: String, surroundingPixelsAreLit: Boolean = false): Pair<Set<Coordinate>, Boolean> {
-    val bounds = generateBounds(image)
-    val (xrange, yrange) = bounds
-    return ((yrange.first - 2)..(yrange.last + 2)).flatMap { y ->
-        ((xrange.first - 2)..(xrange.last + 2)).map { x ->
-            Coordinate(x, y)
+fun enhanceImage(
+    image: Image,
+    enhancementString: String
+): Image {
+    return image.bounds.enlargeBy(2)
+        .listCoordinatesInBounds()
+        .filter { enhance(it, enhancementString, image) }
+        .toSet()
+        .let {
+            Image(it, areSurroundingPixelsLitAfter(image.surroundingPixelsAreLit, enhancementString))
         }
-    }
-        .filter { enhance(it, enhancementString, image, surroundingPixelsAreLit, bounds) == '#' }
-        .toSet() to areSurroundingPixelsLitAfter(surroundingPixelsAreLit, enhancementString)
-}
 
-fun generateBounds(image: Set<Coordinate>): Bounds {
-    val (minX, maxX) = minAndMaxX(image)
-    val (minY, maxY) = minAndMaxY(image)
-    return Bounds(
-        minX..maxX,
-        minY..maxY
-    )
 }
 
 fun enhance(
     coordinate: Coordinate,
     enhancementString: String,
-    image: Set<Coordinate>,
-    surroundingPixelsAreLit: Boolean,
-    bounds: Bounds
-): Char {
+    image: Image
+): Boolean {
     val value = coordinate.listTopLeftToBottomRight()
         .map {
-            if (image.contains(it) || surroundingPixelsAreLit && it.isOutOfBounds(bounds))
-                '1'
+            if (
+                image.contains(it)
+                || image.surroundingPixelsAreLit && it.isOutOfBounds(image.bounds)
+            ) '1'
             else '0'
         }
         .joinToString("").toInt(2)
-    return enhancementString[value]
+    return enhancementString[value] == '#'
 }
 
-private fun Coordinate.isOutOfBounds(image: Bounds): Boolean {
-    val (xRange, yRange) = image
-    return this.x < xRange.first ||
-            this.x > xRange.last ||
-            this.y < yRange.first ||
-            this.y > yRange.last
+private fun Coordinate.isOutOfBounds(bounds: Bounds): Boolean {
+    return bounds.isInBounds(this)
 }
 
 private fun Coordinate.listTopLeftToBottomRight(): List<Coordinate> {
@@ -70,18 +59,53 @@ private fun Coordinate.listTopLeftToBottomRight(): List<Coordinate> {
     )
 }
 
-fun minAndMaxY(image: Set<Coordinate>): Pair<Int, Int> {
-    val yes = image.map { it.y }
-    return yes.minOrNull()!! to yes.maxOrNull()!!
-}
-
-fun minAndMaxX(image: Set<Coordinate>): Pair<Int, Int> {
-    val xes = image.map { it.x }
-    return xes.minOrNull()!! to xes.maxOrNull()!!
-}
-
 private fun areSurroundingPixelsLitAfter(surroundingPixelsAreLit: Boolean, enhancementString: String) =
-    if(surroundingPixelsAreLit) enhancementString.last() == '#'
+    if (surroundingPixelsAreLit) enhancementString.last() == '#'
     else enhancementString.first() == '#'
 
-data class Bounds(val xRange: IntRange, val yRange: IntRange)
+data class Image(val image: Set<Coordinate>, val surroundingPixelsAreLit: Boolean = false) {
+
+    val size: Int by lazy { image.size }
+    val bounds: Bounds by lazy { Bounds(image) }
+
+    fun contains(c: Coordinate): Boolean = image.contains(c)
+
+}
+
+data class Bounds(val xRange: IntRange, val yRange: IntRange) {
+    constructor(image: Collection<Coordinate>) :
+            this(
+                minToMaxX(image),
+                minToMaxY(image)
+            )
+
+    fun enlargeBy(n: Int): Bounds {
+        return Bounds(
+            (xRange.first - n)..(xRange.last + n),
+            (yRange.first - n)..(yRange.last + n)
+        )
+    }
+
+    fun listCoordinatesInBounds(
+    ) = yRange.flatMap { y ->
+        xRange.map { x ->
+            Coordinate(x, y)
+        }
+    }
+
+    fun isInBounds(coordinate: Coordinate): Boolean {
+        return coordinate.x !in xRange ||
+                coordinate.y !in yRange
+    }
+
+}
+
+private fun minToMaxY(image: Collection<Coordinate>): IntRange {
+    val ys = image.map { it.y }
+    return ys.minOrNull()!!..ys.maxOrNull()!!
+}
+
+private fun minToMaxX(image: Collection<Coordinate>): IntRange {
+    val xes = image.map { it.x }
+    return xes.minOrNull()!!..xes.maxOrNull()!!
+}
