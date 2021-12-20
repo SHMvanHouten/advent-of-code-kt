@@ -3,6 +3,7 @@ package com.github.shmvanhouten.adventofcode.utility.compositenumber
 import com.github.shmvanhouten.adventofcode.utility.collectors.toMap
 import java.math.BigInteger
 import kotlin.math.max
+import kotlin.math.min
 
 fun primeFactors(number: Long): List<Long> {
     val factors = mutableListOf<Long>()
@@ -22,9 +23,29 @@ fun primeFactors(number: Long): List<Long> {
     return factors
 }
 
-fun leastCommonMultiple(ns: List<Long>): Long {
-    return removeDuplicates(ns.map { primeFactors(it) })
-        .reduce { acc: Long, l: Long -> acc * l }
+fun greatestCommonDivisor(numbers: List<Long>): Long {
+    return numbers
+        .map { primeFactors(it) }
+        .map { primes -> primes.groupBy { it }.entries }
+        .map { primeGroupings -> primeGroupings.map { (key, value) -> key to value.size } }
+        .joinShared()
+        .map { (n, factor) -> BigInteger.valueOf(n).pow(factor) }
+        .map { it.toLong() }
+        .reduce(Long::times)
+}
+
+private fun List<List<Pair<Long, Int>>>.joinShared(): List<Pair<Long, Int>> {
+    return this.reduce{ l1, l2 ->
+        val other = l2.toMap()
+        l1.filter { (nr, _) -> other.containsKey(nr) }
+            .map { (nr, occurrence) -> nr to min(occurrence, other[nr]!!) }
+    }
+}
+
+fun leastCommonMultiple(numbers: List<Long>): Long {
+    return if(numbers.size == 2) numbers.reduce(Long::times).div(greatestCommonDivisor(numbers))
+    else removeDuplicates(numbers.map { primeFactors(it) })
+        .reduce (Long::times)
 }
 
 fun removeDuplicates(primeFactorsPerNumber: List<List<Long>>): List<Long> {

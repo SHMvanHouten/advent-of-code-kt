@@ -53,21 +53,44 @@ class PrimeFactorTest {
     companion object {
         @Suppress("unused")
         @JvmStatic
-        fun commonMultiples(): Stream<Arguments> =
+        fun leastCommonMultiple(): Stream<Arguments> =
             Stream.of(
                 Arguments.of(listOf(4L, 6L, 8L), 2*2*2*3L),
                 Arguments.of(listOf(18L, 44L, 28L), 2772L),
                 Arguments.of(listOf(140, 72), 2520),
-                Arguments.of(listOf(288, 420), 10080)
+                Arguments.of(listOf(288, 420), 10080),
+                Arguments.of(listOf(140, 15), 420),
+            )
+
+        @Suppress("unused")
+        @JvmStatic
+        fun greatestCommonDivisor(): Stream<Arguments> =
+            Stream.of(
+                Arguments.of(listOf(72, 48, 54), 6),
+                Arguments.of(listOf(288, 420), 12),
+                Arguments.of(listOf(140, 72), 4),
+                Arguments.of(listOf(2*3*5L, 2*5*7L, 5*7*11L), 5),
+                Arguments.of(listOf(2*7*11*101, 2*37*101), 2 * 101),
+                Arguments.of(listOf(2*7*11*101, 2*37*101, 7*11*37*101), 101)
             )
     }
 
-    @ParameterizedTest
-    @MethodSource("commonMultiples")
-    internal fun `least common multiple of 3, 4 and 6 is 12`(
+    @ParameterizedTest(name = "greatest common divisor between {0} is {1}")
+    @MethodSource("greatestCommonDivisor")
+    internal fun `greatest common divisor`(
+        numbers: List<Long>,
+        expected: Long
+    ) {
+        assertThat(greatestCommonDivisor(numbers), equalTo(expected))
+    }
+
+    @ParameterizedTest(name = "least common multiple between {0} is {1}")
+    @MethodSource("leastCommonMultiple")
+    internal fun `least common multiple`(
         numbers: List<Long>,
         expected: Long
     ) {
         assertThat(leastCommonMultiple(numbers), equalTo(expected))
     }
+
 }
