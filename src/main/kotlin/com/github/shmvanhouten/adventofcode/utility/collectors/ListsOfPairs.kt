@@ -13,7 +13,3 @@ fun <FIRST, SECOND: Any> Iterable<Pair<FIRST, SECOND>>.toMap(mergeFunction: (SEC
     this.forEach { (first, second) -> map.merge(first, second, mergeFunction) }
     return map.toMap()
 }
-
-fun <FIRST, SECOND> Iterable<Pair<FIRST, SECOND>>.fracture(): Pair<List<FIRST>, List<SECOND>> {
-    return this.map { it.first } to this.map { it.second }
-}

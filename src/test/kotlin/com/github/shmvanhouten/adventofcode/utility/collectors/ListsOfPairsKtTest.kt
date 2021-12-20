@@ -22,17 +22,4 @@ internal class ListsOfPairsKtTest {
             equalTo(5)
         )
     }
-
-    @Test
-    internal fun `fracture splits the list of pairs into a pair of lists`() {
-        val pairs = listOf(
-            "a" to 2,
-            "b" to 3,
-            "a" to 5,
-            "c" to 2
-        )
-        val (strings, ints) = pairs.fracture()
-        assertThat(strings, equalTo(listOf("a", "b", "a", "c")))
-        assertThat(ints, equalTo(listOf(2, 3, 5, 2)))
-    }
 }
