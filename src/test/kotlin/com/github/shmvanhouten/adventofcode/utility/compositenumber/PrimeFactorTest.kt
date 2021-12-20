@@ -71,7 +71,9 @@ class PrimeFactorTest {
                 Arguments.of(listOf(140, 72), 4),
                 Arguments.of(listOf(2*3*5L, 2*5*7L, 5*7*11L), 5),
                 Arguments.of(listOf(2*7*11*101, 2*37*101), 2 * 101),
-                Arguments.of(listOf(2*7*11*101, 2*37*101, 7*11*37*101), 101)
+                Arguments.of(listOf(2*7*11*101, 2*37*101, 7*11*37*101), 101),
+                Arguments.of(listOf(2*7*11*101*87, 2*37*101*103, 7*11*37*101*723), 101),
+                Arguments.of(listOf(2*7*11*101*87, 2*37*101*103*87, 7*11*101*723*87), 8787),
             )
     }
 
