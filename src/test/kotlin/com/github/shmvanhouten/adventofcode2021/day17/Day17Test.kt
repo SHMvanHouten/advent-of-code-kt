@@ -64,7 +64,7 @@ class Day17Test {
 
         @Test
         internal fun `part 1`() {
-            val (xRange, yRange) = input.parse()
+            val (_, yRange) = input.parse()
             val (_, maxYVelocity) = calculateMinAndMaxYVelocityPossible(yRange)
             assertThat(maxYVelocity, equalTo(114))
             assertThat(calculateMaxHeight(maxYVelocity), equalTo(6555))

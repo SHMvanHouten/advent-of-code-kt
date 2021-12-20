@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.coordinate3d
 
+import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3dComparator
 import com.github.shmvanhouten.adventofcode2021.day19.parse
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo

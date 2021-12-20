@@ -2,8 +2,8 @@ package com.github.shmvanhouten.adventofcode2021.day19
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode2021.coordinate3d.Coordinate3d
-import com.github.shmvanhouten.adventofcode2021.coordinate3d.Coordinate3dComparator
+import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3d
+import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3dComparator
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Nested

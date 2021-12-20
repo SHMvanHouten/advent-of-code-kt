@@ -167,7 +167,7 @@ class Day18Test {
 [[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]
 [[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]"""
             val unsolvedSum = parseSnailFishNumber(example)
-            val (sum, magnitude) = findLargestSumOf2SnailNumbersPossible(unsolvedSum)
+            val (_, magnitude) = findLargestSumOf2SnailNumbersPossible(unsolvedSum)
             assertThat(magnitude, equalTo(3993))
 
         }
@@ -175,7 +175,7 @@ class Day18Test {
         @Test
         internal fun `part 2`() {
             val unsolvedSum = parseSnailFishNumber(input)
-            val (sum, magnitude) = findLargestSumOf2SnailNumbersPossible(unsolvedSum)
+            val (_, magnitude) = findLargestSumOf2SnailNumbersPossible(unsolvedSum)
             assertThat(magnitude, equalTo(4807))
         }
     }

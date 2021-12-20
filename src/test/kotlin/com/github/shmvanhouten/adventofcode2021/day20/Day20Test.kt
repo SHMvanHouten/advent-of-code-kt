@@ -2,6 +2,7 @@ package com.github.shmvanhouten.adventofcode2021.day20
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.coordinate.draw
+import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Nested
@@ -22,10 +23,10 @@ class Day20Test {
                 | #  ## 
                 |  ##  #
                 |   # # 
-                """.trimMargin()
+                """.trimMargin().toCoordinateMap('#')
             val (enhancementString, image) = parse(example)
-            val (enhancedImage, surroundingPixelsAreLit) = enhanceImage(image, enhancementString)
-            assertThat(draw(enhancedImage, '#'), equalTo(expected))
+            val (enhancedImage, _) = enhanceImage(image, enhancementString)
+            assertThat(draw(enhancedImage), equalTo(draw(expected)))
             assertThat(enhanceImage(image, enhancementString, 2).size, equalTo(35))
         }
 
@@ -41,16 +42,16 @@ class Day20Test {
                 #  #   ##
                 ##  #####
                 #########
-                """.trimIndent()
+                """.trimIndent().toCoordinateMap('#')
             val (enhancementString, image) = parse(example)
             val (enhancedImage, _) = enhanceImage(image.copy(surroundingPixelsAreLit = true), enhancementString)
-            assertThat(draw(enhancedImage, '#'), equalTo(expected))
+            assertThat(draw(enhancedImage), equalTo(draw(expected)))
         }
 
         @Test
         internal fun `part 1`() {
             val (enhancementString, image) = parse(input)
-            val (doubleEnhanced, surroundingPixelsAreLit) = enhanceImage(image, enhancementString, 2)
+            val (doubleEnhanced, _) = enhanceImage(image, enhancementString, 2)
             assertThat(doubleEnhanced.size, equalTo(5461))
         }
     }
@@ -61,7 +62,7 @@ class Day20Test {
         @Test
         internal fun example() {
             val (enhancementString, image) = parse(example)
-            val (enhancedImage, surroundingPixelsAreLit) = enhanceImage(image, enhancementString, 50)
+            val (enhancedImage, _) = enhanceImage(image, enhancementString, 50)
             assertThat(enhancedImage.size, equalTo(3351))
         }
 

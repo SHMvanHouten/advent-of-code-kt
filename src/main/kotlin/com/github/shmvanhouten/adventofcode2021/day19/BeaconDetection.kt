@@ -1,8 +1,8 @@
 package com.github.shmvanhouten.adventofcode2021.day19
 
+import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3d
+import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.mapping.mappingInAllDirections
 import com.github.shmvanhouten.adventofcode.utility.lambda.identity
-import com.github.shmvanhouten.adventofcode2021.coordinate3d.Coordinate3d
-import com.github.shmvanhouten.adventofcode2021.coordinate3d.mapping.mappingInAllDirections
 import java.util.*
 
 fun findBeaconPositions(beaconMaps: List<BeaconMap>): Pair<Set<Coordinate3d>, List<Coordinate3d>> {
