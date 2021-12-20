@@ -8,12 +8,12 @@ package com.github.shmvanhouten.adventofcode.utility.collectors
  *
  * @param mergeFunction function to apply in case an entry already exists for the key
  */
-fun <FIRST, SECOND: Any> Collection<Pair<FIRST, SECOND>>.toMap(mergeFunction: (SECOND, SECOND) -> SECOND): Map<FIRST, SECOND> {
+fun <FIRST, SECOND: Any> Iterable<Pair<FIRST, SECOND>>.toMap(mergeFunction: (SECOND, SECOND) -> SECOND): Map<FIRST, SECOND> {
     val map = mutableMapOf<FIRST, SECOND>()
     this.forEach { (first, second) -> map.merge(first, second, mergeFunction) }
     return map.toMap()
 }
 
-fun <FIRST, SECOND> Collection<Pair<FIRST, SECOND>>.fracture(): Pair<List<FIRST>, List<SECOND>> {
+fun <FIRST, SECOND> Iterable<Pair<FIRST, SECOND>>.fracture(): Pair<List<FIRST>, List<SECOND>> {
     return this.map { it.first } to this.map { it.second }
 }

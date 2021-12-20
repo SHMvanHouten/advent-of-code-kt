@@ -1,10 +1,9 @@
 package com.github.shmvanhouten.adventofcode.utility.coordinate
 
+import com.github.shmvanhouten.adventofcode.utility.coordinate.ClockDirection.CLOCKWISE
+import com.github.shmvanhouten.adventofcode.utility.coordinate.ClockDirection.COUNTER_CLOCKWISE
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Degree.*
 import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition.*
-import com.github.shmvanhouten.adventofcode2020.coordinate.ClockDirection
-import com.github.shmvanhouten.adventofcode2020.coordinate.ClockDirection.CLOCKWISE
-import com.github.shmvanhouten.adventofcode2020.coordinate.ClockDirection.COUNTER_CLOCKWISE
 import kotlin.math.abs
 
 data class Coordinate(val x: Int, val y: Int) {

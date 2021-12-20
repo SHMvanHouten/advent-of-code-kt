@@ -1,4 +1,4 @@
-package com.github.shmvanhouten.adventofcode2020.coordinate
+package com.github.shmvanhouten.adventofcode.utility.coordinate
 
 enum class ClockDirection {
     CLOCKWISE,

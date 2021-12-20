@@ -1,8 +1,8 @@
 package com.github.shmvanhouten.adventofcode.utility.coordinate
 
+import com.github.shmvanhouten.adventofcode.utility.coordinate.ClockDirection.CLOCKWISE
+import com.github.shmvanhouten.adventofcode.utility.coordinate.ClockDirection.COUNTER_CLOCKWISE
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Degree.*
-import com.github.shmvanhouten.adventofcode2020.coordinate.ClockDirection.CLOCKWISE
-import com.github.shmvanhouten.adventofcode2020.coordinate.ClockDirection.COUNTER_CLOCKWISE
 import com.natpryce.hamkrest.Matcher
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
