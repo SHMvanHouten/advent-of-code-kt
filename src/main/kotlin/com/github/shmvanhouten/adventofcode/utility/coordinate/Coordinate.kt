@@ -176,3 +176,13 @@ private fun Set<Coordinate>.findMaxY() =
 
 private fun Set<Coordinate>.findMinimumY() =
     this.map { it.y }.minOrNull()
+
+class CoordinateComparator: Comparator<Coordinate> {
+    override fun compare(c1: Coordinate?, c2: Coordinate?): Int {
+        if(c1 == null || c2 == null) error("null coordinates")
+        val compareX = c1.x.compareTo(c2.x)
+        return if(compareX!= 0) compareX
+        else c1.y.compareTo(c2.y)
+    }
+
+}
