@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import kotlin.math.min
+import kotlin.math.max
 
 class Day21Test {
 
@@ -73,6 +73,9 @@ class Day21Test {
                 """.trimIndent()
             val (player1, player2) = parse2(example)
             val (onesWins, twosWins) = evolveToWinningGameStates(player1, player2)
+            println(11997614504960505 / 444356092776315)
+            println(11997614504960505 % 444356092776315)
+            //      11553258412184190
             assertThat(twosWins, equalTo(341960390180808))
             assertThat(onesWins, equalTo(444356092776315))
         }
@@ -83,7 +86,11 @@ class Day21Test {
             val (onesWins, twosWins) = evolveToWinningGameStates(player1, player2)
             println("one wins $onesWins, and 2 wins $twosWins")
             // 90710140491134 too low
-            assertThat(min(onesWins, twosWins), equalTo(1))
+            // 5154225657930459 too high
+            // 190897246590017
+            println(5154225657930459/27)
+            println(5154225657930459%27)
+            assertThat(max(onesWins, twosWins), equalTo(190897246590017))
         }
 
     }
