@@ -2,8 +2,8 @@ package com.github.shmvanhouten.adventofcode2021.day21
 
 
 class DiceGame(
-    val player1: Player,
-    val player2: Player,
+    val player1: PlayerPt1,
+    val player2: PlayerPt1,
     val deterministicDie: DeterministicDie = DeterministicDie()
 ) {
     fun playOut(): DiceGame {
@@ -20,7 +20,7 @@ class DiceGame(
 
 
 
-    fun losingPlayer(): Player {
+    fun losingPlayer(): PlayerPt1 {
         return minOf(player1, player2, PlayerComparator())
     }
 
@@ -42,23 +42,16 @@ data class DeterministicDie(val value: Int = 1, val rolls: Long = 0) {
     }
 }
 
-fun roll(thePlayer: Player, deterministicDie: DeterministicDie): Pair<Player, DeterministicDie> {
+fun roll(thePlayer: PlayerPt1, deterministicDie: DeterministicDie): Pair<PlayerPt1, DeterministicDie> {
     var player = thePlayer
     val (die, value) = deterministicDie.roll()
 
     val newPosition = calculatePosition(player.position, value)
-    player = Player(newPosition, player.score + newPosition)
+    player = PlayerPt1(newPosition, player.score + newPosition)
     return player to die
 }
 
-private fun calculatePosition(position: Int, die: Int): Int {
-    val n = (position + die) % 10
-    return if (n == 0) 10
-    else n
-}
-
-
-data class Player(val position: Int, val score: Long = 0) {
+data class PlayerPt1(val position: Int, val score: Long = 0) {
 
     fun roll(deterministicDie: DeterministicDie) = roll(this, deterministicDie)
     fun wins(): Boolean {
@@ -66,8 +59,8 @@ data class Player(val position: Int, val score: Long = 0) {
     }
 }
 
-class PlayerComparator : Comparator<Player> {
-    override fun compare(o1: Player?, o2: Player?): Int {
+class PlayerComparator : Comparator<PlayerPt1> {
+    override fun compare(o1: PlayerPt1?, o2: PlayerPt1?): Int {
         if (o1 == null || o2 == null) error("null player")
         return o1.score.compareTo(o2.score)
     }
