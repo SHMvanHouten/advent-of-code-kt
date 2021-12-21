@@ -1,6 +1,5 @@
 package com.github.shmvanhouten.adventofcode2021.day14
 
-import com.github.shmvanhouten.adventofcode.utility.collectors.fracture
 import com.github.shmvanhouten.adventofcode.utility.collectors.toMap
 import kotlin.math.max
 
@@ -27,7 +26,7 @@ private fun toPairCounts(template: String) =
 private fun countElements(pairCounts: Map<String, Long>): Map<Char, Long> {
     val (startingElements, endingElements) = pairCounts
         .map { (pair, count) -> Pair(pair[0] to count, pair[1] to count) }
-        .fracture()
+        .unzip()
 
     val startingElementCounts = startingElements.toMap(Long::plus).entries.sortedBy { it.key }
     val endingElementCounts = endingElements.toMap(Long::plus).entries.sortedBy { it.key }

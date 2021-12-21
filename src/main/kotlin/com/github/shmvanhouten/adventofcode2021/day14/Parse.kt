@@ -1,7 +1,7 @@
 package com.github.shmvanhouten.adventofcode2021.day14
 
 import com.github.shmvanhouten.adventofcode.utility.blocks
-import com.github.shmvanhouten.adventofcode2017.util.splitIntoTwo
+import com.github.shmvanhouten.adventofcode.utility.strings.splitIntoTwo
 
 fun parseSimple(input: String): Pair<String, Map<String, String>> {
     val (polymerTemplate, insertionRules) = input.blocks()

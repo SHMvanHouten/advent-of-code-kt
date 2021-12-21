@@ -1,6 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.day12
 
-import com.github.shmvanhouten.adventofcode2017.util.splitIntoTwo
+import com.github.shmvanhouten.adventofcode.utility.strings.splitIntoTwo
 import com.github.shmvanhouten.adventofcode2021.day12.RuleSet.PART_1
 import java.util.*
 internal const val START = "start"
