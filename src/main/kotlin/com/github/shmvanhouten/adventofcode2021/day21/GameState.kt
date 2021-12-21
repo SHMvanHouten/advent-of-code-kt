@@ -1,12 +1,12 @@
 package com.github.shmvanhouten.adventofcode2021.day21
 
 private val range = 1..3
-private val possibleTripleDiceRollsLikelyhood = range
+private val possibleTripleDiceRollsLikelyHood = range
     .flatMap { n -> range.flatMap { n2 -> range.map { n3 -> n + n2 + n3 } } }
     .groupingBy { it }.eachCount()
-val diePermutations = possibleTripleDiceRollsLikelyhood
+val diePermutations = possibleTripleDiceRollsLikelyHood
     .flatMap { (roll, likelyHood) ->
-        possibleTripleDiceRollsLikelyhood.map { (roll2, likelyHood2) ->
+        possibleTripleDiceRollsLikelyHood.map { (roll2, likelyHood2) ->
             Pair(roll, roll2) to likelyHood * likelyHood2.toLong()
         }
     }
@@ -27,8 +27,12 @@ fun evolveToWinningGameStates(player1: Player, player2: Player): Pair<Long, Long
 
     }
 
-    return gameStatesPlayer1Won.values.reduce(Long::plus) to gameStatesPlayer2Won.values.reduce(Long::plus)
+    return gameStatesPlayer1Won.values.reduce(Long::plus)/ permutationsWherePlayer2RolledAfterHeAlreadyLost() to
+            gameStatesPlayer2Won.values.reduce(Long::plus)
 }
+
+private fun permutationsWherePlayer2RolledAfterHeAlreadyLost() =
+    possibleTripleDiceRollsLikelyHood.values.reduce(Int::plus)
 
 fun permuteNextGameStates(gameState: GameState): List<Pair<GameState, Long>> {
     return diePermutations
