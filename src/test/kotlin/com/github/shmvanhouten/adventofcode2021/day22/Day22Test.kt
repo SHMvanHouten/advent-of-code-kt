@@ -18,7 +18,7 @@ on x=11..13,y=11..13,z=11..13
 off x=9..11,y=9..11,z=9..11
 on x=10..10,y=10..10,z=10..10"""
             val rebootSteps = parse(input)
-            assertThat(runReboot(rebootSteps).size, equalTo(39) )
+            assertThat(runReboot(rebootSteps).size, equalTo(39))
         }
 
         @Test
@@ -30,7 +30,7 @@ on x=10..10,y=10..10,z=10..10"""
         @Test
         internal fun `part 1`() {
             val rebootSteps = parse(input)
-            assertThat(runReboot(rebootSteps).size, equalTo(590784) )
+            assertThat(runReboot(rebootSteps).size, equalTo(607573))
         }
     }
 
@@ -40,16 +40,17 @@ on x=10..10,y=10..10,z=10..10"""
         @Test
         internal fun `example 1`() {
             val rebootSteps = parse(example3)
-            assertThat(countAmountOfCubesThatWouldBeOn(rebootSteps), equalTo(1) )
+            assertThat(countAmountOfCubesThatWouldBeOn(rebootSteps), equalTo(1))
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1, equalTo(1) )
+            assertThat(1, equalTo(1))
         }
     }
 
-    private val input by lazy { readFile("/input-day22.txt")}
+
+    private val input by lazy { readFile("/input-day22.txt") }
     private val example2: String = """on x=-20..26,y=-36..17,z=-47..7
 on x=-20..33,y=-21..23,z=-26..28
 on x=-22..28,y=-29..23,z=-38..16
@@ -73,7 +74,7 @@ on x=-41..9,y=-7..43,z=-33..15
 on x=-54112..-39298,y=-85059..-49293,z=-27449..7877
 on x=967..23432,y=45373..81175,z=27513..53682"""
 
-private val example3 = """on x=-5..47,y=-31..22,z=-19..33
+    private val example3 = """on x=-5..47,y=-31..22,z=-19..33
 on x=-44..5,y=-27..21,z=-14..35
 on x=-49..-1,y=-11..42,z=-10..38
 on x=-20..34,y=-40..6,z=-44..1
