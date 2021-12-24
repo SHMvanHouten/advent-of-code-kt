@@ -7,19 +7,25 @@ import com.github.shmvanhouten.adventofcode2021.day23.LocationType.*
 import java.util.*
 import kotlin.math.abs
 
-fun shortestPathToBurrowHappiness(burrow: Burrow): Long {
-    val paths = priorityQueueOf(Path(listOf(burrow)))
+fun shortestPathToBurrowHappiness(input: Burrow): Long {
+    val burrows = priorityQueueOf(input, 0L)
+    val visitedStates = mutableMapOf<Burrow, Long>()
     var shortestPath = Long.MAX_VALUE
-    val visitedStates = mapOf(burrow to 0L)
-    while (paths.isNotEmpty()) {
-        val path = paths.poll()
+    while (burrows.isNotEmpty()) {
+        val (burrowState, energyTaken) = burrows.poll()
 
-        if (path.isComplete()) shortestPath = path.energyConsumed
-        else paths.addAll(path.doPossibleSteps())
+        if(energyTaken < shortestPath && (!visitedStates.contains(burrowState) || energyTaken < visitedStates[burrowState]!!)) {
+            visitedStates += burrowState to energyTaken
+            if(burrowState.isInDesiredState())
+                shortestPath = energyTaken
 
-        paths.removeIf { it.energyConsumed + it.minimumEnergyStillRequired >= shortestPath }
+            burrowState
+                .doPossibleAmphipodMovements()
+                .map { it.first to it.second + energyTaken }
+                .let { burrows.addAll(it) }
+        }
     }
-    return shortestPath
+    return visitedStates.entries.single { it.key.isInDesiredState() }.value
 }
 
 fun toAmphipodBurrow(input: String): Burrow {
@@ -28,29 +34,14 @@ fun toAmphipodBurrow(input: String): Burrow {
             Amphipod(coordinate, AmphipodType.valueOf(c.toString()))
         } else null
     }.values.filterNotNull()
-    return Burrow(amphipods = amphipods)
-}
-
-data class Path(val burrowsPath: List<Burrow>, val energyConsumed: Long = 0) {
-    val minimumEnergyStillRequired: Long = burrowsPath.last().minimumEnergyStillRequired
-
-    fun doPossibleSteps(): List<Path> {
-        val burrow = burrowsPath.last()
-        return burrow
-            .doPossibleAmphipodMovements()
-            .map { (newBurrow, energyTaken) -> Path(burrowsPath + newBurrow, energyConsumed + energyTaken) }
-    }
-
-    fun isComplete(): Boolean {
-        return burrowsPath.last().isInDesiredState()
-    }
+    return Burrow(amphipods = amphipods.toSet())
 }
 
 data class Burrow(
-    val amphipods: List<Amphipod>
+    val amphipods: Set<Amphipod>
 ) {
-    val minimumEnergyStillRequired: Long =
-        amphipods.sumOf { it.distanceFrom(it.type.finalDestinations.first()) * it.type.stepCost }
+    val minimumEnergyStillRequired: Long = 12000
+//        amphipods.sumOf { it.distanceFrom(it.type.finalDestinations.first()) * it.type.stepCost }
 
     fun doPossibleAmphipodMovements(): List<Pair<Burrow, Long>> {
         return amphipods
@@ -78,10 +69,9 @@ data class Burrow(
         val otherAmphipods = amphipods - amphipod
         val accessibleFinalDestinations = amphipod.type.finalDestinations
             .filter { it.isNotBlocked(amphipod.location, otherAmphipods) }
-        if(accessibleFinalDestinations.isNotEmpty() && amphipod.type.finalDestinations.none { dest -> otherAmphipods.any { it.location == dest && it.type != amphipod.type } }) {
-            return listOf(accessibleFinalDestinations.maxByOrNull { it.y }!!)
-        }
-        else return BURROW_LAYOUT.entries
+        return if(accessibleFinalDestinations.isNotEmpty() && amphipod.type.finalDestinations.none { dest -> otherAmphipods.any { it.location == dest && it.type != amphipod.type } }) {
+            listOf(accessibleFinalDestinations.maxByOrNull { it.y }!!)
+        } else BURROW_LAYOUT.entries
             .filter { it.value.allows(amphipod) }
             .map { it.key }
             .filter { it != amphipod.location }
@@ -95,7 +85,7 @@ data class Burrow(
     }
 }
 
-private fun Coordinate.isNotBlocked(thisAmphipodLocation: Coordinate, otherAmphipods: List<Amphipod>): Boolean {
+private fun Coordinate.isNotBlocked(thisAmphipodLocation: Coordinate, otherAmphipods: Set<Amphipod>): Boolean {
     return otherAmphipods.map { it.location }
         .none { it.isBetween(this, thisAmphipodLocation) }
 }
@@ -168,25 +158,26 @@ enum class LocationType(private val allowedAmphipods: Set<AmphipodType>) {
     }
 }
 
-fun priorityQueueOf(path: Path): PriorityQueue<Path> {
-    val queue = PriorityQueue(PathComparator())
-    queue.add(path)
+fun priorityQueueOf(burrow: Burrow, energyRequired: Long): PriorityQueue<Pair<Burrow, Long>> {
+    val queue = PriorityQueue(BurrowComparator())
+    queue.add(burrow to energyRequired)
     return queue
 }
 
-class PathComparator : Comparator<Path> {
-    override fun compare(one: Path?, other: Path?): Int {
+class BurrowComparator : Comparator<Pair<Burrow, Long>> {
+    override fun compare(one: Pair<Burrow, Long>?, other: Pair<Burrow, Long>?): Int {
         if (one == null || other == null) error("null burrows")
-        val compareTo = other.burrowsPath.size.compareTo(one.burrowsPath.size)
-        return if(compareTo == 0) one.energyConsumed.compareTo(other.energyConsumed)
-        else compareTo
+        val (oneBurrow, oneEnergyTaken) = one
+        val (otherBurrow, otherEnergyTaken) = other
+        return (oneBurrow.minimumEnergyStillRequired + oneEnergyTaken)
+            .compareTo(otherBurrow.minimumEnergyStillRequired + otherEnergyTaken)
     }
 
 }
 
 
 private val BURROW_LAYOUT = mapOf(
-    Coordinate(1, 1) to HALLWAY,
+//    Coordinate(1, 1) to HALLWAY,
     Coordinate(2, 1) to HALLWAY,
     Coordinate(3, 1) to DOORWAY,
     Coordinate(4, 1) to HALLWAY,
@@ -196,7 +187,7 @@ private val BURROW_LAYOUT = mapOf(
     Coordinate(8, 1) to HALLWAY,
     Coordinate(9, 1) to DOORWAY,
     Coordinate(10, 1) to HALLWAY,
-    Coordinate(11, 1) to HALLWAY,
+//    Coordinate(11, 1) to HALLWAY,
     Coordinate(3, 2) to SIDEROOM_A,
     Coordinate(3, 3) to SIDEROOM_A,
     Coordinate(5, 2) to SIDEROOM_B,
