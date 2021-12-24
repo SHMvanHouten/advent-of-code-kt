@@ -20,8 +20,7 @@ class Day23Test {
                 |  #A#D#C#A#
                 |  #########""".trimMargin()
             val burrow = toAmphipodBurrow(example)
-            val (burrowChain, energy) = shortestPathToBurrowHappiness(burrow)
-            println(burrowChain)
+            val energy = shortestPathToBurrowHappiness(burrow)
             assertThat(
                 energy,
                 equalTo(12521)
@@ -31,8 +30,7 @@ class Day23Test {
         @Test
         internal fun `part 1`() {
             val burrow = toAmphipodBurrow(input)
-            val (burrowChain, energy) = shortestPathToBurrowHappiness(burrow)
-            println(burrowChain)
+            val energy = shortestPathToBurrowHappiness(burrow)
             assertThat(
                 energy,
                 equalTo(19167)
@@ -44,13 +42,39 @@ class Day23Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1, equalTo(1) )
+        internal fun example() {
+            val example = """#############
+#...........#
+###B#C#B#D###
+  #D#C#B#A#
+  #D#B#A#C#
+  #A#D#C#A#
+  #########"""
+            val burrow = toAmphipodBurrow(example)
+            val energy = shortestPathToBurrowHappiness(burrow)
+            assertThat(
+                energy,
+                equalTo(44169)
+            )
+
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1, equalTo(1) )
+            val input = """#############
+#...........#
+###D#A#C#A###
+  #D#C#B#A#
+  #D#B#A#C#
+  #D#C#B#B#
+  #########"""
+            val burrow = toAmphipodBurrow(input)
+            val energy = shortestPathToBurrowHappiness(burrow)
+            // 47857 too high
+            assertThat(
+                energy,
+                equalTo(19167)
+            )
         }
     }
 
