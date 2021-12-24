@@ -1,31 +1,46 @@
 package com.github.shmvanhouten.adventofcode2021.day23
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.coordinate.draw
 import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
 import com.github.shmvanhouten.adventofcode2021.day23.AmphipodType.*
 import com.github.shmvanhouten.adventofcode2021.day23.LocationType.*
 import java.util.*
 import kotlin.math.abs
 
-fun shortestPathToBurrowHappiness(input: Burrow): Long {
+fun shortestPathToBurrowHappiness(input: Burrow): Pair<String, Long> {
     val burrows = priorityQueueOf(input, 0L)
-    val visitedStates = mutableMapOf<Burrow, Long>()
+    val visitedStates = mutableMapOf<Burrow, Pair<Burrow?,Long>>()
     var shortestPath = Long.MAX_VALUE
     while (burrows.isNotEmpty()) {
-        val (burrowState, energyTaken) = burrows.poll()
+        val (burrowState, previousBurrow, energyTaken) = burrows.poll()
 
-        if(energyTaken < shortestPath && (!visitedStates.contains(burrowState) || energyTaken < visitedStates[burrowState]!!)) {
-            visitedStates += burrowState to energyTaken
+        if(energyTaken < shortestPath && (!visitedStates.contains(burrowState) || energyTaken < visitedStates[burrowState]!!.second)) {
+            visitedStates += burrowState to Pair(previousBurrow, energyTaken)
             if(burrowState.isInDesiredState())
                 shortestPath = energyTaken
 
             burrowState
                 .doPossibleAmphipodMovements()
-                .map { it.first to it.second + energyTaken }
+                .map { Triple(it.first ,burrowState, it.second + energyTaken) }
                 .let { burrows.addAll(it) }
         }
     }
-    return visitedStates.entries.single { it.key.isInDesiredState() }.value
+    val (burrow, path) = visitedStates.entries.single { it.key.isInDesiredState() }
+
+    return createChain(burrow, visitedStates) to path.second
+}
+
+fun createChain(burrow: Burrow, visitedStates: MutableMap<Burrow, Pair<Burrow?, Long>>): String {
+    var previousBurrow = visitedStates[burrow]?.first
+    var string = burrow.draw()
+    while (previousBurrow != null) {
+        string += "\n"
+        string += previousBurrow.draw()
+        previousBurrow = visitedStates[previousBurrow]?.first
+
+    }
+    return string
 }
 
 fun toAmphipodBurrow(input: String): Burrow {
@@ -83,6 +98,10 @@ data class Burrow(
                 + oldAmphipod.location.y - 1
                 + newLocation.y - 1) * oldAmphipod.type.stepCost
     }
+
+    fun draw(): String {
+        return (emptyBurrow.toCoordinateMap() + amphipods.map { it.location to it.type.name[0] }).draw()
+    }
 }
 
 private fun Coordinate.isNotBlocked(thisAmphipodLocation: Coordinate, otherAmphipods: Set<Amphipod>): Boolean {
@@ -91,10 +110,18 @@ private fun Coordinate.isNotBlocked(thisAmphipodLocation: Coordinate, otherAmphi
 }
 
 private fun Coordinate.isBetween(destination: Coordinate, origin: Coordinate): Boolean {
-    return if (this.x !in rangeOf(origin.x, destination.x)) false
-    else if (this.y == 1 && destination.y == 1) true
-    else if(destination.x == this.x) destination.y >= this.y
-    else this.x == origin.x && this.y < origin.y
+    return origin.pathTo(destination).contains(this)
+}
+
+private fun Coordinate.pathTo(destination: Coordinate): Set<Coordinate> {
+    return if(this.x != destination.x) {
+        val xRange = rangeOf(this.x, destination.x).map { Coordinate(it, 1) }
+        val originYrange = if(this.y == 1) emptySet() else (2..this.y).map { this.copy(y = it) }
+        val destinationRange = if(destination.y == 1) emptySet() else (2..destination.y).map { destination.copy(y = it) }
+        (xRange + originYrange + destinationRange).toSet()
+    } else {
+        rangeOf(this.y, destination.y).map { Coordinate(this.x, it) }.toSet()
+    }
 }
 
 fun rangeOf(one: Int, other: Int): IntRange {
@@ -112,25 +139,6 @@ data class Amphipod(
         return if(absx == 0) absx
         else absx + this.location.y + other.y - 2
     }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Amphipod
-
-        if (location != other.location) return false
-        if (type != other.type) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = location.hashCode()
-        result = 31 * result + type.hashCode()
-        return result
-    }
-
 
 }
 
@@ -158,23 +166,30 @@ enum class LocationType(private val allowedAmphipods: Set<AmphipodType>) {
     }
 }
 
-fun priorityQueueOf(burrow: Burrow, energyRequired: Long): PriorityQueue<Pair<Burrow, Long>> {
+fun priorityQueueOf(burrow: Burrow, energyRequired: Long, previousBurrow: Burrow? = null): PriorityQueue<Triple<Burrow, Burrow?, Long>> {
     val queue = PriorityQueue(BurrowComparator())
-    queue.add(burrow to energyRequired)
+    queue.add(Triple(burrow, previousBurrow, energyRequired))
     return queue
 }
 
-class BurrowComparator : Comparator<Pair<Burrow, Long>> {
-    override fun compare(one: Pair<Burrow, Long>?, other: Pair<Burrow, Long>?): Int {
+class BurrowComparator : Comparator<Triple<Burrow, Burrow?, Long>> {
+    override fun compare(one: Triple<Burrow, Burrow?, Long>?, other: Triple<Burrow, Burrow?, Long>?): Int {
         if (one == null || other == null) error("null burrows")
-        val (oneBurrow, oneEnergyTaken) = one
-        val (otherBurrow, otherEnergyTaken) = other
+        val (oneBurrow, _, oneEnergyTaken) = one
+        val (otherBurrow, _, otherEnergyTaken) = other
         return (oneBurrow.minimumEnergyStillRequired + oneEnergyTaken)
             .compareTo(otherBurrow.minimumEnergyStillRequired + otherEnergyTaken)
     }
 
 }
 
+private val emptyBurrow = """
+                |#############
+                |#...........#
+                |###.#.#.#.###
+                |  #.#.#.#.#
+                |  #########
+                |  """.trimMargin()
 
 private val BURROW_LAYOUT = mapOf(
 //    Coordinate(1, 1) to HALLWAY,

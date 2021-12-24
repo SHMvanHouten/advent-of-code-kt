@@ -20,15 +20,23 @@ class Day23Test {
                 |  #A#D#C#A#
                 |  #########""".trimMargin()
             val burrow = toAmphipodBurrow(example)
+            val (burrowChain, energy) = shortestPathToBurrowHappiness(burrow)
+            println(burrowChain)
             assertThat(
-                shortestPathToBurrowHappiness(burrow),
+                energy,
                 equalTo(12521)
             )
         }
 
         @Test
         internal fun `part 1`() {
-            assertThat(1, equalTo(1) )
+            val burrow = toAmphipodBurrow(input)
+            val (burrowChain, energy) = shortestPathToBurrowHappiness(burrow)
+            println(burrowChain)
+            assertThat(
+                energy,
+                equalTo(19167)
+            )
         }
     }
 
