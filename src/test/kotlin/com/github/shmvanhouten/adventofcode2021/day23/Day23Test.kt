@@ -70,15 +70,74 @@ class Day23Test {
   #########"""
             val burrow = toAmphipodBurrow(input)
             val energy = shortestPathToBurrowHappiness(burrow)
-//            47283 too low
-//            47857 too high
             assertThat(
                 energy,
-                equalTo(19167)
+                equalTo(47665)
             )
         }
     }
 
-    private val input by lazy { readFile("/input-day23.txt")}
+    private val input by lazy { readFile("/input-day23.txt") }
 
 }
+/**
+#############
+#...........#
+###D#A#C#A###
+#D#C#B#A#
+#D#B#A#C#
+#D#C#B#B#
+#########
+
+#############
+#.........CA#
+###D#.#.#A###
+#D#C#B#A#
+#D#B#A#C#
+#D#C#B#B#
+#########
+
+407
+
+#############
+#A......B.CA#
+###D#.#.#A###
+#D#C#.#A#
+#D#B#.#C#
+#D#C#B#B#
+#########
+
+407 + 30 + 9 + 90 = 536
+
+#############
+#AB.B...B.CA#
+###D#.#.#A###
+#D#.#.#A#
+#D#.#C#C#
+#D#.#C#B#
+#########
+
+536 + 800 + 40 + 900 = 2276
+
+#############
+#A.........A#
+###D#.#.#A###
+#D#B#C#A#
+#D#B#C#C#
+#D#B#C#B#
+#########
+
+2276 + 50 + 60 + 500 + 50 = 2936
+
+#############
+#AA.......AA#
+###D#B#C#.###
+#D#B#C#.#
+#D#B#C#.#
+#D#B#C#.#
+#########
+
+2936 + 2 + 9 + 600 + 90 = 3637
+
+3637 + 44000 + 28 = 47665
+ */
