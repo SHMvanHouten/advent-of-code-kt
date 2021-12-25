@@ -1,0 +1,97 @@
+private val digitHandingFunctions = listOf(
+    DigitHandlingFunction(A, 10, 9),
+    DigitHandlingFunction(A, 12, 6),
+    DigitHandlingFunction(A, 13, 4),
+    DigitHandlingFunction(A, 13, 2),
+    DigitHandlingFunction(A, 14, 9),
+    // up to here its just (z * 26) + w + s
+
+    // for every z where wInput = z % 26 -2
+    // the previous output is divided
+    // this needs to be true for _all_ B functions in order for the last function to
+    // return 0
+    DigitHandlingFunction(B, -2, 1),
+    DigitHandlingFunction(A, 11, 10),
+    DigitHandlingFunction(B, -15, 6),
+    DigitHandlingFunction(B, -10, 4),
+    // z = (result - s - w) / 26
+    // (36645 - 4 - w) / 26 =
+    // (36645 - (s = 6 + w = 5)) % 26 = 0, so w _has_ to be 5
+    DigitHandlingFunction(A, 10, 6),
+    // 1409 * 26 36.634 - (- 10 + 1)         36645
+
+    How does 1404 equate to 36646?
+
+
+    // (f11 * 26) - r - w10
+    DigitHandlingFunction(B, -10, 3),
+    // target = 54 * 26 1404 - (4 + 1) = 1409
+    // f11 = target = ((((w13 + 1) * 26) - 1 -w12) * 26) - 10 - w11
+    DigitHandlingFunction(B, -4, 9),
+    // at index 12 to attain target 2 with input 1 we need 54
+    // at index 12 to attain target 3 with input 1 we need 80
+    // at index 12 to attain target 4 with input 1 we need 106
+    //       at index 12 to attain target 4 with input 2 we need 107
+    // at index 12 to attain target 10 with input 1 we need 262
+    // target = 2 * 26 - -1 - -1
+    // target = 3 * 26 + 2
+    // target = (((w13 + 1) * 26) - 1 - w12)
+    DigitHandlingFunction(B, -1, 15),
+    // in order to return 0 z needs to be between 2 and 10
+    // f(w13 + 1)
+    DigitHandlingFunction(START, -1, 5),
+)
+
+
+fun handleDigitTypeA(digitW: Int, r: Int, s: Int, z: Long ): Long {
+//    val x = doComparison(digitW, z, r)  : not necessary
+    val x = 1
+    val y = 25 * x + 1
+    val newZ = z * y
+    // if(digitW == ((z % 26) + r).toInt()) z *= 26 else z = z
+    val yy = (digitW + s) * x
+    return newZ + yy
+}
+
+
+fun handleDigitTypeB(digitW: Int, r: Int, s: Int, z: Long = 0): Long {
+    val x = doComparison(digitW, z, r)
+    val y = 25 * x + 1
+    val dividedZ = z / 26
+    val newZ = dividedZ * y
+    val yy = (digitW + s) * x
+    return newZ + yy
+}
+// 1 - 9 (==) z%26 + 10
+
+private fun doComparison(digitW: Int, z: Long, r: Int) = if (digitW == ((z % 26) + r).toInt()) 0
+else 1
+// careful: switched 1 and 0 and != and ==
+
+enum class FunctionType(
+    val function: (Int, Int, Int, Long) -> Long
+) {
+    A(::handleDigitTypeA),
+    B(::handleDigitTypeB),
+    START(::handleDigitTypeB)
+}
+
+fun aReverseFunction(w: Int, s: Int, resultDesired: Long): Long? {
+    // z = (result - s - w) / 26
+    val l = resultDesired - s - w
+    return if(l % 26 == 0L) l / 26
+    else null
+}
+
+fun bReverseFunction(w: Int, r: Int, s: Int, resultDesired: Long): Long {
+    // (resultDesired * 26) - r - w10
+    return (0..Long.MAX_VALUE)
+        .asSequence()
+        .map { it to B.function.invoke(w, r, s, it) }
+        .filter { it.second == resultDesired }
+        .map { it.first }
+        .first()
+//    return (resultDesired * 26) - r + w
+}
+
+fun startingFunction(w: Int): Long = w + 1L

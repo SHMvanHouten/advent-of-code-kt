@@ -5,6 +5,8 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
 class Day24Test {
 
@@ -12,14 +14,46 @@ class Day24Test {
     inner class Part1 {
 
         @Test
-        internal fun `part 1`() {
-            printFirstPossibilities()
+        internal fun `how does 1404 equate to 36646`() {
+            // to get 1409 with w = 2 (and r = -10) how do we get 1404?
+            assertThat(handleDigitTypeB(2, -10, 3, 1404L), equalTo(1409))
+            assertThat(handleDigitTypeB(2, -10, 3, 36646), equalTo(1409))
 
-            val result = (9..13).reversed().fold(0L) { target, i ->
-                listNecessaryDigitsToAttainTarget(target, i).first()
+            // if "doComparison" equates to 1 (so z % 26 + r != w
+            // z + w + s
+            // any value for z where (z % 26) - 10 != w
+            // AND z + w + s == 1409
+
+
+            println(bReverseFunction(2, -10, 3, 1409))
+            println(bReverseFunction(3, -10, 3, 1409))
+
+
+            doReverseFunctionBAtIndex(10, 1404L)
+                .forEach { println(it) }
+
+//            println(leastCommonMultiple(listOf(1404L, 36646)))
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = [
+            "14992994195999"
+        ])
+        internal fun `testing outcomes`(nr: String) {
+            assertThat(findOutComeOfNumber(nr), equalTo(0))
+        }
+
+        @Test
+        internal fun `part 1`() {
+//            printFirstPossibilities()
+
+            val listValidNumbers = listValidNumbers()
+            listValidNumbers.forEach {
+                assertThat(findOutComeOfNumber(it), equalTo(0))
             }
-            println(result)
+            assertThat(listValidNumbers.maxOrNull(), equalTo("1"))
 //            assertThat(countDownUntilValid(), equalTo("1") )
+            // 14992994195999 too low
         }
     }
 
