@@ -45,6 +45,7 @@ data class Burrow(
 
     fun doPossibleAmphipodMovements(): List<Pair<Burrow, Long>> {
         val possibleMoves = amphipods
+            .filter { it.type != D || amphipodsByCoordinate[Coordinate(9, 5)]?.type?.equals(D)?:true }
             .filter { it.movesDone < 2 }
             .flatMap { amphipod ->
                 accessibleLocationsFrom(amphipod).map { amphipod to it }

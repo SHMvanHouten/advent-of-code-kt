@@ -70,7 +70,8 @@ class Day23Test {
   #########"""
             val burrow = toAmphipodBurrow(input)
             val energy = shortestPathToBurrowHappiness(burrow)
-            // 47857 too high
+//            47283 too low
+//            47857 too high
             assertThat(
                 energy,
                 equalTo(19167)
