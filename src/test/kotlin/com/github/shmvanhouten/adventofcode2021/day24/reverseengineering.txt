@@ -1,0 +1,264 @@
+inp w      // z = 0
+mul x 0
+add x z
+mod x 26   // x = z % 26
+add x 10   // x += r
+eql x w    // x = x != w
+eql x 0    //  --> x = w != (z % 26 + r)
+mul y 0
+add y 25   // y = 25
+mul y x    // y = 25 * x
+add y 1    // y = 25 * x + 1
+mul z y    // z = z * (25 * x + 1)
+mul y 0
+add y w
+add y 0    // y = w + s
+mul y x    // y *= x (see 7)
+add z y    // z += y*x
+-
+inp w
+mul x 0
+add x z
+mod x 26
+add x 12
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 6
+mul y x
+add z y
+-
+inp w
+mul x 0
+add x z
+mod x 26
+add x 13
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 4
+mul y x
+add z y
+-
+inp w
+mul x 0
+add x z
+mod x 26
+add x 13
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 2
+mul y x
+add z y
+-
+inp w
+mul x 0
+add x z
+mod x 26
+add x 14
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 9
+mul y x
+add z y
+------------- type 1 ^^^^
+------------- type 2 vvvv
+inp w          // z = 0
+mul x 0
+add x z
+mod x 26       // x = z % 26
+div z 26       // z /= 26
+add x -2       // x += r
+eql x w        // x = x != w
+eql x 0        //  --> x = w != (z % 26 + r)
+mul y 0
+add y 25       // y = 25
+mul y x        // y = 25 * x
+add y 1        // y = 25 * x + 1
+mul z y        // z = z * (25 * x + 1)
+mul y 0
+add y w
+add y 1        // y = w + s
+mul y x        // y *= x (see 7)
+add z y        // z += y*x
+------------- type 2 ^^^^
+---------- type 1 vvvv
+inp w
+mul x 0
+add x z
+mod x 26
+add x 11
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 10
+mul y x
+add z y
+--------- type 1 ^^^^
+--------- type 2 vvvv
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -15
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 6
+mul y x
+add z y
+--
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -10
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 4
+mul y x
+add z y
+------------- type 2 ^^^^
+----------- type 1 vvvv
+inp w
+mul x 0
+add x z
+mod x 26
+add x 10
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 6
+mul y x
+add z y
+-------------- type 1 ^^^^
+------------- type 2 vvvv
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -10
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 3
+mul y x
+add z y
+-
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -4
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 9
+mul y x
+add z y
+-
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -1
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 15
+mul y x
+add z y
+-
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -1
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 5
+mul y x
+add z y
+------------- type 2 ^^^^

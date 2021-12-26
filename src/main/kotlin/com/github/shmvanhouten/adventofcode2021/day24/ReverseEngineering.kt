@@ -2,7 +2,7 @@ package com.github.shmvanhouten.adventofcode2021.day24
 
 import com.github.shmvanhouten.adventofcode2021.day24.FunctionType.*
 
-private val viableDigits = 9.downTo(0)
+private val viableDigits = 9.downTo(1)
 fun listValidNumbers(): List<String> {
     return findValidNumbers(13, 0L, "")?: error("did not find any valid numbers")
 }
@@ -69,6 +69,7 @@ fun countDownUntilValid(): String {
 
 fun findOutComeOfNumber(nr: String) = nr.foldIndexed(0L) { index, previousResult, c ->
     val w = c.digitToInt()
+//    println("z at $index is $previousResult")
     resultsOfInputAtIndex[Triple(index, previousResult, w)]
         ?: invokeFunction(digitHandingFunctions[index], w, previousResult, index)
 }
@@ -86,7 +87,7 @@ private fun invokeFunction(
 }
 
 private val digitHandingFunctions = listOf(
-    DigitHandlingFunction(A, 10, 9),
+    DigitHandlingFunction(A, 10, 0),
     DigitHandlingFunction(A, 12, 6),
     DigitHandlingFunction(A, 13, 4),
     DigitHandlingFunction(A, 13, 2),

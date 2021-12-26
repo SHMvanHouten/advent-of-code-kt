@@ -21,7 +21,10 @@ class AluRunnner(private val input: String) {
             val amount: Long = if (variables.contains(p2)) variables[p2]!!
                 else p2.toLong()
             when(operator) {
-                "inp" -> variables["w"] = number[wPointer++].toLong()
+                "inp" -> {
+                    println("z at $wPointer is ${variables["z"]}")
+                    variables["w"] = number[wPointer++].toLong()
+                }
                 "add" -> variables[p1] = variables[p1]!! + amount
                 "mul" -> variables[p1] = variables[p1]!! * amount
                 "div" -> variables[p1] = variables[p1]!! / amount
@@ -35,6 +38,16 @@ class AluRunnner(private val input: String) {
         val z = variables["z"]!!
         return z
     }
+
+    fun runSingleStep(w: Long = 0L, z: Long = 0L, index: Int): Long {
+        val indicesOfInputInstructions = listIndicesOfInputInstructions()
+        return -1
+    }
+
+    private fun listIndicesOfInputInstructions() = instructions
+        .mapIndexed { index, instruction -> index to instruction }
+        .filter { it.second[0] == "inp" }
+        .map { it.first }
 
 }
 
