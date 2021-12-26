@@ -24,20 +24,24 @@ data class Coordinate3dRange(val xRange: IntRange, val yRange: IntRange, val zRa
                 || otherRange.first in oneRange || otherRange.last in oneRange
     }
 
+    // this is larger than the other in negative direction: - x
+    // this is smaller than the other in negative direction: + x
+    // this is larger than the other in positive direction: - x
+    // this is smaller than the other in positive direction: + x
     fun differencesInDirections(other: Coordinate3dRange): Map<Direction, Int> {
-        return this.zip(other)
+        return this.zipRanges(other)
             .mapIndexed { i, rangePair ->
                 val (onePair, otherPair) = rangePair
                 listOf(
-                    values()[i * 2] to otherPair.first - onePair.first,
-                    values()[1 + i * 2] to otherPair.last - onePair.last,
+                    Direction.values()[i * 2] to otherPair.first - onePair.first,
+                    Direction.values()[1 + i * 2] to otherPair.last - onePair.last,
                 )
             }
             .flatten()
             .toMap()
     }
 
-    private fun zip(other: Coordinate3dRange): List<Pair<IntRange, IntRange>> {
+    private fun zipRanges(other: Coordinate3dRange): List<Pair<IntRange, IntRange>> {
         return listOf(
             this.xRange to other.xRange,
             this.yRange to other.yRange,
@@ -65,36 +69,122 @@ fun combineRanges(one: Coordinate3dRange, other: Coordinate3dRange): List<Coordi
         val yRange = one.yRange + other.yRange
         val zRange = one.zRange + other.zRange
         listOf(Coordinate3dRange(xRange, yRange, zRange))
-    } else if(differencesPerDimension[Y_NEG]!! > 0 && differencesPerDimension[Z_NEG]!! > 0) {
+    } else if(differencesInYRange(differencesPerDimension) && differencesInZRange(differencesPerDimension)) {
         // todo: > 3 ranges needed
         emptyList()
-    } else if (differencesPerDimension[Y_NEG]!! > 0){
-        listOf(
-            Coordinate3dRange(
-                one.xRange + other.xRange,
-                other.yRange,
-                one.zRange
-            ),
-            Coordinate3dRange(
-                one.xRange,
-                one.yRange.minus(other.yRange),
-                one.zRange
-            )
-        )
+    } else if (differencesInYRange(differencesPerDimension)){
+        if(differencesInDirection[Y_POS]!! != 0 && differencesInDirection[Y_NEG]!! != 0) {
+            if (other.yRange.overlapsEntirely(one.yRange)) {
+                rangesWhereOneYRangeOverlapsOtherEntirely(other, one)
+            } else if(one.yRange.overlapsEntirely(other.yRange)) {
+                rangesWhereOneYRangeOverlapsOtherEntirely(one, other)
+            }else {
+                touchingRanges(one, other)
+            }
+        } else if(differencesInDirection[Y_POS]!! < 0 || differencesInDirection[Y_NEG]!! > 0) {
+            splitRangesForY(one, other)
+        } else {
+            splitRangesForY(other, one)
+        }
     } else {
         // todo: Z
         emptyList()
     }
 }
 
-public operator fun IntRange.plus(other: IntRange): IntRange {
+fun touchingRanges(one: Coordinate3dRange, other: Coordinate3dRange): List<Coordinate3dRange> {
+    return if(one.xRange.last > other.xRange.last) oneBelowRightOther(one, other)
+    else oneBelowRightOther(other, one)
+}
+
+/*
+    .##
+    .#X0
+    ..00
+ */
+private fun oneBelowRightOther(
+    one: Coordinate3dRange,
+    other: Coordinate3dRange
+): List<Coordinate3dRange> {
+    return listOf(
+        other,
+        one.copy(
+            xRange = one.xRange.after(other.xRange)
+        ),
+        one.copy(
+            one.xRange.first..other.xRange.last,
+            yRange = one.yRange.after(other.yRange)
+        )
+    )
+}
+
+/**
+ * .#.    .#.    .#.
+ * 0X0    .X0    0X.
+ * .#.    .#.    .#.
+ */
+private fun rangesWhereOneYRangeOverlapsOtherEntirely(
+    one: Coordinate3dRange,
+    other: Coordinate3dRange
+): List<Coordinate3dRange> {
+    val ranges = mutableListOf(
+        one,
+        Coordinate3dRange(
+            other.xRange.after(one.xRange),
+            other.yRange,
+            other.zRange
+        )
+    )
+    if(other.xRange.overlapsEntirely(one.xRange)) {
+        ranges.add(
+            Coordinate3dRange(
+                other.xRange.before(one.xRange),
+                other.yRange,
+                other.zRange
+            )
+        )
+    }
+    return ranges
+}
+
+/**
+    ###
+    00000
+ */
+private fun splitRangesForY(
+    one: Coordinate3dRange,
+    other: Coordinate3dRange
+) = listOf(
+    Coordinate3dRange(
+        one.xRange + other.xRange,
+        other.yRange,
+        one.zRange
+    ),
+    Coordinate3dRange(
+        one.xRange,
+        one.yRange.after(other.yRange),
+        one.zRange
+    )
+)
+
+private fun differencesInZRange(differencesPerDimension: Map<Direction, Int>) =
+    differencesPerDimension[Z_NEG]!! > 0
+
+private fun differencesInYRange(differencesPerDimension: Map<Direction, Int>) =
+    differencesPerDimension[Y_NEG]!! > 0
+
+operator fun IntRange.plus(other: IntRange): IntRange {
     return min(this.first, other.first)..max(this.last, other.last)
 }
 
-fun IntRange.minus(other: IntRange): IntRange {
-    // for now going
-    return min(this.last, other.last + 1)..this.last
+fun IntRange.afterOrBefore(other: IntRange): IntRange {
+    return if(other.contains(this.first)) after(other)
+    else this.before(other)
 }
+
+private fun IntRange.after(other: IntRange) = (other.last + 1)..this.last
+
+private fun IntRange.before(other: IntRange) = this.first until other.first
 
 private fun IntRange.extendBy(
     left: Int,
@@ -109,6 +199,10 @@ private val IntRange.length: Int
 
 private fun IntRange.isContainedBy(maybeContaining: IntRange): Boolean {
     return maybeContaining.first <= this.first && maybeContaining.last >= this.last
+}
+
+private fun IntRange.overlapsEntirely(maybeOverlapping: IntRange): Boolean {
+    return this.first < maybeOverlapping.first && this.last > maybeOverlapping.last
 }
 
 enum class Direction {

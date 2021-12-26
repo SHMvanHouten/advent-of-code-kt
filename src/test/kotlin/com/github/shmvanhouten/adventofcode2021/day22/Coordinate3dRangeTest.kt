@@ -1,8 +1,9 @@
 package com.github.shmvanhouten.adventofcode2021.day22
 
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3d
-import com.github.shmvanhouten.adventofcode2020.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode2020.coordinate.toCoordinateMap
+import com.github.shmvanhouten.adventofcode.utility.coordinate.draw
+import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasSize
@@ -93,7 +94,7 @@ internal class Coordinate3dRangeTest {
         assertThat(range2.size, equalTo(3 * 2 * 1))
 
         val combined = listOf(range1).add(range2)
-        assertThat(combined, hasSize( equalTo(1)))
+        assertThat(combined, hasSize(equalTo(1)))
         assertThat(combined.first().size, equalTo(6 * 2 * 1))
         assertThat(listOf(range2).add(range1).first().size, equalTo(12))
     }
@@ -114,8 +115,11 @@ internal class Coordinate3dRangeTest {
             """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
 
         val combined = listOf(range1).add(range2)
-        assertThat(combined, hasSize( equalTo(2)))
+        assertThat(combined, hasSize(equalTo(2)))
         assertThat(combined.first().size + combined[1].size, equalTo(19))
+        val combined2 = listOf(range2).add(range1)
+        assertThat(combined2, hasSize(equalTo(2)))
+        assertThat(combined2.first().size + combined2[1].size, equalTo(19))
     }
 
     @Test
@@ -133,11 +137,125 @@ internal class Coordinate3dRangeTest {
                 ...........
             """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
 
-        val combined = listOf(range1).add(range2)
-        assertThat(combined, hasSize( equalTo(2)))
-        assertThat(combined.first().size + combined[1].size, equalTo(15))
+        val combined2 = listOf(range1).add(range2)
+        assertThat(combined2, hasSize(equalTo(2)))
+        assertThat(combined2.first().size + combined2[1].size, equalTo(17))
+        val combined = listOf(range2).add(range1)
+        assertThat(combined, hasSize(equalTo(2)))
+        assertThat(combined.first().size + combined[1].size, equalTo(17))
     }
+
+
+    @Test
+    internal fun `overlapping but matching in other direction`() {
+        val range1 = """
+                ...#####...
+                ...#####...
+                ...#####...
+                ...........
+            """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
+        val range2 = """
+                ...........
+                ...........
+                ...#######.
+                ...........
+            """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
+
+        val combined2 = listOf(range1).add(range2)
+        assertThat(combined2, hasSize(equalTo(2)))
+        assertThat(combined2.first().size + combined2[1].size, equalTo(17))
+        val combined = listOf(range2).add(range1)
+        assertThat(combined, hasSize(equalTo(2)))
+        assertThat(combined.first().size + combined[1].size, equalTo(17))
+    }
+
+    @Test
+    internal fun `overlapping in both directions`() {
+        val range1 = """
+                ...#####...
+                ...#####...
+                ...#####...
+                ...#####...
+            """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
+        val range2 = """
+                ...........
+                ......####.
+                ......####.
+                ...........
+            """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
+
+        val combined = listOf(range1).add(range2)
+        assertThat(combined, hasSize(equalTo(2)))
+        assertThat(combined.first().size + combined[1].size, equalTo(24))
+        val combined2 = listOf(range2).add(range1)
+        assertThat(combined2, hasSize(equalTo(2)))
+        assertThat(combined2.first().size + combined2[1].size, equalTo(24))
+    }
+
+    @Test
+    internal fun `makes a cross`() {
+        val range1 = """
+                ...#####...
+                ...#####...
+                ...#####...
+                ...#####...
+            """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
+        val range2 = """
+                ...........
+                .#########.
+                .#########.
+                ...........
+            """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
+
+        val combined = listOf(range1).add(range2)
+        println(drawIn2D(combined))
+        assertThat(combined, hasSize( equalTo(3)))
+        assertThat(combined.sumOf { it.size }, equalTo(28))
+
+        val combined2 = listOf(range2).add(range1)
+        println(drawIn2D(combined2))
+        assertThat(combined2, hasSize(equalTo(3)))
+        assertThat(combined2.sumOf { it.size }, equalTo(28))
+    }
+
+    @Test
+    internal fun `each overlaps the other in either direction`() {
+        val range1 = """
+                ...#####...
+                ...#####...
+                ...#####...
+                ...........
+            """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
+        val range2 = """
+                ...........
+                ......####.
+                ......####.
+                ......####.
+                ......####.
+            """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
+
+        val combined = listOf(range1).add(range2)
+        println(drawIn2D(combined))
+        assertThat(combined, hasSize( equalTo(3)))
+        assertThat(combined.sumOf { it.size }, equalTo(27))
+        val combined2 = listOf(range2).add(range1)
+        println(drawIn2D(combined2))
+        assertThat(combined2, hasSize(equalTo(3)))
+        assertThat(combined2.sumOf { it.size }, equalTo(27))
+    }
+
 }
+
+private fun drawIn2D(combined2: List<Coordinate3dRange>) =
+    draw(
+        runReboot(combined2.map {
+            RebootStep(
+                Toggle.ON,
+                it
+            )
+        }).map { Coordinate(it.x, it.y) },
+        c = '#'
+    )
 
 class Coordinate3dRangePairAggregator : ArgumentsAggregator {
     override fun aggregateArguments(
