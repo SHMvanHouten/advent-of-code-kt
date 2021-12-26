@@ -11,6 +11,19 @@ import org.junit.jupiter.params.provider.ValueSource
 class Day24Test {
 
     @Nested
+    inner class TestAluRunner {
+        @Test
+        internal fun `14992994195999 is a valid model number`() {
+            val number = "14992994195999"
+            val alu = AluRunnner(input)
+            val result: Long = alu.check(number)
+            assertThat(result, equalTo(14)) //???
+        }
+
+
+    }
+
+    @Nested
     inner class Part1 {
 
         @Test
