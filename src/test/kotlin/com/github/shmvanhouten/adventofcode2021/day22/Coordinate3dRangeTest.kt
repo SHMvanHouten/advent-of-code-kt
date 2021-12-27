@@ -209,7 +209,7 @@ internal class Coordinate3dRangeTest {
 
         val combined = listOf(range1).add(range2)
         println(drawIn2D(combined))
-        assertThat(combined, hasSize( equalTo(3)))
+        assertThat(combined, hasSize(equalTo(3)))
         assertThat(combined.sumOf { it.size }, equalTo(28))
 
         val combined2 = listOf(range2).add(range1)
@@ -236,7 +236,7 @@ internal class Coordinate3dRangeTest {
 
         val combined = listOf(range1).add(range2)
         println(drawIn2D(combined))
-        assertThat(combined, hasSize( equalTo(3)))
+        assertThat(combined, hasSize(equalTo(3)))
         assertThat(combined.sumOf { it.size }, equalTo(27))
         val combined2 = listOf(range2).add(range1)
         println(drawIn2D(combined2))
@@ -292,43 +292,89 @@ internal class Coordinate3dRangeTest {
                 1..5
             )
             val result = listOf(cuboid1).minus(cuboidToDetract)
+            assertThat(result.sumOf { it.size }, equalTo(cuboid1.size - cuboidToDetract.size))
             assertThat(result, hasSize(equalTo(6)))
             val expectedCuboidAbove = Cuboid(
                 0..6,
                 0..0,
                 0..6
             )
-            assertThat(result.filter { it == expectedCuboidAbove}, hasSize(equalTo(1)))
+            assertThat(result.filter { it == expectedCuboidAbove }, hasSize(equalTo(1)))
             val expectedCuboidBelow = Cuboid(
                 0..6,
                 6..6,
                 0..6
             )
-            assertThat(result.filter { it == expectedCuboidBelow}, hasSize(equalTo(1)))
+            assertThat(result.filter { it == expectedCuboidBelow }, hasSize(equalTo(1)))
             val expectedCuboidBehind = Cuboid(
                 0..6,
                 1..5,
                 0..0
             )
-            assertThat(result.filter { it == expectedCuboidBehind}, hasSize(equalTo(1)))
+            assertThat(result.filter { it == expectedCuboidBehind }, hasSize(equalTo(1)))
             val expectedCuboidInFront = Cuboid(
                 0..6,
                 1..5,
                 6..6
             )
-            assertThat(result.filter { it == expectedCuboidInFront}, hasSize(equalTo(1)))
+            assertThat(result.filter { it == expectedCuboidInFront }, hasSize(equalTo(1)))
             val expectedCuboidToTheLeft = Cuboid(
                 0..0,
                 1..5,
                 1..5
             )
-            assertThat(result.filter { it == expectedCuboidToTheLeft}, hasSize(equalTo(1)))
+            assertThat(result.filter { it == expectedCuboidToTheLeft }, hasSize(equalTo(1)))
             val expectedCuboidToTheRight = Cuboid(
                 6..6,
                 1..5,
                 1..5
             )
-            assertThat(result.filter { it == expectedCuboidToTheRight}, hasSize(equalTo(1)))
+            assertThat(result.filter { it == expectedCuboidToTheRight }, hasSize(equalTo(1)))
+
+        }
+
+        @Test
+        internal fun `partially overlapping`() {
+            val cuboid1 = Cuboid(
+                7..9,
+                0..2,
+                0..2
+            )
+            val cuboidToDetract = Cuboid(
+                7..9,
+                1..5,
+                1..5
+            )
+            val result = listOf(cuboid1).minus(cuboidToDetract)
+            assertThat(result.sumOf { it.size }, equalTo(
+                1 * 3 * 3 /* top sliver */ + 1 * 2 * 3 /* side sliver with top cut off */
+            ))
+        }
+
+        @Test
+        internal fun `detracting from multiple ranges`() {
+            val cuboids = listOf(
+                Cuboid(
+                    0..6,
+                    0..6,
+                    0..6
+                ),
+                Cuboid(
+                    7..9,
+                    0..2,
+                    0..2
+                )
+            )
+            val cuboidToDetract = Cuboid(
+                1..9,
+                1..5,
+                1..5
+            )
+            val result = cuboids.minus(cuboidToDetract)
+            assertThat(result.sumOf { it.size }, equalTo(
+                (cuboids.first().size - cuboidToDetract.copy(xRange = 1..6).size) +
+                1 * 3 * 3 /* top sliver */ + 1 * 2 * 3 /* side sliver with top cut off */
+            ))
         }
     }
 

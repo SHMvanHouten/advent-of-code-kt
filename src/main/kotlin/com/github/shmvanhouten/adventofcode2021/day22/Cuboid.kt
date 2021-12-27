@@ -6,11 +6,10 @@ import kotlin.math.min
 
 data class Cuboid(val xRange: IntRange, val yRange: IntRange, val zRange: IntRange) {
     val size: Long by lazy { xRange.length.toLong() * yRange.length * zRange.length }
-    fun isContainedBy(
-        other: Cuboid
-    ) = xRange.isContainedBy(other.xRange) &&
-            yRange.isContainedBy(other.yRange) &&
-            zRange.isContainedBy(other.zRange)
+
+    fun containsEntirely(other: Cuboid) = other.xRange.isContainedBy(xRange) &&
+            other.yRange.isContainedBy(yRange) &&
+            other.zRange.isContainedBy(zRange)
 
     fun sharesCoordinatesWith(other: Cuboid): Boolean {
         return overlap(xRange, other.xRange)
@@ -23,53 +22,30 @@ data class Cuboid(val xRange: IntRange, val yRange: IntRange, val zRange: IntRan
                 || otherRange.first in oneRange || otherRange.last in oneRange
     }
 
-    // this is larger than the other in negative direction: - x
-    // this is smaller than the other in negative direction: + x
-    // this is larger than the other in positive direction: - x
-    // this is smaller than the other in positive direction: + x
-    fun differencesInDirections(other: Cuboid): Map<Direction, Int> {
-        return this.zipRanges(other)
-            .mapIndexed { i, rangePair ->
-                val (onePair, otherPair) = rangePair
-                listOf(
-                    Direction.values()[i * 2] to otherPair.first - onePair.first,
-                    Direction.values()[1 + i * 2] to otherPair.last - onePair.last,
-                )
-            }
-            .flatten()
-            .toMap()
-    }
-
-    private fun zipRanges(other: Cuboid): List<Pair<IntRange, IntRange>> {
-        return listOf(
-            this.xRange to other.xRange,
-            this.yRange to other.yRange,
-            this.zRange to other.zRange
-        )
-    }
-
     fun minus(cuboidToDetract: Cuboid): List<Cuboid> {
-        val cuboidAbove = if(this.hasCubesAbove(cuboidToDetract)) this.copy(
+        if (cuboidToDetract.containsEntirely(this)) return emptyList() // not necessary but faster
+        if (!this.sharesCoordinatesWith(cuboidToDetract)) return listOf(this)
+        val cuboidAbove = if (this.hasCubesAbove(cuboidToDetract)) this.copy(
             yRange = this.yRange.first.until(cuboidToDetract.yRange.first)
         ) else null
 
-        val cuboidBelow = if(this.hasCubesBelow(cuboidToDetract)) this.copy(
+        val cuboidBelow = if (this.hasCubesBelow(cuboidToDetract)) this.copy(
             yRange = (cuboidToDetract.yRange.last + 1)..this.yRange.last
         ) else null
 
-        val cuboidBehind = if(this.hasCubesBehind(cuboidToDetract)) this.copy(
+        val cuboidBehind = if (this.hasCubesBehind(cuboidToDetract)) this.copy(
             zRange = this.zRange.first.until(cuboidToDetract.zRange.first)
         ).minus(cuboidAbove).minus(cuboidBelow) else null
 
-        val cuboidInFront = if(this.hasCubesInFront(cuboidToDetract)) this.copy(
+        val cuboidInFront = if (this.hasCubesInFront(cuboidToDetract)) this.copy(
             zRange = (cuboidToDetract.zRange.last + 1)..this.zRange.last
         ).minus(cuboidAbove).minus(cuboidBelow) else null
 
-        val cuboidToTheLeft = if(this.hasCubesToTheLeft(cuboidToDetract)) this.copy(
+        val cuboidToTheLeft = if (this.hasCubesToTheLeft(cuboidToDetract)) this.copy(
             xRange = this.xRange.first.until(cuboidToDetract.xRange.first)
         ).minus(cuboidAbove).minus(cuboidBelow).minus(cuboidBehind).minus(cuboidInFront) else null
 
-        val cuboidToTheRight = if(this.hasCubesToTheRight(cuboidToDetract)) this.copy(
+        val cuboidToTheRight = if (this.hasCubesToTheRight(cuboidToDetract)) this.copy(
             xRange = (cuboidToDetract.xRange.last + 1)..this.xRange.last
         ).minus(cuboidAbove).minus(cuboidBelow).minus(cuboidBehind).minus(cuboidInFront) else null
 
@@ -114,17 +90,15 @@ data class Cuboid(val xRange: IntRange, val yRange: IntRange, val zRange: IntRan
 
 }
 
-fun List<Cuboid>.minus(cubeToDetract: Cuboid): List<Cuboid> {
-    val first = this.first()
-    return if (first.isContainedBy(cubeToDetract)) emptyList() // not necessary but faster
-    else if (first.sharesCoordinatesWith(cubeToDetract)) first.minus(cubeToDetract)
-    else listOf(first)
+fun List<Cuboid>.minus(cubeToDetract: Cuboid): Set<Cuboid> {
+    return this.flatMap { it.minus(cubeToDetract) }.toSet()
 }
+
 
 fun List<Cuboid>.add(rangeToAdd: Cuboid): List<Cuboid> {
     val first = this.first()
-    return if (first.isContainedBy(rangeToAdd)) listOf(rangeToAdd) // not necessary but faster
-    else if (rangeToAdd.isContainedBy(first)) listOf(first) // not necessary but faster
+    return if (rangeToAdd.containsEntirely(first)) listOf(rangeToAdd) // not necessary but faster
+    else if (first.containsEntirely(rangeToAdd)) listOf(first) // not necessary but faster
     else if (first.sharesCoordinatesWith(rangeToAdd)) combineRanges(this.first(), rangeToAdd)
     else this + rangeToAdd
 }
@@ -146,17 +120,4 @@ private val IntRange.length: Int
 
 private fun IntRange.isContainedBy(maybeContaining: IntRange): Boolean {
     return maybeContaining.first <= this.first && maybeContaining.last >= this.last
-}
-
-private fun IntRange.overlapsEntirely(maybeOverlapping: IntRange): Boolean {
-    return this.first < maybeOverlapping.first && this.last > maybeOverlapping.last
-}
-
-enum class Direction {
-    X_NEG,
-    X_POS,
-    Y_NEG,
-    Y_POS,
-    Z_NEG,
-    Z_POS
 }
