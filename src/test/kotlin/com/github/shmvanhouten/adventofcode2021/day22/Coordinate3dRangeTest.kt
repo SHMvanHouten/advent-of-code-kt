@@ -7,6 +7,7 @@ import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasSize
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.params.ParameterizedTest
@@ -18,7 +19,7 @@ import org.junit.jupiter.params.provider.CsvSource
 internal class Coordinate3dRangeTest {
     @Test
     internal fun `adding two of the same coordinate ranges together returns the same coordinate range`() {
-        val range = Coordinate3dRange(0..1, 0..1, 0..1)
+        val range = Cuboid(0..1, 0..1, 0..1)
         assertThat(
             listOf(range).add(range),
             equalTo(listOf(range))
@@ -27,8 +28,8 @@ internal class Coordinate3dRangeTest {
 
     @Test
     internal fun `adding a coordinate range that overlaps another the other range returns a list of that first range`() {
-        val smallerRange = Coordinate3dRange(0..1, 0..1, 0..1)
-        val largerRange = Coordinate3dRange(-1..1, 0..1, 0..1)
+        val smallerRange = Cuboid(0..1, 0..1, 0..1)
+        val largerRange = Cuboid(-1..1, 0..1, 0..1)
         assertThat(
             listOf(smallerRange).add(largerRange),
             equalTo(listOf(largerRange))
@@ -45,9 +46,9 @@ internal class Coordinate3dRangeTest {
         ]
     )
     internal fun `adding a coordinate range that is contained by a larger range returns that larger range`(
-        @AggregateWith(Coordinate3dRangePairAggregator::class) ranges: Pair<Coordinate3dRange, Coordinate3dRange>
+        @AggregateWith(Coordinate3dRangePairAggregator::class) ranges: Pair<Cuboid, Cuboid>
     ) {
-        val (smallerRange: Coordinate3dRange, largerRange: Coordinate3dRange) = ranges
+        val (smallerRange: Cuboid, largerRange: Cuboid) = ranges
         assertThat(
             listOf(largerRange).add(smallerRange),
             equalTo(listOf(largerRange))
@@ -67,9 +68,9 @@ internal class Coordinate3dRangeTest {
         ]
     )
     internal fun `two not overlapping ranges are individually represented in the result`(
-        @AggregateWith(Coordinate3dRangePairAggregator::class) ranges: Pair<Coordinate3dRange, Coordinate3dRange>
+        @AggregateWith(Coordinate3dRangePairAggregator::class) ranges: Pair<Cuboid, Cuboid>
     ) {
-        val (range1: Coordinate3dRange, range2: Coordinate3dRange) = ranges
+        val (range1: Cuboid, range2: Cuboid) = ranges
         assertThat(
             listOf(range1).add(range2),
             equalTo(listOf(range1, range2))
@@ -94,9 +95,8 @@ internal class Coordinate3dRangeTest {
         assertThat(range2.size, equalTo(3 * 2 * 1))
 
         val combined = listOf(range1).add(range2)
-        assertThat(combined, hasSize(equalTo(1)))
-        assertThat(combined.first().size, equalTo(6 * 2 * 1))
-        assertThat(listOf(range2).add(range1).first().size, equalTo(12))
+        assertThat(combined.sumOf { it.size }, equalTo(6 * 2 * 1))
+        assertThat(listOf(range2).add(range1).sumOf { it.size }, equalTo(12))
     }
 
     @Test
@@ -244,9 +244,97 @@ internal class Coordinate3dRangeTest {
         assertThat(combined2.sumOf { it.size }, equalTo(27))
     }
 
+    @Nested
+    inner class DetractingRanges {
+
+        @Test
+        internal fun `if a cuboid is contained entirely by the cuboid that is detracted from it, the result is an empty list`() {
+            val cuboid1 = Cuboid(
+                1..5,
+                1..5,
+                1..5
+            )
+            val cuboidToDetract = Cuboid(
+                0..6,
+                0..6,
+                0..6
+            )
+            assertThat(listOf(cuboid1).minus(cuboidToDetract), hasSize(equalTo(0)))
+        }
+
+        @ParameterizedTest
+        @CsvSource(
+            value = [
+                "2..3, 0..1, 0..1, 0..1, 0..1, 0..1",
+                "0..1, 0..1, 0..1, 0..1, 2..3, 0..1",
+                "0..1, 0..1, -2..-1, 0..1, 0..1, 0..1",
+            ]
+        )
+        internal fun `if the cuboid to detract does not overlap the original cuboid at all, the original cuboid is returned`(
+            @AggregateWith(Coordinate3dRangePairAggregator::class) ranges: Pair<Cuboid, Cuboid>
+        ) {
+            val (cuboid1, cuboidToDetract) = ranges
+            val result = listOf(cuboid1).minus(cuboidToDetract)
+            assertThat(result, hasSize(equalTo(1)))
+            assertThat(result.first(), equalTo(cuboid1))
+        }
+
+        @Test
+        internal fun `if the cuboid to detract overlaps, the result is cuboids, before and after it in each direction`() {
+            val cuboid1 = Cuboid(
+                0..6,
+                0..6,
+                0..6
+            )
+            val cuboidToDetract = Cuboid(
+                1..5,
+                1..5,
+                1..5
+            )
+            val result = listOf(cuboid1).minus(cuboidToDetract)
+            assertThat(result, hasSize(equalTo(6)))
+            val expectedCuboidAbove = Cuboid(
+                0..6,
+                0..0,
+                0..6
+            )
+            assertThat(result.filter { it == expectedCuboidAbove}, hasSize(equalTo(1)))
+            val expectedCuboidBelow = Cuboid(
+                0..6,
+                6..6,
+                0..6
+            )
+            assertThat(result.filter { it == expectedCuboidBelow}, hasSize(equalTo(1)))
+            val expectedCuboidBehind = Cuboid(
+                0..6,
+                1..5,
+                0..0
+            )
+            assertThat(result.filter { it == expectedCuboidBehind}, hasSize(equalTo(1)))
+            val expectedCuboidInFront = Cuboid(
+                0..6,
+                1..5,
+                6..6
+            )
+            assertThat(result.filter { it == expectedCuboidInFront}, hasSize(equalTo(1)))
+            val expectedCuboidToTheLeft = Cuboid(
+                0..0,
+                1..5,
+                1..5
+            )
+            assertThat(result.filter { it == expectedCuboidToTheLeft}, hasSize(equalTo(1)))
+            val expectedCuboidToTheRight = Cuboid(
+                6..6,
+                1..5,
+                1..5
+            )
+            assertThat(result.filter { it == expectedCuboidToTheRight}, hasSize(equalTo(1)))
+        }
+    }
+
 }
 
-private fun drawIn2D(combined2: List<Coordinate3dRange>) =
+private fun drawIn2D(combined2: List<Cuboid>) =
     draw(
         runReboot(combined2.map {
             RebootStep(
@@ -261,13 +349,13 @@ class Coordinate3dRangePairAggregator : ArgumentsAggregator {
     override fun aggregateArguments(
         accessor: ArgumentsAccessor?,
         context: ParameterContext?
-    ): Pair<Coordinate3dRange, Coordinate3dRange> {
-        val smallerRange = Coordinate3dRange(
+    ): Pair<Cuboid, Cuboid> {
+        val smallerRange = Cuboid(
             toIntRange(accessor?.getString(0)),
             toIntRange(accessor?.getString(1)),
             toIntRange(accessor?.getString(2))
         )
-        val largerRange = Coordinate3dRange(
+        val largerRange = Cuboid(
             toIntRange(accessor?.getString(3)),
             toIntRange(accessor?.getString(4)),
             toIntRange(accessor?.getString(5))
@@ -279,14 +367,14 @@ class Coordinate3dRangePairAggregator : ArgumentsAggregator {
         raw?.toRange() ?: error("Not enough arguments for Pair of Coordinate ranges")
 }
 
-private fun Set<Coordinate3d>.toCoordinate3dRange(): Coordinate3dRange {
+private fun Set<Coordinate3d>.toCoordinate3dRange(): Cuboid {
     val xes = this.map { it.x }
     val xRange = xes.minOrNull()!!..xes.maxOrNull()!!
     val ys = this.map { it.y }
     val yRange = ys.minOrNull()!!..ys.maxOrNull()!!
     val zs = this.map { it.z }
     val zRange = zs.minOrNull()!!..zs.maxOrNull()!!
-    return Coordinate3dRange(xRange, yRange, zRange)
+    return Cuboid(xRange, yRange, zRange)
 }
 
 private fun Set<Coordinate>.expandInThirdDimension(zRange: IntRange): Set<Coordinate3d> {

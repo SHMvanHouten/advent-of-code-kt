@@ -36,7 +36,7 @@ private fun to3dCoordinates(xRange: IntRange, yRange: IntRange, zRange: IntRange
         }
     }
 
-data class RebootStep(val toggle: Toggle, val range: Coordinate3dRange)
+data class RebootStep(val toggle: Toggle, val range: Cuboid)
 
 enum class Toggle {
     ON,

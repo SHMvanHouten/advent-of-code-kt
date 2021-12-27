@@ -9,7 +9,7 @@ fun parse(input: String): List<RebootStep> {
 private fun String.toRebootStep(): RebootStep {
     val (toggle, ranges) = this.split(' ')
     val (xRange, yRange, zRange) = ranges.split(',').map { it.toRange() }
-    return RebootStep(Toggle.valueOf(toggle.uppercase()), Coordinate3dRange(xRange, yRange, zRange))
+    return RebootStep(Toggle.valueOf(toggle.uppercase()), Cuboid(xRange, yRange, zRange))
 }
 
 fun String.toRange(): IntRange {
