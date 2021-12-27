@@ -22,7 +22,7 @@ internal class Coordinate3dRangeTest {
         val range = Cuboid(0..1, 0..1, 0..1)
         assertThat(
             listOf(range).add(range),
-            equalTo(listOf(range))
+            equalTo(setOf(range))
         )
     }
 
@@ -32,7 +32,7 @@ internal class Coordinate3dRangeTest {
         val largerRange = Cuboid(-1..1, 0..1, 0..1)
         assertThat(
             listOf(smallerRange).add(largerRange),
-            equalTo(listOf(largerRange))
+            equalTo(setOf(largerRange))
         )
     }
 
@@ -50,12 +50,12 @@ internal class Coordinate3dRangeTest {
     ) {
         val (smallerRange: Cuboid, largerRange: Cuboid) = ranges
         assertThat(
-            listOf(largerRange).add(smallerRange),
-            equalTo(listOf(largerRange))
+            setOf(largerRange).add(smallerRange),
+            equalTo(setOf(largerRange))
         )
         assertThat(
-            listOf(smallerRange).add(largerRange),
-            equalTo(listOf(largerRange))
+            setOf(smallerRange).add(largerRange),
+            equalTo(setOf(largerRange))
         )
     }
 
@@ -73,7 +73,7 @@ internal class Coordinate3dRangeTest {
         val (range1: Cuboid, range2: Cuboid) = ranges
         assertThat(
             listOf(range1).add(range2),
-            equalTo(listOf(range1, range2))
+            equalTo(setOf(range1, range2))
         )
     }
 
@@ -116,10 +116,9 @@ internal class Coordinate3dRangeTest {
 
         val combined = listOf(range1).add(range2)
         assertThat(combined, hasSize(equalTo(2)))
-        assertThat(combined.first().size + combined[1].size, equalTo(19))
         val combined2 = listOf(range2).add(range1)
-        assertThat(combined2, hasSize(equalTo(2)))
-        assertThat(combined2.first().size + combined2[1].size, equalTo(19))
+        assertThat(combined2.sumOf { it.size }, equalTo(19))
+        assertThat(drawIn2D(combined), equalTo(drawIn2D(combined2)))
     }
 
     @Test
@@ -138,11 +137,10 @@ internal class Coordinate3dRangeTest {
             """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
 
         val combined2 = listOf(range1).add(range2)
-        assertThat(combined2, hasSize(equalTo(2)))
-        assertThat(combined2.first().size + combined2[1].size, equalTo(17))
+        assertThat(combined2.sumOf { it.size }, equalTo(17))
         val combined = listOf(range2).add(range1)
-        assertThat(combined, hasSize(equalTo(2)))
-        assertThat(combined.first().size + combined[1].size, equalTo(17))
+        assertThat(combined.sumOf { it.size }, equalTo(17))
+        assertThat(drawIn2D(combined), equalTo(drawIn2D(combined2)))
     }
 
 
@@ -162,11 +160,10 @@ internal class Coordinate3dRangeTest {
             """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
 
         val combined2 = listOf(range1).add(range2)
-        assertThat(combined2, hasSize(equalTo(2)))
-        assertThat(combined2.first().size + combined2[1].size, equalTo(17))
+        assertThat(combined2.sumOf { it.size }, equalTo(17))
         val combined = listOf(range2).add(range1)
-        assertThat(combined, hasSize(equalTo(2)))
-        assertThat(combined.first().size + combined[1].size, equalTo(17))
+        assertThat(combined.sumOf { it.size }, equalTo(17))
+        assertThat(drawIn2D(combined), equalTo(drawIn2D(combined2)))
     }
 
     @Test
@@ -185,11 +182,12 @@ internal class Coordinate3dRangeTest {
             """.trimIndent().toCoordinateMap('#').expandInThirdDimension(0..0).toCoordinate3dRange()
 
         val combined = listOf(range1).add(range2)
-        assertThat(combined, hasSize(equalTo(2)))
-        assertThat(combined.first().size + combined[1].size, equalTo(24))
+        assertThat(combined.sumOf { it.size }, equalTo(24))
         val combined2 = listOf(range2).add(range1)
-        assertThat(combined2, hasSize(equalTo(2)))
-        assertThat(combined2.first().size + combined2[1].size, equalTo(24))
+        assertThat(combined2.sumOf { it.size }, equalTo(24))
+        val drawn = drawIn2D(combined)
+        println(drawn)
+        assertThat(drawn, equalTo(drawIn2D(combined2)))
     }
 
     @Test
@@ -209,13 +207,13 @@ internal class Coordinate3dRangeTest {
 
         val combined = listOf(range1).add(range2)
         println(drawIn2D(combined))
-        assertThat(combined, hasSize(equalTo(3)))
         assertThat(combined.sumOf { it.size }, equalTo(28))
 
         val combined2 = listOf(range2).add(range1)
         println(drawIn2D(combined2))
-        assertThat(combined2, hasSize(equalTo(3)))
         assertThat(combined2.sumOf { it.size }, equalTo(28))
+
+        assertThat(drawIn2D(combined), equalTo(drawIn2D(combined2)))
     }
 
     @Test
@@ -236,12 +234,12 @@ internal class Coordinate3dRangeTest {
 
         val combined = listOf(range1).add(range2)
         println(drawIn2D(combined))
-        assertThat(combined, hasSize(equalTo(3)))
         assertThat(combined.sumOf { it.size }, equalTo(27))
         val combined2 = listOf(range2).add(range1)
         println(drawIn2D(combined2))
-        assertThat(combined2, hasSize(equalTo(3)))
         assertThat(combined2.sumOf { it.size }, equalTo(27))
+
+        assertThat(drawIn2D(combined), equalTo(drawIn2D(combined2)))
     }
 
     @Nested
@@ -346,9 +344,11 @@ internal class Coordinate3dRangeTest {
                 1..5
             )
             val result = listOf(cuboid1).minus(cuboidToDetract)
-            assertThat(result.sumOf { it.size }, equalTo(
-                1 * 3 * 3 /* top sliver */ + 1 * 2 * 3 /* side sliver with top cut off */
-            ))
+            assertThat(
+                result.sumOf { it.size }, equalTo(
+                    1 * 3 * 3 /* top sliver */ + 1 * 2 * 3 /* side sliver with top cut off */
+                )
+            )
         }
 
         @Test
@@ -371,16 +371,44 @@ internal class Coordinate3dRangeTest {
                 1..5
             )
             val result = cuboids.minus(cuboidToDetract)
-            assertThat(result.sumOf { it.size }, equalTo(
-                (cuboids.first().size - cuboidToDetract.copy(xRange = 1..6).size) +
-                1 * 3 * 3 /* top sliver */ + 1 * 2 * 3 /* side sliver with top cut off */
-            ))
+            assertThat(
+                result.sumOf { it.size }, equalTo(
+                    (cuboids.first().size - cuboidToDetract.copy(xRange = 1..6).size) +
+                            1 * 3 * 3 /* top sliver */ + 1 * 2 * 3 /* side sliver with top cut off */
+                )
+            )
+        }
+
+        @Test
+        internal fun `adding to multiple ranges`() {
+            val cuboids = listOf(
+                Cuboid(
+                    0..2,
+                    0..2,
+                    0..2
+                ),
+                Cuboid(
+                    4..6,
+                    4..6,
+                    4..6
+                )
+            )
+            val cuboidToAdd = Cuboid(
+                2..4,
+                2..4,
+                2..4
+            )
+            val result = cuboids.add(cuboidToAdd)
+            assertThat(
+                result.sumOf { it.size },
+                equalTo(cuboids.sumOf { it.size } + cuboidToAdd.size - 2 /* overlapping cubes*/)
+            )
         }
     }
 
 }
 
-private fun drawIn2D(combined2: List<Cuboid>) =
+private fun drawIn2D(combined2: Set<Cuboid>) =
     draw(
         runReboot(combined2.map {
             RebootStep(

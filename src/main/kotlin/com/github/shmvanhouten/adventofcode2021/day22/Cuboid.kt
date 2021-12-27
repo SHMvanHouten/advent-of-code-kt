@@ -1,26 +1,9 @@
 package com.github.shmvanhouten.adventofcode2021.day22
 
 import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 
 data class Cuboid(val xRange: IntRange, val yRange: IntRange, val zRange: IntRange) {
     val size: Long by lazy { xRange.length.toLong() * yRange.length * zRange.length }
-
-    fun containsEntirely(other: Cuboid) = other.xRange.isContainedBy(xRange) &&
-            other.yRange.isContainedBy(yRange) &&
-            other.zRange.isContainedBy(zRange)
-
-    fun sharesCoordinatesWith(other: Cuboid): Boolean {
-        return overlap(xRange, other.xRange)
-                && overlap(yRange, other.yRange)
-                && overlap(zRange, other.zRange)
-    }
-
-    private fun overlap(oneRange: IntRange, otherRange: IntRange): Boolean {
-        return oneRange.first in otherRange || oneRange.last in otherRange
-                || otherRange.first in oneRange || otherRange.last in oneRange
-    }
 
     fun minus(cuboidToDetract: Cuboid): List<Cuboid> {
         if (cuboidToDetract.containsEntirely(this)) return emptyList() // not necessary but faster
@@ -88,29 +71,38 @@ data class Cuboid(val xRange: IntRange, val yRange: IntRange, val zRange: IntRan
         return this.yRange.last > other.yRange.last
     }
 
+    fun containsEntirely(other: Cuboid) = other.xRange.isContainedBy(xRange) &&
+            other.yRange.isContainedBy(yRange) &&
+            other.zRange.isContainedBy(zRange)
+
+    fun sharesCoordinatesWith(other: Cuboid): Boolean {
+        return overlap(xRange, other.xRange)
+                && overlap(yRange, other.yRange)
+                && overlap(zRange, other.zRange)
+    }
+
+    private fun overlap(oneRange: IntRange, otherRange: IntRange): Boolean {
+        return oneRange.first in otherRange || oneRange.last in otherRange
+                || otherRange.first in oneRange || otherRange.last in oneRange
+    }
+
 }
 
-fun List<Cuboid>.minus(cubeToDetract: Cuboid): Set<Cuboid> {
+fun Collection<Cuboid>.minus(cubeToDetract: Cuboid): Set<Cuboid> {
     return this.flatMap { it.minus(cubeToDetract) }.toSet()
 }
 
+fun Collection<Cuboid>.add(cuboidToAdd: Cuboid): Set<Cuboid> {
+    if(this.any { it.containsEntirely(cuboidToAdd) }) return this.toSet()
+    if(this.none { it.sharesCoordinatesWith(cuboidToAdd) }) return this.toSet() + cuboidToAdd
 
-fun List<Cuboid>.add(rangeToAdd: Cuboid): List<Cuboid> {
-    val first = this.first()
-    return if (rangeToAdd.containsEntirely(first)) listOf(rangeToAdd) // not necessary but faster
-    else if (first.containsEntirely(rangeToAdd)) listOf(first) // not necessary but faster
-    else if (first.sharesCoordinatesWith(rangeToAdd)) combineRanges(this.first(), rangeToAdd)
-    else this + rangeToAdd
-}
+    val cuboidsThatAreContainedByNewCuboid = this.filter { cuboidToAdd.containsEntirely(it) }.toSet()
+    if(cuboidsThatAreContainedByNewCuboid.isNotEmpty()) return (this - cuboidsThatAreContainedByNewCuboid).add(cuboidToAdd)
 
-fun combineRanges(one: Cuboid, other: Cuboid): List<Cuboid> {
-
-    return if(one.size >= other.size) other.minus(one) + one
-    else one.minus(other) + other
-}
-
-operator fun IntRange.plus(other: IntRange): IntRange {
-    return min(this.first, other.first)..max(this.last, other.last)
+    val remainingCuboids = this.fold(setOf(cuboidToAdd)) { remaining, cuboid ->
+        remaining.flatMap { it.minus(cuboid) }.toSet()
+    }
+    return remainingCuboids + this
 }
 
 private val IntRange.length: Int
