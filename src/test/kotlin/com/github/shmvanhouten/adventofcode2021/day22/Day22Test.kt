@@ -19,18 +19,24 @@ off x=9..11,y=9..11,z=9..11
 on x=10..10,y=10..10,z=10..10"""
             val rebootSteps = parse(input)
             assertThat(runReboot(rebootSteps).size, equalTo(39))
+            assertThat(runRebootWithCuboids(rebootSteps).sumOf{it.size}, equalTo(39))
         }
 
         @Test
         internal fun `example 2 filter out the high ranges`() {
             val rebootSteps = parse(example2)
             assertThat(runReboot(rebootSteps).size, equalTo(590784))
+            assertThat(runRebootWithCuboids(rebootSteps.filter { isInBoundsOf50(it) }).sumOf{it.size}, equalTo(590784))
         }
 
         @Test
         internal fun `part 1`() {
             val rebootSteps = parse(input)
             assertThat(runReboot(rebootSteps).size, equalTo(607573))
+            assertThat(
+                runRebootWithCuboids(rebootSteps.filter { isInBoundsOf50(it) }).sumOf{it.size},
+                equalTo(607573)
+            )
         }
     }
 
@@ -40,12 +46,19 @@ on x=10..10,y=10..10,z=10..10"""
         @Test
         internal fun `example 1`() {
             val rebootSteps = parse(example3)
-            assertThat(countAmountOfCubesThatWouldBeOn(rebootSteps), equalTo(1))
+            assertThat(
+                runRebootWithCuboids(rebootSteps).sumOf { it.size },
+                equalTo(2758514936282235)
+            )
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1, equalTo(1))
+            val rebootSteps = parse(input)
+            assertThat(
+                runRebootWithCuboids(rebootSteps).sumOf { it.size },
+                equalTo(1267133912086024)
+            )
         }
     }
 

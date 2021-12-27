@@ -2,15 +2,20 @@ package com.github.shmvanhouten.adventofcode2021.day22
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3d
 
-fun countAmountOfCubesThatWouldBeOn(rebootSteps: List<RebootStep>): Long {
-    return 1
+fun runRebootWithCuboids(rebootSteps: List<RebootStep>): Set<Cuboid> {
+    return rebootSteps.fold(emptySet<Cuboid>()) { cuboids, nextStep ->
+        when(nextStep.toggle) {
+            Toggle.ON -> cuboids.add(nextStep.cuboid)
+            Toggle.OFF -> cuboids.minus(nextStep.cuboid)
+        }
+    }
 }
 
 fun runReboot(rebootSteps: List<RebootStep>): Set<Coordinate3d> {
     return rebootSteps
         .filter { isInBoundsOf50(it) }
         .fold(setOf<Coordinate3d>()) { coordinates, rebootstep ->
-            val newCoords = to3dCoordinates(rebootstep.range.xRange, rebootstep.range.yRange, rebootstep.range.zRange)
+            val newCoords = to3dCoordinates(rebootstep.cuboid.xRange, rebootstep.cuboid.yRange, rebootstep.cuboid.zRange)
             when (rebootstep.toggle) {
                 Toggle.ON -> coordinates + newCoords
                 Toggle.OFF -> coordinates - newCoords.toSet()
@@ -19,7 +24,7 @@ fun runReboot(rebootSteps: List<RebootStep>): Set<Coordinate3d> {
 }
 
 fun isInBoundsOf50(step: RebootStep): Boolean {
-    return listOf(step.range.xRange, step.range.yRange, step.range.zRange)
+    return listOf(step.cuboid.xRange, step.cuboid.yRange, step.cuboid.zRange)
         .all { it.isInBounds(-50, 50) }
 }
 
@@ -36,7 +41,7 @@ private fun to3dCoordinates(xRange: IntRange, yRange: IntRange, zRange: IntRange
         }
     }
 
-data class RebootStep(val toggle: Toggle, val range: Cuboid)
+data class RebootStep(val toggle: Toggle, val cuboid: Cuboid)
 
 enum class Toggle {
     ON,
