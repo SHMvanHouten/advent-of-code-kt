@@ -25,14 +25,14 @@ on x=10..10,y=10..10,z=10..10"""
         @Test
         internal fun `example 2 filter out the high ranges`() {
             val rebootSteps = parse(example2)
-            assertThat(runReboot(rebootSteps).size, equalTo(590784))
+//            assertThat(runReboot(rebootSteps).size, equalTo(590784))
             assertThat(runRebootWithCuboids(rebootSteps.filter { isInBoundsOf50(it) }).sumOf{it.size}, equalTo(590784))
         }
 
         @Test
         internal fun `part 1`() {
             val rebootSteps = parse(input)
-            assertThat(runReboot(rebootSteps).size, equalTo(607573))
+//            assertThat(runReboot(rebootSteps).size, equalTo(607573))
             assertThat(
                 runRebootWithCuboids(rebootSteps.filter { isInBoundsOf50(it) }).sumOf{it.size},
                 equalTo(607573)

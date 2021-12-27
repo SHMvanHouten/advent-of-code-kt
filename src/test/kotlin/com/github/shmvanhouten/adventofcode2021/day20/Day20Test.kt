@@ -26,7 +26,7 @@ class Day20Test {
                 """.trimMargin().toCoordinateMap('#')
             val (enhancementString, image) = parse(example)
             val (enhancedImage, _) = enhanceImage(image, enhancementString)
-            assertThat(draw(enhancedImage), equalTo(draw(expected)))
+            assertThat(draw(enhancedImage, '#'), equalTo(draw(expected, '#')))
             assertThat(enhanceImage(image, enhancementString, 2).size, equalTo(35))
         }
 
@@ -45,7 +45,7 @@ class Day20Test {
                 """.trimIndent().toCoordinateMap('#')
             val (enhancementString, image) = parse(example)
             val (enhancedImage, _) = enhanceImage(image.copy(surroundingPixelsAreLit = true), enhancementString)
-            assertThat(draw(enhancedImage), equalTo(draw(expected)))
+            assertThat(draw(enhancedImage, '#'), equalTo(draw(expected, '#')))
         }
 
         @Test

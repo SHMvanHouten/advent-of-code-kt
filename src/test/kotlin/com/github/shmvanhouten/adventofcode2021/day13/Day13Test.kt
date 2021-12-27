@@ -72,7 +72,7 @@ class Day13Test {
             val folds = instructions.runningFold(coordinates) { coords, instruction ->
                 fold(coords, instruction)
             }
-//            folds.forEach { println(draw(it)) }
+//            folds.forEach { println(draw(it, '#')) }
             println(draw(folds.last()))
             //"PZEHRAER"
         }
