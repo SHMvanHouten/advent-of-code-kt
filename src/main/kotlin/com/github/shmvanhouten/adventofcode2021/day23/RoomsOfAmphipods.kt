@@ -16,7 +16,6 @@ fun shortestPathToBurrowHappiness(input: Burrow): Long {
 
         if((!visitedStates.contains(burrowState) || energyTaken < visitedStates[burrowState]!!)) {
             visitedStates += burrowState to energyTaken
-
             burrowState
                 .doPossibleAmphipodMovements()
                 .map { Pair(it.first, it.second + energyTaken) }
@@ -50,13 +49,14 @@ data class Burrow(
             .flatMap { amphipod ->
                 accessibleLocationsFrom(amphipod).map { amphipod to it }
             }.filter { (oldAmphipod, newLocation) ->
-                oldAmphipod.movesDone < 1 || isAtHome(oldAmphipod, newLocation)
+                oldAmphipod.movesDone < 1 || (isAtHome(oldAmphipod, newLocation) && newLocation.y > oldAmphipod.location.y &&
+                        (newLocation.y == roomDepth ||
+                                hasCoordinateOfSameTypeBelowDestinationInRoom(oldAmphipod, newLocation)))
             }
         val finalLocation = possibleMoves.filter { isAtHome(it.first, it.second) }.maxByOrNull { it.second.y }
         if(finalLocation != null &&
             (finalLocation.second.y == roomDepth ||
-                    hasCoordinateOfSameTypeBelowDestinationInRoom(finalLocation))
-        ) {
+                    hasCoordinateOfSameTypeBelowDestinationInRoom(finalLocation.first, finalLocation.second))) {
             val (oldAmphipod, newLocation) = finalLocation
             return listOf(
                 Burrow((amphipods - oldAmphipod) + oldAmphipod.copy(location = newLocation, movesDone = oldAmphipod.movesDone + 1)) to
@@ -64,16 +64,15 @@ data class Burrow(
             )
         }
         return possibleMoves
-            .map { (oldAmphipod, newLocation) ->
+            .map { (oldAmphipod,  newLocation) ->
                 Burrow((amphipods - oldAmphipod) + oldAmphipod.copy(location = newLocation, movesDone = oldAmphipod.movesDone + 1)) to
                         calculateEnergy(oldAmphipod, newLocation)
             }
     }
 
-    private fun hasCoordinateOfSameTypeBelowDestinationInRoom(finalLocation: Pair<Amphipod, Coordinate>): Boolean {
-        val (amphipod, location) = finalLocation
-
-        return (amphipodsByCoordinate[location.copy(y = location.y + 1)]!!.type.equals(amphipod.type))
+    private fun hasCoordinateOfSameTypeBelowDestinationInRoom(amphipod: Amphipod, location: Coordinate): Boolean {
+        return amphipodsByCoordinate[location.copy(y = location.y + 1)]?.type?.equals(amphipod.type)?: false
+                && (amphipodsByCoordinate[location.copy(y = location.y + 2)]?.type?.equals(amphipod.type)?:true)
     }
 
     fun isInDesiredState(): Boolean {
