@@ -1,12 +1,12 @@
 package com.github.shmvanhouten.adventofcode.utility.coordinate
 
-fun draw(coordinates: Collection<Coordinate>): String {
+fun draw(coordinates: Collection<Coordinate>, c: Char = '█'): String {
     val (minY, maxY) = coordinates.map { it.y }.extremes() ?: error("empty collection $coordinates")
     val (minX, maxX) = coordinates.map { it.x }.extremes() ?: error("empty collection $coordinates")
     return (minY..maxY).joinToString("\n") { y ->
         (minX..maxX).map { x ->
             if (coordinates.contains(Coordinate(x, y))) {
-                '█'
+                c
             } else {
                 ' '
             }

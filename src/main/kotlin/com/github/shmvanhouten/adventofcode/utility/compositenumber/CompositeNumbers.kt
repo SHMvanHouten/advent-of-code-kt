@@ -14,9 +14,6 @@ fun primeFactors(number: Long): List<Long> {
         }
         divisor++
     }
-    if (remainder > 1) {
-        factors.add(remainder)
-    }
     return factors
 }
 
