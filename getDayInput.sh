@@ -2,6 +2,8 @@
 
 cookie=$(cat .session.txt)
 
+year=$(date +%Y)
+
 if [[ -z "$1" ]]
 then
 DD=$(date +%d)
@@ -11,12 +13,12 @@ fi
 echo "fetching input for day $DD"
 DAY=$((10#$DD))
 
-mkdir src/main/kotlin/com/github/shmvanhouten/adventofcode2021/day${DD}
-mkdir src/test/kotlin/com/github/shmvanhouten/adventofcode2021/day${DD}
+mkdir src/main/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
+mkdir src/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
 
-curl --cookie "session=$cookie;" https://adventofcode.com/2021/day/${DAY}/input -o src/main/resources/input-day${DD}.txt -s
+curl --cookie "session=$cookie;" https://adventofcode.com/${year}/day/${DAY}/input -o src/main/resources/${year}/input-day${DD}.txt -s
 
-echo "package com.github.shmvanhouten.adventofcode2021.day${DD}
+echo "package com.github.shmvanhouten.adventofcode${year}.day${DD}
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.natpryce.hamkrest.assertion.assertThat
@@ -54,8 +56,8 @@ class Day${DD}Test {
         }
     }
 
-    private val input by lazy { readFile(\"/input-day${DD}.txt\")}
+    private val input by lazy { readFile(\"/${year}/input-day${DD}.txt\")}
 
-}" > ./src/test/kotlin/com/github/shmvanhouten/adventofcode2021/day${DD}/Day${DD}Test.kt
+}" > ./src/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}/Day${DD}Test.kt
 
-open https://adventofcode.com/2021/day/${DAY}
+open https://adventofcode.com/${year}/day/${DAY}
