@@ -16,7 +16,7 @@ DAY=$((10#$DD))
 mkdir src/main/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
 mkdir src/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
 
-curl --cookie "session=$cookie;" https://adventofcode.com/${year}/day/${DAY}/input -o src/main/resources/${year}/input-day${DD}.txt -s
+curl --user-agent "https://github.com/SHMvanHouten/adventOfCode2021" --cookie "session=$cookie;" https://adventofcode.com/${year}/day/${DAY}/input -o src/main/resources/${year}/input-day${DD}.txt -s
 
 echo "package com.github.shmvanhouten.adventofcode${year}.day${DD}
 
