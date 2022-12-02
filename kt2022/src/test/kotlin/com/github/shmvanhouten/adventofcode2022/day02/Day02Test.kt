@@ -109,6 +109,6 @@ class Day02Test {
         }
     }
 
-    private val input by lazy { readFile("/2022/input-day02.txt")}
+    private val input by lazy { readFile("/input-day02.txt")}
 
 }

@@ -45,6 +45,7 @@ class Day23Test {
     inner class Part2 {
 
         @Test
+        @Disabled("slow")
         internal fun example() {
             val example = """#############
 #...........#
@@ -63,6 +64,7 @@ class Day23Test {
         }
 
         @Test
+        @Disabled("slow")
         internal fun `part 2`() {
             val input = """#############
 #...........#

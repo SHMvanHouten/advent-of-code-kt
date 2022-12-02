@@ -13,10 +13,12 @@ fi
 echo "fetching input for day $DD"
 DAY=$((10#$DD))
 
-mkdir src/main/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
-mkdir src/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
+source_location=kt${year}/src
 
-curl --user-agent "https://github.com/SHMvanHouten/adventOfCode2021" --cookie "session=$cookie;" https://adventofcode.com/${year}/day/${DAY}/input -o src/main/resources/${year}/input-day${DD}.txt -s
+mkdir ${source_location}/main/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
+mkdir ${source_location}/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
+
+curl --user-agent "https://github.com/SHMvanHouten/advent-of-code-kt/blob/master/getDayInput.sh" --cookie "session=$cookie;" https://adventofcode.com/${year}/day/${DAY}/input -o ${source_location}/main/resources/input-day${DD}.txt -s
 
 echo "package com.github.shmvanhouten.adventofcode${year}.day${DD}
 
@@ -58,6 +60,6 @@ class Day${DD}Test {
 
     private val input by lazy { readFile(\"/${year}/input-day${DD}.txt\")}
 
-}" > ./src/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}/Day${DD}Test.kt
+}" > ./${source_location}/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}/Day${DD}Test.kt
 
 open https://adventofcode.com/${year}/day/${DAY}

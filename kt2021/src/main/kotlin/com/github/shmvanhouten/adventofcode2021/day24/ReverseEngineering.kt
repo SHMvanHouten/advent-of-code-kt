@@ -19,7 +19,7 @@ fun findValidNumbers(index: Int, desiredResult: Long, numberSoFar: String): List
                 ?.let {
                     val (nextDigit, nextDesiredResult) = it
                     findValidNumbers(index - 1, nextDesiredResult!!, nextDigit.toString() + numberSoFar)
-                } ?: null // no number divisible by 26 found for this result
+                } // no number divisible by 26 found for this result
         }
         B -> {
             return viableDigits.map { w -> w to bReverseFunction(w, r, s, desiredResult) }
