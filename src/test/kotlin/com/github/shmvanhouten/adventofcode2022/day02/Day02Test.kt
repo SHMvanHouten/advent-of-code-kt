@@ -16,19 +16,19 @@ class Day02Test {
         @Test
         internal fun `given Opponent chooses ROCK and I choose SCISSORS I get 3 + 0 = 3 points`() {
             val input = "A Z"
-            assertThat(RockPaperScissors(input).score(), equalTo(3))
+            assertThat(RockPaperScissors(input).scorep1(), equalTo(3))
         }
 
         @Test
         internal fun `given Opponent chooses ROCK and I choose ROCK I get 1 + 3 = 4 points`() {
             val input = "A X"
-            assertThat(RockPaperScissors(input).score(), equalTo(4))
+            assertThat(RockPaperScissors(input).scorep1(), equalTo(4))
         }
 
         @Test
         internal fun `given Opponent chooses ROCK and I choose PAPER I get 2 + 6 = 8 points`() {
             val input = "A Y"
-            assertThat(RockPaperScissors(input).score(), equalTo(8))
+            assertThat(RockPaperScissors(input).scorep1(), equalTo(8))
         }
 
         @ParameterizedTest
@@ -46,7 +46,7 @@ class Day02Test {
         ])
         internal fun all_the_scores(input: String, expectedResult: Long) {
             val rps = RockPaperScissors(input)
-            assertThat(rps.score(), equalTo(expectedResult))
+            assertThat(rps.scorep1(), equalTo(expectedResult))
         }
 
         @Test
@@ -56,12 +56,12 @@ class Day02Test {
                 B X
                 C Z
             """.trimIndent()
-            assertThat(RockPaperScissors(example1).score(), equalTo(15) )
+            assertThat(RockPaperScissors(example1).scorep1(), equalTo(15) )
         }
 
         @Test
         internal fun `part 1`() {
-            assertThat(RockPaperScissors(input).score(), equalTo(11767) )
+            assertThat(RockPaperScissors(input).scorep1(), equalTo(11767) )
         }
 
 
@@ -71,13 +71,18 @@ class Day02Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1, equalTo(1) )
+        internal fun example() {
+            val example1 = """
+                A Y
+                B X
+                C Z
+            """.trimIndent()
+            assertThat(RockPaperScissors(example1).scorep2(), equalTo(12) )
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1, equalTo(1) )
+            assertThat(RockPaperScissors(input).scorep2(), equalTo(11767) )
         }
     }
 
