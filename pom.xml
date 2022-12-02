@@ -20,8 +20,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.compiler.jvmTarget>13</kotlin.compiler.jvmTarget>
-        <kotlin.version>1.6.10-RC</kotlin.version>
+        <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
+        <kotlin.version>1.7.22</kotlin.version>
         <junit-jupiter.version>5.9.0</junit-jupiter.version>
     </properties>
 
@@ -73,7 +73,6 @@
             <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 
