@@ -4,30 +4,25 @@ import com.github.shmvanhouten.adventofcode2022.day02.Result.*
 import com.github.shmvanhouten.adventofcode2022.day02.Shape.*
 
 class RockPaperScissors(private val input: String) {
-    fun scorep1(): Long = input.lines()
-        .map { it.words() }
-        .sumOf { (opponent, me ) ->
-            score(
-                opponent.toShape(),
-                me.toShape()
-            )
-        }
+    fun scoreWhenBothEntriesAreShapes(): Long =
+        input.lines()
+            .map { it.words() }
+            .map { it[0].toShape() to it[1].toShape() }
+            .sumOf { (opponent, me) ->
+                me.value() + me.versus(opponent).score()
+            }
 
-    fun scorep2(): Long = input.lines()
-        .map { it.words() }
-        .sumOf { (opponent, requiredResult) ->
-            score(opponent.toShape(), requiredResult.toResult())
-        }
+    fun scoreWhenSecondEntryIsTheRequiredResult(): Long =
+        input.lines()
+            .map { it.words() }
+            .map { it[0].toShape() to it[1].toResult() }
+            .sumOf { (opponent, result) ->
+                findShapeNeededToGetResult(opponent, result)
+                    .value()
+                    .plus(result.score())
+            }
 
-    private fun score(opponent: Shape, me: Shape): Long {
-        return me.value() + me.versus(opponent).score()
-    }
-
-    private fun score(elf: Shape, requiredResult: Result): Long {
-        return requiredResult.score() + findRequiredShapeForMe(elf, requiredResult).value()
-    }
-
-    private fun findRequiredShapeForMe(opponentsShape: Shape, requiredResult: Result): Shape {
+    private fun findShapeNeededToGetResult(opponentsShape: Shape, requiredResult: Result): Shape {
         return when (requiredResult) {
             DRAW -> opponentsShape
             WIN -> opponentsShape.superiorShape()
@@ -43,7 +38,7 @@ enum class Result {
     WIN;
 
     fun score(): Long {
-        return when(this) {
+        return when (this) {
             LOSS -> 0
             DRAW -> 3
             WIN -> 6
@@ -59,8 +54,9 @@ private enum class Shape {
     fun isSuperiorTo(other: Shape): Boolean {
         return this.inferiorShape() == other
     }
+
     fun superiorShape(): Shape {
-        return when(this) {
+        return when (this) {
             ROCK -> PAPER
             PAPER -> SCISSORS
             SCISSORS -> ROCK
@@ -68,7 +64,7 @@ private enum class Shape {
     }
 
     fun inferiorShape(): Shape {
-        return when(this) {
+        return when (this) {
             PAPER -> ROCK
             SCISSORS -> PAPER
             ROCK -> SCISSORS
@@ -80,14 +76,14 @@ private enum class Shape {
     }
 
     fun versus(opponent: Shape): Result {
-        return if(opponent == this) DRAW
-        else if(opponent.isSuperiorTo(this)) LOSS
+        return if (opponent == this) DRAW
+        else if (opponent.isSuperiorTo(this)) LOSS
         else WIN
     }
 }
 
 private fun String.toResult(): Result {
-    return when(this) {
+    return when (this) {
         "X" -> LOSS
         "Y" -> DRAW
         "Z" -> WIN
