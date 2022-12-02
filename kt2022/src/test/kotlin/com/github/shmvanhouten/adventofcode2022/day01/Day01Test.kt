@@ -1,8 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day01
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -18,30 +17,30 @@ class Day01Test {
         @ValueSource(longs = [1000, 2000])
         internal fun `given one elf that elf is carrying the most`(carriedAmount: Long) {
             val input = carriedAmount.toString()
-            assertThat(carryingTheMost(input), equalTo(carriedAmount) )
+            assertThat(carryingTheMost(input))
+                .isEqualTo(carriedAmount)
         }
 
-        @ParameterizedTest
-        @CsvSource(
-            delimiter = ',',
-            value = [
-                "'1000\n1000',2000"
-            ]
-        )
-        internal fun `given one elf with multiiple items that elf is carrying the most`(input: String, carriedAmount: Long) {
-            assertThat(carryingTheMost(input), equalTo(carriedAmount) )
+        @Test
+        internal fun `given one elf with multiiple items that elf is carrying the most`() {
+            val input = """
+                |1000
+                |1000
+            """.trimMargin()
+            assertThat(carryingTheMost(input))
+                .isEqualTo(2000)
         }
 
         @Test
         internal fun `pick the elf with the most calories (example 1)`() {
-
-
-            assertThat(carryingTheMost(exampleinput), equalTo(24000))
+            assertThat(carryingTheMost(exampleinput))
+                .isEqualTo(24000)
         }
 
         @Test
         internal fun `part 1`() {
-            assertThat(carryingTheMost(input), equalTo(67622) )
+            assertThat(carryingTheMost(input))
+                .isEqualTo(67622)
         }
     }
 
@@ -50,12 +49,14 @@ class Day01Test {
 
         @Test
         internal fun `example 2`() {
-            assertThat(top3ElvesTotal(exampleinput), equalTo(45000L))
+            assertThat(top3ElvesTotal(exampleinput))
+                .isEqualTo(45000L)
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(top3ElvesTotal(input), equalTo(201491) )
+            assertThat(top3ElvesTotal(input))
+                .isEqualTo(201491)
         }
     }
 

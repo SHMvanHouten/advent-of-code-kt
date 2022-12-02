@@ -23,8 +23,7 @@ curl --user-agent "https://github.com/SHMvanHouten/advent-of-code-kt/blob/master
 echo "package com.github.shmvanhouten.adventofcode${year}.day${DD}
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -35,12 +34,12 @@ class Day${DD}Test {
 
         @Test
         internal fun \`fixme\`() {
-            assertThat(1, equalTo(1) )
+            assertThat(1).isEqualTo(1)
         }
 
         @Test
         internal fun \`part 1\`() {
-            assertThat(1, equalTo(1) )
+            assertThat(1).isEqualTo(1)
         }
     }
 
@@ -49,12 +48,12 @@ class Day${DD}Test {
 
         @Test
         internal fun \`fixme\`() {
-            assertThat(1, equalTo(1) )
+            assertThat(1).isEqualTo(1)
         }
 
         @Test
         internal fun \`part 2\`() {
-            assertThat(1, equalTo(1) )
+            assertThat(1).isEqualTo(1)
         }
     }
 

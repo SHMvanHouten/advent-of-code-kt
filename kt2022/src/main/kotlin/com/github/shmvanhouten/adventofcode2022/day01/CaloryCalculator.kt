@@ -7,13 +7,13 @@ fun carryingTheMost(input: String): Long {
         .maxOrNull()?:error("no elf found")
 }
 
-private fun calculateWhatElvesAreCarrying(input: String): List<Long> {
-    return input.blocks()
-        .map { elf -> elf.lines().map { it.toLong() }.sum() }
-}
-
 fun top3ElvesTotal(input: String): Long {
     return calculateWhatElvesAreCarrying(input)
         .sortedDescending()
         .take(3).sum()
+}
+
+private fun calculateWhatElvesAreCarrying(input: String): List<Long> {
+    return input.blocks()
+        .map { elf -> elf.lines().map { it.toLong() }.sum() }
 }
