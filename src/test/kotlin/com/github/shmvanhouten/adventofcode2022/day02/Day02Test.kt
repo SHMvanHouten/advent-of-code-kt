@@ -82,7 +82,7 @@ class Day02Test {
 
         @Test
         internal fun `part 2`() {
-            assertThat(RockPaperScissors(input).scorep2(), equalTo(11767) )
+            assertThat(RockPaperScissors(input).scorep2(), equalTo(13886) )
         }
     }
 
