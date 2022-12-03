@@ -8,7 +8,8 @@ fun prioritySumOf(input: String): Int {
 }
 
 fun prioritySumOfSharedItems(input: String): Int {
-    return input.lines().windowed(3, 3)
+    return input.lines()
+        .chunked(3)
         .sumOf { findSharedItem(it).priority() }
 }
 
@@ -18,12 +19,11 @@ private fun findSharedItem(rucksack: String): Char {
 }
 
 fun findSharedItem(rucksacks: List<String>): Char {
-    val (r1, r2, r3) = rucksacks
-    val sharedBetweenAll3 = r1
-        .filter { r2.contains(it) }.toSet()
-        .filter { r3.contains(it) }
-    assert(sharedBetweenAll3.size == 1)
-    return sharedBetweenAll3.first()
+    val sharedBetweenAll = rucksacks.reduce { s1, s2 ->
+        s1.filter { s2.contains(it) }
+    }.toSet()
+    assert(sharedBetweenAll.size == 1)
+    return sharedBetweenAll.first()
 }
 
 private fun Char.priority(): Int {
