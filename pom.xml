@@ -9,6 +9,7 @@
     <modules>
         <module>kt2022</module>
         <module>kt2021</module>
+        <module>utility</module>
     </modules>
 
     <groupId>com.github.shmvanhouten.adventofcode</groupId>
