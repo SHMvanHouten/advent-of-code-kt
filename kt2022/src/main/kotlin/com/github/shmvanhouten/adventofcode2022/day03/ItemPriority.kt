@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2022.day03
 
+import com.github.shmvanhouten.adventofcode.utility.collectors.only
 import com.github.shmvanhouten.adventofcode.utility.strings.splitIntoTwo
 
 fun prioritySumOf(input: String): Int {
@@ -22,8 +23,7 @@ fun findSharedItem(rucksacks: List<String>): Char {
     val sharedBetweenAll = rucksacks.reduce { s1, s2 ->
         s1.filter { s2.contains(it) }
     }.toSet()
-    assert(sharedBetweenAll.size == 1)
-    return sharedBetweenAll.first()
+    return sharedBetweenAll.only()
 }
 
 private fun Char.priority(): Int {
