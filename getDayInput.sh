@@ -57,7 +57,7 @@ class Day${DD}Test {
         }
     }
 
-    private val input by lazy { readFile(\"/${year}/input-day${DD}.txt\")}
+    private val input by lazy { readFile(\"/input-day${DD}.txt\")}
 
 }" > ./${source_location}/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}/Day${DD}Test.kt
 
