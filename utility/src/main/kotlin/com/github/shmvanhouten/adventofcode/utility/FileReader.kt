@@ -2,18 +2,11 @@ package com.github.shmvanhouten.adventofcode.utility
 
 object FileReader {
 
-    fun readFile(relativePath: String): String{
-        val stringBuilder = StringBuilder()
-
-        val inputStream = this::class.java.getResourceAsStream(relativePath)?: error("could not read file")
-        inputStream.bufferedReader()
+    fun readFile(relativePath: String): String {
+        return (this::class.java.getResourceAsStream(relativePath) ?: error("could not read file: $relativePath"))
+            .bufferedReader()
             .useLines { lines ->
-                lines.forEach {
-                    stringBuilder.append(it)
-                    stringBuilder.append('\n')
-                }
+                lines.joinToString("\n").trim()
             }
-
-        return stringBuilder.toString().trim()
     }
 }
