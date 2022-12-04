@@ -22,7 +22,7 @@ class Day04Test {
             """.trimMargin()
 
             assertThat(
-                input.parse().count { theyOverlap(it.first, it.second) },
+                input.parse().count { oneFullyContainsTheOther(it.first, it.second) },
             )
                 .isEqualTo(2)
         }
@@ -30,9 +30,9 @@ class Day04Test {
         @Test
         internal fun `part 1`() {
             assertThat(
-                input.parse().count { theyOverlap(it.first, it.second) },
+                input.parse().count { oneFullyContainsTheOther(it.first, it.second) },
             )
-                .isEqualTo(2)
+                .isEqualTo(528)
         }
     }
 
@@ -40,13 +40,28 @@ class Day04Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1).isEqualTo(1)
+        internal fun example() {
+            val input = """
+                |2-4,6-8
+                |2-3,4-5
+                |5-7,7-9
+                |2-8,3-7
+                |6-6,4-6
+                |2-6,4-8
+            """.trimMargin()
+
+            assertThat(
+                input.parse().count { theyOverlap(it.first, it.second) },
+            )
+                .isEqualTo(4)
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1).isEqualTo(1)
+            assertThat(
+                input.parse().count { theyOverlap(it.first, it.second) },
+            )
+                .isEqualTo(881)
         }
     }
 

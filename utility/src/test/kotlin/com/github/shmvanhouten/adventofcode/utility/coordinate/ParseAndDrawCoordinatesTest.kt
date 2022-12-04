@@ -23,14 +23,14 @@ internal class DrawCoordinatesTest {
             println(draw(coordinates))
             assertThat(
                 coordinates,
-                equalTo(setOf(Coordinate(0,0), Coordinate(2,0), Coordinate(1,2)))
+                equalTo(setOf(Coordinate(0, 0), Coordinate(2, 0), Coordinate(1, 2)))
             )
         }
     }
-}
 
-private val exampleInput = """2199943210
+    private val exampleInput = """2199943210
 3987894921
 9856789892
 8767896789
 9899965678"""
+}

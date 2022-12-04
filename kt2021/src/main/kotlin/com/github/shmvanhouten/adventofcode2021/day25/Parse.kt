@@ -1,7 +1,7 @@
 package com.github.shmvanhouten.adventofcode2021.day25
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.extremes
+import com.github.shmvanhouten.adventofcode.utility.collectors.extremes
 import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
 
 fun toSeaCucumbers(input: String): FieldOfSeaCucumbers {

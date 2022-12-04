@@ -21,7 +21,7 @@ fun <T>String.toCoordinateMap(mappingFunction: (Char, Coordinate) -> T): Map<Coo
 /**
  * returns a set of coordinates for wherever the char is found in the string
  */
-fun String.toCoordinateMap(targetChar: Char = '#'): Set<Coordinate> {
+fun String.toCoordinateMap(targetChar: Char): Set<Coordinate> {
     return this.lines().mapIndexed { y, line ->
         line.mapIndexedNotNull { x, c ->
             if(c == targetChar) {
