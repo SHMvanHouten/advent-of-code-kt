@@ -1,22 +1,30 @@
 package com.github.shmvanhouten.adventofcode2022.day05
 
-fun Stacks.perform(instructions: List<Instruction>): Stacks {
+fun Stacks.execute(instructions: List<Instruction>): Stacks {
     for (instruction in instructions) {
-        repeat(instruction.amount) {
-            val from = this[instruction.from]!!
-            this[instruction.to]!!.addLast(from.last())
-            from.removeLast()
-        }
+        this.execute(instruction)
     }
     return this
 }
 
-fun Stacks.performv9001(instructions: List<Instruction>): Stacks {
+private fun Stacks.execute(instruction: Instruction) {
+    repeat(instruction.amount) {
+        this[instruction.to]!!.addLast(
+            this[instruction.from]!!.removeLast()
+        )
+    }
+}
+
+fun Stacks.executeV9001(instructions: List<Instruction>): Stacks {
     for (instruction in instructions) {
-        this[instruction.to]!!.addAll(this[instruction.from]!!.takeLast(instruction.amount))
-        repeat(instruction.amount) {this[instruction.from]!!.removeLast()}
+        executeV9001(instruction)
     }
     return this
+}
+
+private fun Stacks.executeV9001(instruction: Instruction) {
+    this[instruction.to]!!.addAll(this[instruction.from]!!.takeLast(instruction.amount))
+    repeat(instruction.amount) { this[instruction.from]!!.removeLast() }
 }
 
 fun Stacks.getTopCrates(): String {

@@ -37,7 +37,7 @@ class Day05Test {
         @Test
         internal fun example() {
             val (stacks, instructions) = parse(example)
-            val result = stacks.perform(instructions)
+            val result = stacks.execute(instructions)
 
             assertThat(result.getTopCrates()).isEqualTo("CMZ")
         }
@@ -45,7 +45,7 @@ class Day05Test {
         @Test
         internal fun `part 1`() {
             val (stacks, instructions) = parse(input)
-            val result = stacks.perform(instructions)
+            val result = stacks.execute(instructions)
 
             assertThat(result.getTopCrates()).isEqualTo("CNSZFDVLJ")
         }
@@ -58,14 +58,14 @@ class Day05Test {
         internal fun example() {
             val (stacks, instructions) = parse(example)
 
-            val result = stacks.performv9001(instructions)
+            val result = stacks.executeV9001(instructions)
             assertThat(result.getTopCrates()).isEqualTo("MCD")
         }
 
         @Test
         internal fun `part 2`() {
             val (stacks, instructions) = parse(input)
-            val result = stacks.performv9001(instructions)
+            val result = stacks.executeV9001(instructions)
 
             assertThat(result.getTopCrates()).isEqualTo("QNDWLMGNS")
         }
