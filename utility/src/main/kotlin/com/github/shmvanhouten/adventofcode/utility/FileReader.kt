@@ -6,7 +6,7 @@ object FileReader {
         return (this::class.java.getResourceAsStream(relativePath) ?: error("could not read file: $relativePath"))
             .bufferedReader()
             .useLines { lines ->
-                lines.joinToString("\n").trim()
+                lines.joinToString("\n").trimEnd()
             }
     }
 }
