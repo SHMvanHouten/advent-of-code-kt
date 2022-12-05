@@ -2,16 +2,12 @@ package com.github.shmvanhouten.adventofcode2022.day05
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.`in`
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class Day05Test {
 
-    @Nested
-    inner class Part1 {
-
-        private val example = """
+    private val example = """
                 |    [D]    
                 |[N] [C]    
                 |[Z] [M] [P]
@@ -22,6 +18,10 @@ class Day05Test {
                 |move 2 from 2 to 1
                 |move 1 from 1 to 2
             """.trimMargin()
+
+
+    @Nested
+    inner class Part1 {
 
         @Test
         internal fun `input is parsed`() {
@@ -55,13 +55,19 @@ class Day05Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1).isEqualTo(1)
+        internal fun example() {
+            val (stacks, instructions) = parse(example)
+
+            val result = stacks.performv9001(instructions)
+            assertThat(result.getTopCrates()).isEqualTo("MCD")
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1).isEqualTo(1)
+            val (stacks, instructions) = parse(input)
+            val result = stacks.performv9001(instructions)
+
+            assertThat(result.getTopCrates()).isEqualTo("QNDWLMGNS")
         }
     }
 

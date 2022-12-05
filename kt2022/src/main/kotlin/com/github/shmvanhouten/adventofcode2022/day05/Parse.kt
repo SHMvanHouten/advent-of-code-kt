@@ -1,8 +1,6 @@
 package com.github.shmvanhouten.adventofcode2022.day05
 
 import com.github.shmvanhouten.adventofcode.utility.blocks
-import java.util.Deque
-import java.util.LinkedList
 
 fun parse(input: String): Pair<Stacks, List<Instruction>> {
     val (rawCrates, rawInstructions) = input.blocks()
