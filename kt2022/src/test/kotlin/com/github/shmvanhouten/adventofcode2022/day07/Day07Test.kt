@@ -8,11 +8,6 @@ import org.junit.jupiter.api.Test
 
 class Day07Test {
 
-    /*
-    - go through line by line and follow the instructions
-    - if line is $, it is an instruction
-     */
-
     @Nested
     inner class Part1 {
 
@@ -129,8 +124,8 @@ class Day07Test {
         internal fun example() {
             val device = createDeviceFromBrowsingData(exampleInput)
 
-            val allDirectories = device.listAllDirectories()
-            assertThat(allDirectories.filter { it.size <= 100000 }.sumOf { it.size })
+            val smallDirectories = device.filterDirectories{ size <= 100000 }
+            assertThat(smallDirectories.sumOf { it.size })
                 .isEqualTo(95437)
         }
 
@@ -138,9 +133,8 @@ class Day07Test {
         internal fun `part 1`() {
             val device = createDeviceFromBrowsingData(input)
 
-
-            val allDirectories = device.listAllDirectories()
-            assertThat(allDirectories.filter { it.size <= 100000 }.sumOf { it.size })
+            val smallDirectories = device.filterDirectories { size <= 100000 }
+            assertThat(smallDirectories.sumOf { it.size })
                 .isEqualTo(1315285)
         }
     }
@@ -152,8 +146,6 @@ class Day07Test {
         internal fun example2() {
             val device = createDeviceFromBrowsingData(exampleInput)
 
-            device.listAllDirectories()
-
             assertThat(device.usedSpace()).isEqualTo(48381165)
             assertThat(device.directoryToDeleteToFreeUpSpaceForUpdate().size)
                 .isEqualTo(24933642)
@@ -163,16 +155,6 @@ class Day07Test {
         internal fun `part 2`() {
             val device = createDeviceFromBrowsingData(input)
 
-            println(input.lines()
-                .flatMap { it.split(' ') }
-                .filter { it.all { it.isDigit() } }
-                .map { it.toLong() }
-                .sum()
-            )
-
-            device.listAllDirectories()
-
-            assertThat(device.usedSpace()).isEqualTo(48748071)
             assertThat(device.directoryToDeleteToFreeUpSpaceForUpdate().size)
                 .isEqualTo(9847279)
 
