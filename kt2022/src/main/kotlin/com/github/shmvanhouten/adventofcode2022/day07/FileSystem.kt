@@ -1,6 +1,8 @@
 package com.github.shmvanhouten.adventofcode2022.day07
 
 private const val ROOT = "/"
+private const val TOTAL_DISK_SPACE = 70000000L
+private const val FREE_DISK_SPACE_REQUIRED = 30000000L
 
 fun createDeviceFromBrowsingData(input: String, device: Device = Device()): Device {
     val lines = input.lines().iterator()
@@ -60,13 +62,22 @@ class Device(
     fun listAllDirectories(): List<Directory> {
         return rootDirectory.listAllSubDirectories()
     }
+
+    fun usedSpace(): Long {
+        return listAllDirectories().flatMap { it.files }.sumOf { it.size }
+    }
+
+    fun directoryToDeleteToFreeUpSpaceForUpdate(): Directory {
+        val amountOfSpaceToDelete = usedSpace() - (TOTAL_DISK_SPACE - FREE_DISK_SPACE_REQUIRED)
+        return listAllDirectories().filter { it.size >= amountOfSpaceToDelete }.minByOrNull { it.size }!!
+    }
 }
 
 data class Directory(
     val name: String,
     val parent: Directory?,
-    val subDirectories: MutableList<Directory> = mutableListOf(),
-    val files: MutableList<File> = mutableListOf()
+    val subDirectories: MutableSet<Directory> = mutableSetOf(),
+    val files: MutableSet<File> = mutableSetOf()
 //    val children: List<>
 ) {
     fun listAllSubDirectories(): List<Directory> {
@@ -75,6 +86,10 @@ data class Directory(
 
     val size: Long by lazy {
         files.sumOf { it.size } + subDirectories.sumOf { it.size }
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
     }
 }
 

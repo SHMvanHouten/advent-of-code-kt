@@ -36,7 +36,7 @@ class Day07Test {
 
             assertThat(device.currentDirectory.files)
                 .hasSize(1)
-            assertThat(device.currentDirectory.files[0].size)
+            assertThat(device.currentDirectory.files.first().size)
                 .isEqualTo(14848514L)
         }
 
@@ -129,7 +129,6 @@ class Day07Test {
         internal fun example() {
             val device = createDeviceFromBrowsingData(exampleInput)
 
-
             val allDirectories = device.listAllDirectories()
             assertThat(allDirectories.filter { it.size <= 100000 }.sumOf { it.size })
                 .isEqualTo(95437)
@@ -151,12 +150,32 @@ class Day07Test {
 
         @Test
         internal fun example2() {
-            assertThat(1).isEqualTo(1)
+            val device = createDeviceFromBrowsingData(exampleInput)
+
+            device.listAllDirectories()
+
+            assertThat(device.usedSpace()).isEqualTo(48381165)
+            assertThat(device.directoryToDeleteToFreeUpSpaceForUpdate().size)
+                .isEqualTo(24933642)
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1).isEqualTo(1)
+            val device = createDeviceFromBrowsingData(input)
+
+            println(input.lines()
+                .flatMap { it.split(' ') }
+                .filter { it.all { it.isDigit() } }
+                .map { it.toLong() }
+                .sum()
+            )
+
+            device.listAllDirectories()
+
+            assertThat(device.usedSpace()).isEqualTo(48748071)
+            assertThat(device.directoryToDeleteToFreeUpSpaceForUpdate().size)
+                .isEqualTo(9847279)
+
         }
     }
 
