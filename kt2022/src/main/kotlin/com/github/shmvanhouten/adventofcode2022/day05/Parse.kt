@@ -30,7 +30,7 @@ private fun toLineOfCratesWithLineNumber(
     else null
 }
 
-private fun <E> List<E>.tail(): List<E> {
+fun <E> List<E>.tail(): List<E> {
     return if(size <= 1) emptyList()
     else subList(1, size)
 }
