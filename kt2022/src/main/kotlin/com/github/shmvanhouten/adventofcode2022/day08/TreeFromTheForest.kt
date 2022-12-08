@@ -7,9 +7,9 @@ fun forEachOrientationPrint(input: String) {
     println("rotatedLeft:")
     println(rotatedLeft(input))
     println("mirrored:")
-    println(mirror(input))
+    println(turnUpsideDown(input))
     println("rotatedRight")
-    println(rotatedLeft(mirror(input)))
+    println(rotatedLeft(turnUpsideDown(input)))
 }
 
 fun treesVisible(input: String): Set<Coordinate> {
@@ -17,11 +17,11 @@ fun treesVisible(input: String): Set<Coordinate> {
     val maxY = input.lines().lastIndex
     return treesVisibleFromThisDirection(input) +
             treesVisibleFromThisDirection(rotatedLeft(input)).rotateCoordinatesRight(maxX, maxY) +
-            treesVisibleFromThisDirection(mirror(input)).mirrorCoordinates(maxX, maxY) +
-            treesVisibleFromThisDirection(rotatedLeft(mirror(input))).rotateCoordinatesLeft(maxX, maxY)
+            treesVisibleFromThisDirection(turnUpsideDown(input)).mirrorCoordinates(maxX, maxY) +
+            treesVisibleFromThisDirection(rotatedLeft(turnUpsideDown(input))).rotateCoordinatesLeft(maxX, maxY)
 }
 
-fun mirror(input: String): String {
+fun turnUpsideDown(input: String): String {
     return input.lines().map { it.reversed() }.reversed().joinToString("\n")
 }
 
@@ -32,7 +32,6 @@ private fun Set<Coordinate>.rotateCoordinatesRight(maxX: Int, maxY: Int): Set<Co
 private fun Set<Coordinate>.mirrorCoordinates(maxX: Int, maxY: Int): Set<Coordinate> {
     return map { Coordinate(maxX - it.x, maxY - it.y) }.toSet()
 }
-
 
 private fun Set<Coordinate>.rotateCoordinatesLeft(maxX: Int, maxY: Int): Set<Coordinate> {
     return map { Coordinate(it.y,maxY - it.x) }.toSet()

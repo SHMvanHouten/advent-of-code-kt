@@ -13,8 +13,8 @@ class Day08Test {
     inner class Part1 {
 
         @Test
-        @Disabled
         internal fun bla() {
+//            forEachOrientationPrint(input)
             forEachOrientationPrint(
                 """
                 abc
@@ -65,7 +65,7 @@ class Day08Test {
         internal fun `part 2`() {
             assertThat(
                 findBestTree(input.toCoordinateMap { c, coord -> c.digitToInt() })
-            ).isEqualTo(8)
+            ).isEqualTo(268800)
         }
     }
 

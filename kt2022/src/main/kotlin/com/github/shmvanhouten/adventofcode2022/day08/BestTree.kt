@@ -22,7 +22,8 @@ fun findBestTree(trees: Map<Coordinate, Int>): Int {
 
 fun calculateValue(
     location: Coordinate,
-    treeValue: Int, trees: Map<Coordinate, Int>,
+    treeValue: Int,
+    trees: Map<Coordinate, Int>,
     maxX: Int,
     maxY: Int
 ): Int {

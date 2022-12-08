@@ -12,7 +12,7 @@ class Device(
     }
 
     fun usedSpace(): Long {
-        return listAllDirectories().flatMap { it.files }.sumOf { it.size }
+        return rootDirectory.size
     }
 
     fun directoryToDeleteToFreeUpSpaceForUpdate(): Directory {
