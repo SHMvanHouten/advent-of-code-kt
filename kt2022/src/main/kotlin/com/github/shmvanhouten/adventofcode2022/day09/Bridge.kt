@@ -7,7 +7,7 @@ import java.lang.Math.abs
 class Bridge {
     private var headPosition = Coordinate(0,0)
     private var tailPosition = Coordinate(0,0)
-    val placesVisitedByTail = mutableSetOf<Coordinate>(tailPosition)
+    val placesVisitedByTail = mutableSetOf(tailPosition)
 
     fun follow(instructions: String): Bridge {
         return follow(instructions.lines())
@@ -48,7 +48,7 @@ class Bridge {
 
 }
 
-private fun String.toDirection(): Direction {
+internal fun String.toDirection(): Direction {
     return when(this) {
         "R" -> Direction.EAST
         "L" -> Direction.WEST
@@ -58,6 +58,6 @@ private fun String.toDirection(): Direction {
     }
 }
 
-private fun String.words(): List<String> {
+internal fun String.words(): List<String> {
     return split(' ')
 }

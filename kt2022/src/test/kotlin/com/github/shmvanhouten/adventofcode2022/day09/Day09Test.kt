@@ -71,13 +71,65 @@ class Day09Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1).isEqualTo(1)
+        internal fun firstExample() {
+            val input = """
+                R 4
+                U 4
+                L 3
+                D 1
+                R 4
+                D 1
+                L 5
+                R 2
+            """.trimIndent()
+
+            val bridge = LongRopeBridge().follow(input)
+        }
+
+        @Test
+        internal fun example() {
+            val input = """
+                R 5
+                U 8
+                L 8
+                D 3
+                R 17
+                D 10
+                L 25
+                U 20
+            """.trimIndent()
+            val bridge = LongRopeBridge().follow(input)
+
+            assertThat(bridge.countPlacesTailVisited())
+                .isEqualTo(36)
+
+            assertThat(draw(bridge.placesVisitedByTail, '#').replace(' ', '.'))
+                .isEqualTo(
+                    """
+                        #.........................
+                        #.............###.........
+                        #............#...#........
+                        .#..........#.....#.......
+                        ..#..........#.....#......
+                        ...#........#.......#.....
+                        ....#......#.........#....
+                        .....#..............#.....
+                        ......#............#......
+                        .......#..........#.......
+                        ........#........#........
+                        .........########.........
+                    """.trimIndent()
+                )
+            println(draw(bridge.placesVisitedByTail, '#'))
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1).isEqualTo(1)
+            val bridge = LongRopeBridge().follow(input)
+            println(draw(bridge.placesVisitedByTail, '#'))
+
+            assertThat(bridge.countPlacesTailVisited())
+                .isEqualTo(2627)
         }
     }
 
