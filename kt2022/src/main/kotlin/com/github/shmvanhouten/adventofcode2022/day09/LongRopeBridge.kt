@@ -2,9 +2,10 @@ package com.github.shmvanhouten.adventofcode2022.day09
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction
+import kotlin.math.abs
 
 class LongRopeBridge(private val amountOfKnots: Int = 2) {
-    private var knotPositions = 0.until(amountOfKnots).associateWith { Coordinate(0, 0) }.toMutableMap()
+    private var knotPositions = MutableList(amountOfKnots){Coordinate(0, 0)}
     val placesVisitedByTail = mutableSetOf(Coordinate(0,0))
 
     fun follow(instructions: String): LongRopeBridge {
@@ -29,22 +30,22 @@ class LongRopeBridge(private val amountOfKnots: Int = 2) {
 
     private fun moveRope(direction: Direction, nrOfSteps: Int) {
         repeat(nrOfSteps) {
-            var knotAheadPreviousPosition = knotPositions[0]!!
-            knotPositions[0] = knotPositions[0]!!.move(direction)
+            var knotAheadPreviousPosition = knotPositions[0]
+            knotPositions[0] = knotPositions[0].move(direction)
 
             for (knot in (1.until(amountOfKnots))) {
-                val currentKnotsStartingPosition = knotPositions[knot]!!
+                val currentKnotsStartingPosition = knotPositions[knot]
 
                 when {
                     knotAheadMovedDiagonally(knot) -> {
                         knotPositions[knot] = knotAheadPreviousPosition
                     }
                     knotAheadMovedVertically(knot) -> {
-                        knotPositions[knot] = Coordinate(knotAheadPreviousPosition.x, knotPositions[knot - 1]!!.y)
+                        knotPositions[knot] = Coordinate(knotAheadPreviousPosition.x, knotPositions[knot - 1].y)
 
                     }
                     knotAheadMovedHorizontally(knot) -> {
-                        knotPositions[knot] = Coordinate(knotPositions[knot - 1]!!.x, knotAheadPreviousPosition.y)
+                        knotPositions[knot] = Coordinate(knotPositions[knot - 1].x, knotAheadPreviousPosition.y)
 
                     }
 
@@ -53,15 +54,15 @@ class LongRopeBridge(private val amountOfKnots: Int = 2) {
                 knotAheadPreviousPosition = currentKnotsStartingPosition
             }
 
-            placesVisitedByTail += knotPositions[amountOfKnots - 1]!!
+            placesVisitedByTail += knotPositions[amountOfKnots - 1]
         }
     }
 
     private fun knotAheadMovedDiagonally(knot: Int) = knotAheadMovedVertically(knot) && knotAheadMovedHorizontally(knot)
 
-    private fun knotAheadMovedHorizontally(knot: Int) = Math.abs(knotPositions[knot - 1]!!.y - knotPositions[knot]!!.y) > 1
+    private fun knotAheadMovedHorizontally(knot: Int) = abs(knotPositions[knot - 1].y - knotPositions[knot].y) > 1
 
-    private fun knotAheadMovedVertically(knot: Int) = Math.abs(knotPositions[knot - 1]!!.x - knotPositions[knot]!!.x) > 1
+    private fun knotAheadMovedVertically(knot: Int) = abs(knotPositions[knot - 1].x - knotPositions[knot].x) > 1
 
 }
 

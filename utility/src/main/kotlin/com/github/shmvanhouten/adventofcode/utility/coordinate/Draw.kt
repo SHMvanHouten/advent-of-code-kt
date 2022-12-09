@@ -21,7 +21,7 @@ fun Map<Coordinate, Char>.draw(): String {
             if (this.contains(Coordinate(x, y))) {
                 this[Coordinate(x, y)]
             } else {
-                '?'
+                '.'
             }
         }.joinToString("")
     }
