@@ -2,21 +2,22 @@ package com.github.shmvanhouten.adventofcode2022.day09
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction
-import com.github.shmvanhouten.adventofcode.utility.coordinate.draw
 
-class LongRopeBridge {
-    private var knotPositions = (0..9).map { it to Coordinate(0,0) }.toMap().toMutableMap()
+class LongRopeBridge(private val amountOfKnots: Int = 2) {
+    private var knotPositions = 0.until(amountOfKnots).associateWith { Coordinate(0, 0) }.toMutableMap()
     val placesVisitedByTail = mutableSetOf(Coordinate(0,0))
 
     fun follow(instructions: String): LongRopeBridge {
-        return follow(instructions.lines())
+        return instructions.lines()
+            .map { it.words() }
+            .map { (direction, nrOfSteps) -> direction.toDirection() to nrOfSteps.toInt() }
+            .let { follow(it) }
     }
 
-    private fun follow(instructions: List<String>): LongRopeBridge {
-        instructions.map { it.words() }
-            .map { (direction, nrOfSteps) -> direction.toDirection() to nrOfSteps.toInt() }
+    private fun follow(instructions: List<Pair<Direction, Int>>): LongRopeBridge {
+        instructions
             .forEach { (direction, nrOfSteps) ->
-                moveHeadAndTail(direction, nrOfSteps)
+                moveRope(direction, nrOfSteps)
             }
 
         return this
@@ -26,36 +27,54 @@ class LongRopeBridge {
         return placesVisitedByTail.count()
     }
 
-    private fun moveHeadAndTail(direction: Direction, nrOfSteps: Int) {
+    private fun moveRope(direction: Direction, nrOfSteps: Int) {
         repeat(nrOfSteps) {
-            var oldKnotAheadPosition = knotPositions[0]!!
-            println(draw(knotPositions.values, '#').replace(' ', '.'))
-            println()
-            knotPositions[0] = knotPositions[0]!!.move(direction) // move head knot
+            var knotAheadPreviousPosition = knotPositions[0]!!
+            knotPositions[0] = knotPositions[0]!!.move(direction)
 
-            for (knot in (1..9)) {
-                val (oldX, oldY) = oldKnotAheadPosition
-                oldKnotAheadPosition = knotPositions[knot]!!
-                if(isMoreThanOneToTheSide(knot) && isMorThan1AboveOrBelow(knot)) {
-                    knotPositions[knot] = Coordinate(oldX, oldY)
+            for (knot in (1.until(amountOfKnots))) {
+                val currentKnotsStartingPosition = knotPositions[knot]!!
+
+                when {
+                    knotAheadMovedDiagonally(knot) -> {
+                        knotPositions[knot] = knotAheadPreviousPosition
+                    }
+                    knotAheadMovedVertically(knot) -> {
+                        knotPositions[knot] = Coordinate(knotAheadPreviousPosition.x, knotPositions[knot - 1]!!.y)
+
+                    }
+                    knotAheadMovedHorizontally(knot) -> {
+                        knotPositions[knot] = Coordinate(knotPositions[knot - 1]!!.x, knotAheadPreviousPosition.y)
+
+                    }
+
+                    else -> {}// do nothing, previous knot has not moved enough to pull this one
                 }
-                else if (isMoreThanOneToTheSide(knot)) {
-                    knotPositions[knot] = Coordinate(oldX, knotPositions[knot - 1]!!.y)
-
-                } else if (isMorThan1AboveOrBelow(knot)) {
-                    knotPositions[knot] = Coordinate(knotPositions[knot - 1]!!.x, oldY)
-
-                } else {
-                    // do nothing
-                }
+                knotAheadPreviousPosition = currentKnotsStartingPosition
             }
 
-            placesVisitedByTail += knotPositions.getValue(9)
+            placesVisitedByTail += knotPositions[amountOfKnots - 1]!!
         }
     }
 
-    private fun isMorThan1AboveOrBelow(knot: Int) = Math.abs(knotPositions[knot - 1]!!.y - knotPositions[knot]!!.y) > 1
+    private fun knotAheadMovedDiagonally(knot: Int) = knotAheadMovedVertically(knot) && knotAheadMovedHorizontally(knot)
 
-    private fun isMoreThanOneToTheSide(knot: Int) = Math.abs(knotPositions[knot - 1]!!.x - knotPositions[knot]!!.x) > 1
+    private fun knotAheadMovedHorizontally(knot: Int) = Math.abs(knotPositions[knot - 1]!!.y - knotPositions[knot]!!.y) > 1
 
+    private fun knotAheadMovedVertically(knot: Int) = Math.abs(knotPositions[knot - 1]!!.x - knotPositions[knot]!!.x) > 1
+
+}
+
+private fun String.toDirection(): Direction {
+    return when(this) {
+        "R" -> Direction.EAST
+        "L" -> Direction.WEST
+        "U" -> Direction.NORTH
+        "D" -> Direction.SOUTH
+        else -> error("unknown direction $this")
+    }
+}
+
+private fun String.words(): List<String> {
+    return split(' ')
 }

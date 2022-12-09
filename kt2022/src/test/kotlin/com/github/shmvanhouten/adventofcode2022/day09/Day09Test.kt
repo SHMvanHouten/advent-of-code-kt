@@ -15,7 +15,7 @@ class Day09Test {
         internal fun `head and tail start in the same place, given head moves 1 the tail stays in the same place`() {
             val input = "R 1"
 
-            assertThat(Bridge().follow(input).countPlacesTailVisited())
+            assertThat(LongRopeBridge().follow(input).countPlacesTailVisited())
                 .isEqualTo(1)
         }
 
@@ -23,7 +23,7 @@ class Day09Test {
         internal fun `given head moves twice in the same direction from the start the tail moves once in that same direction`() {
             val input = "R 2"
 
-            assertThat(Bridge().follow(input).countPlacesTailVisited())
+            assertThat(LongRopeBridge().follow(input).countPlacesTailVisited())
                 .isEqualTo(2)
         }
 
@@ -34,7 +34,7 @@ class Day09Test {
                 U 2
             """.trimIndent()
 
-            assertThat(Bridge().follow(input).countPlacesTailVisited())
+            assertThat(LongRopeBridge().follow(input).countPlacesTailVisited())
                 .isEqualTo(3)
         }
 
@@ -51,7 +51,7 @@ class Day09Test {
                 R 2
             """.trimIndent()
 
-            val bridge = Bridge().follow(input)
+            val bridge = LongRopeBridge().follow(input)
             println(draw(bridge.placesVisitedByTail, '#'))
 
             assertThat(bridge.countPlacesTailVisited())
@@ -60,7 +60,7 @@ class Day09Test {
 
         @Test
         internal fun `part 1`() {
-            val bridge = Bridge().follow(input)
+            val bridge = LongRopeBridge().follow(input)
 
             assertThat(bridge.countPlacesTailVisited()).isEqualTo(6357)
         }
@@ -69,22 +69,6 @@ class Day09Test {
 
     @Nested
     inner class Part2 {
-
-        @Test
-        internal fun firstExample() {
-            val input = """
-                R 4
-                U 4
-                L 3
-                D 1
-                R 4
-                D 1
-                L 5
-                R 2
-            """.trimIndent()
-
-            val bridge = LongRopeBridge().follow(input)
-        }
 
         @Test
         internal fun example() {
@@ -98,7 +82,7 @@ class Day09Test {
                 L 25
                 U 20
             """.trimIndent()
-            val bridge = LongRopeBridge().follow(input)
+            val bridge = LongRopeBridge(10).follow(input)
 
             assertThat(bridge.countPlacesTailVisited())
                 .isEqualTo(36)
@@ -106,27 +90,26 @@ class Day09Test {
             assertThat(draw(bridge.placesVisitedByTail, '#').replace(' ', '.'))
                 .isEqualTo(
                     """
-                        #.........................
-                        #.............###.........
-                        #............#...#........
-                        .#..........#.....#.......
-                        ..#..........#.....#......
-                        ...#........#.......#.....
-                        ....#......#.........#....
-                        .....#..............#.....
-                        ......#............#......
-                        .......#..........#.......
-                        ........#........#........
-                        .........########.........
+                        #.....................
+                        #.............###.....
+                        #............#...#....
+                        .#..........#.....#...
+                        ..#..........#.....#..
+                        ...#........#.......#.
+                        ....#......#.........#
+                        .....#..............#.
+                        ......#............#..
+                        .......#..........#...
+                        ........#........#....
+                        .........########.....
                     """.trimIndent()
                 )
-            println(draw(bridge.placesVisitedByTail, '#'))
         }
 
         @Test
         internal fun `part 2`() {
-            val bridge = LongRopeBridge().follow(input)
-            println(draw(bridge.placesVisitedByTail, '#'))
+            val bridge = LongRopeBridge(10).follow(input)
+            println(draw(bridge.placesVisitedByTail, '#').replace(' ', '.'))
 
             assertThat(bridge.countPlacesTailVisited())
                 .isEqualTo(2627)
