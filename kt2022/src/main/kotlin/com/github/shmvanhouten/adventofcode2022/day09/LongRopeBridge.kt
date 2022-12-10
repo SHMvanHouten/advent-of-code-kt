@@ -76,6 +76,6 @@ private fun String.toDirection(): Direction {
     }
 }
 
-private fun String.words(): List<String> {
+fun String.words(): List<String> {
     return split(' ')
 }
