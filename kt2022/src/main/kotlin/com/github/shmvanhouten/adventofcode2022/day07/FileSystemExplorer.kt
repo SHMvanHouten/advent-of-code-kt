@@ -1,5 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day07
 
+import com.github.shmvanhouten.adventofcode.utility.strings.words
+
 const val ROOT = "/"
 
 fun createDeviceFromBrowsingData(input: String): Device {
@@ -28,19 +30,19 @@ fun createDeviceFromBrowsingData(input: String): Device {
 }
 
 private fun String.toDirectory(parent: Directory): Directory {
-    return Directory(name = this.split(' ')[1], parent = parent)
+    return Directory(name = this.words()[1], parent = parent)
 }
 
 private fun String.toFile(): File {
-    val (size, name) = this.split(' ')
+    val (size, name) = this.words()
     return File(name = name, size = size.toLong())
 }
 
-private fun String.isMoveUpDir(): Boolean = split(' ').last() == ".."
+private fun String.isMoveUpDir(): Boolean = words().last() == ".."
 
-private fun String.isMoveToRoot(): Boolean = split(' ').last() == ROOT
+private fun String.isMoveToRoot(): Boolean = words().last() == ROOT
 
-private fun String.changeDirectoryName(): String = this.split(' ')[2]
+private fun String.changeDirectoryName(): String = this.words()[2]
 
 private fun String.isDirectory(): Boolean = this.startsWith("dir")
 

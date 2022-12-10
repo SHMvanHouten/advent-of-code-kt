@@ -2,13 +2,13 @@ package com.github.shmvanhouten.adventofcode.utility.coordinate
 
 import com.github.shmvanhouten.adventofcode.utility.collectors.extremes
 
-fun draw(coordinates: Collection<Coordinate>, c: Char = '█'): String {
+fun draw(coordinates: Collection<Coordinate>, hit: Char = '⚫', miss: Char = '⚪'): String {
     val (minY, maxY) = coordinates.map { it.y }.extremes() ?: error("empty collection $coordinates")
     val (minX, maxX) = coordinates.map { it.x }.extremes() ?: error("empty collection $coordinates")
     return (minY..maxY).joinToString("\n") { y ->
         (minX..maxX).map { x ->
-            if (coordinates.contains(Coordinate(x, y))) c
-            else ' '
+            if (coordinates.contains(Coordinate(x, y))) hit
+            else miss
         }.joinToString("")
     }
 }

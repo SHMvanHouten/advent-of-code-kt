@@ -1,6 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day05
 
-import com.github.shmvanhouten.adventofcode.utility.blocks
+import com.github.shmvanhouten.adventofcode.utility.strings.blocks
+import com.github.shmvanhouten.adventofcode.utility.strings.words
 
 fun parse(input: String): Pair<Stacks, List<Instruction>> {
     val (rawCrates, rawInstructions) = input.blocks()
@@ -39,8 +40,4 @@ fun toInstructions(rawInstructions: String): List<Instruction> {
     return rawInstructions.lines()
         .map { it.words() }
         .map { Instruction(it[1].toInt(), it[3].toInt(), it[5].toInt()) }
-}
-
-private fun String.words(): List<String> {
-    return split(' ')
 }

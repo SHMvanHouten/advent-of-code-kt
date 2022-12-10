@@ -1,6 +1,6 @@
 package com.github.shmvanhouten.adventofcode2022.day01
 
-import com.github.shmvanhouten.adventofcode.utility.blocks
+import com.github.shmvanhouten.adventofcode.utility.strings.blocks
 
 fun carryingTheMost(input: String): Long {
     return calculateWhatElvesAreCarrying(input)

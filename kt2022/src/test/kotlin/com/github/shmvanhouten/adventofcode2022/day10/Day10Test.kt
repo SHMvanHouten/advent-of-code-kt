@@ -59,16 +59,12 @@ class Day10Test {
 
         @Test
         internal fun example() {
-            val result = runInstructions(example)
-
-            assertThat(sumSignalStrengths(result)).isEqualTo(13140)
+            assertThat(sumSignalStrengths(example)).isEqualTo(13140)
         }
 
         @Test
         internal fun `part 1`() {
-            val result = runInstructions(input)
-
-            assertThat(sumSignalStrengths(result)).isEqualTo(14220)
+            assertThat(sumSignalStrengths(input)).isEqualTo(14220)
         }
     }
 
@@ -80,13 +76,14 @@ class Day10Test {
             assertThat(draw(example.lines()))
                 .isEqualTo(
                     """
-                        ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  
-                        ███   ███   ███   ███   ███   ███   ███ 
-                        ████    ████    ████    ████    ████    
-                        █████     █████     █████     █████     
-                        ██████      ██████      ██████      ████
-                        ███████       ███████       ███████     
-                    """.trimIndent() + "\n " // I don't really care about the next line...
+                    |⚫⚫⚪⚪⚫⚫⚪⚪⚫⚫⚪⚪⚫⚫⚪⚪⚫⚫⚪⚪⚫⚫⚪⚪⚫⚫⚪⚪⚫⚫⚪⚪⚫⚫⚪⚪⚫⚫⚪⚪
+                    |⚫⚫⚫⚪⚪⚪⚫⚫⚫⚪⚪⚪⚫⚫⚫⚪⚪⚪⚫⚫⚫⚪⚪⚪⚫⚫⚫⚪⚪⚪⚫⚫⚫⚪⚪⚪⚫⚫⚫⚪
+                    |⚫⚫⚫⚫⚪⚪⚪⚪⚫⚫⚫⚫⚪⚪⚪⚪⚫⚫⚫⚫⚪⚪⚪⚪⚫⚫⚫⚫⚪⚪⚪⚪⚫⚫⚫⚫⚪⚪⚪⚪
+                    |⚫⚫⚫⚫⚫⚪⚪⚪⚪⚪⚫⚫⚫⚫⚫⚪⚪⚪⚪⚪⚫⚫⚫⚫⚫⚪⚪⚪⚪⚪⚫⚫⚫⚫⚫⚪⚪⚪⚪⚪
+                    |⚫⚫⚫⚫⚫⚫⚪⚪⚪⚪⚪⚪⚫⚫⚫⚫⚫⚫⚪⚪⚪⚪⚪⚪⚫⚫⚫⚫⚫⚫⚪⚪⚪⚪⚪⚪⚫⚫⚫⚫
+                    |⚫⚫⚫⚫⚫⚫⚫⚪⚪⚪⚪⚪⚪⚪⚫⚫⚫⚫⚫⚫⚫⚪⚪⚪⚪⚪⚪⚪⚫⚫⚫⚫⚫⚫⚫⚪⚪⚪⚪⚪
+                    |⚪
+                    """.trimMargin()
                 )
         }
 

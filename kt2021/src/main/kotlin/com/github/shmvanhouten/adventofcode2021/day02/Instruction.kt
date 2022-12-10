@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.day02
 
+import com.github.shmvanhouten.adventofcode.utility.strings.words
 import com.github.shmvanhouten.adventofcode2021.depth.coordinate.Direction
 
 data class Instruction(val direction: Direction, val steps: Int)
@@ -17,8 +18,4 @@ fun toInstruction(line: String): Instruction {
 
 fun toDirection(line: String): Direction {
     return Direction.valueOf(line.uppercase())
-}
-
-private fun String.words(): List<String> {
-    return this.split(' ')
 }

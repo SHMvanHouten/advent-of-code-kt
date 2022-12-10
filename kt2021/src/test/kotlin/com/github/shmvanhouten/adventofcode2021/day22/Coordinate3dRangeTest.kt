@@ -236,6 +236,7 @@ internal class Coordinate3dRangeTest {
         println(drawIn2D(combined))
         assertThat(combined.sumOf { it.size }, equalTo(27))
         val combined2 = listOf(range2).add(range1)
+        println()
         println(drawIn2D(combined2))
         assertThat(combined2.sumOf { it.size }, equalTo(27))
 
@@ -408,15 +409,16 @@ internal class Coordinate3dRangeTest {
 
 }
 
-private fun drawIn2D(combined2: Set<Cuboid>) =
+private fun drawIn2D(combined: Set<Cuboid>) =
     draw(
-        runReboot(combined2.map {
+        runReboot(combined.map {
             RebootStep(
                 Toggle.ON,
                 it
             )
         }).map { Coordinate(it.x, it.y) },
-        c = '#'
+        hit = '#',
+        miss = ' '
     )
 
 class Coordinate3dRangePairAggregator : ArgumentsAggregator {

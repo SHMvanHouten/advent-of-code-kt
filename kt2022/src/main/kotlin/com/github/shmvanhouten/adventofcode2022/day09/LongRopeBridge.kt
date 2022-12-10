@@ -2,6 +2,7 @@ package com.github.shmvanhouten.adventofcode2022.day09
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction
+import com.github.shmvanhouten.adventofcode.utility.strings.words
 import kotlin.math.abs
 
 class LongRopeBridge(private val amountOfKnots: Int = 2) {
@@ -74,8 +75,4 @@ private fun String.toDirection(): Direction {
         "D" -> Direction.SOUTH
         else -> error("unknown direction $this")
     }
-}
-
-fun String.words(): List<String> {
-    return split(' ')
 }

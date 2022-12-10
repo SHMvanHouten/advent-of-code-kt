@@ -1,6 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.day19
 
-import com.github.shmvanhouten.adventofcode.utility.blocks
+import com.github.shmvanhouten.adventofcode.utility.strings.blocks
 import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3d
 
 fun parse(input: String): List<BeaconMap> {

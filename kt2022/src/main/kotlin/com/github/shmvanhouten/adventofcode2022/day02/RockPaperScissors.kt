@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2022.day02
 
+import com.github.shmvanhouten.adventofcode.utility.strings.words
 import com.github.shmvanhouten.adventofcode2022.day02.Result.*
 import com.github.shmvanhouten.adventofcode2022.day02.Shape.*
 
@@ -98,8 +99,4 @@ private fun String.toShape(): Shape {
         "Z", "C" -> SCISSORS
         else -> error("unknown shape $this")
     }
-}
-
-private fun String.words(): List<String> {
-    return this.split(' ')
 }
