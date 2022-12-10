@@ -76,13 +76,23 @@ class Day10Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1).isEqualTo(1)
+        internal fun example() {
+            assertThat(draw(example.lines()))
+                .isEqualTo(
+                    """
+                        ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  
+                        ███   ███   ███   ███   ███   ███   ███ 
+                        ████    ████    ████    ████    ████    
+                        █████     █████     █████     █████     
+                        ██████      ██████      ██████      ████
+                        ███████       ███████       ███████     
+                    """.trimIndent() + "\n " // I don't really care about the next line...
+                )
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1).isEqualTo(1)
+            println(draw(input.lines()))
         }
     }
 

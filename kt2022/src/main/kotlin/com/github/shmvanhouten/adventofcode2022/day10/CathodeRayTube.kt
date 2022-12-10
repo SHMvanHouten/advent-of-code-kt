@@ -1,6 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day10
 
 import com.github.shmvanhouten.adventofcode2022.day09.words
+import kotlin.math.abs
 
 fun runInstructions(instructions: String): List<Long> {
     return runInstructions(instructions.lines())
@@ -15,6 +16,18 @@ fun runInstructions(instructions: List<String>): List<Long> {
         }
     }
     return registerXAtCycle
+}
+
+fun draw(instructions: List<String>): String {
+    return runInstructions(instructions)
+        .chunked(40).joinToString("\n") { chunk -> drawLine(chunk) }
+}
+
+fun drawLine(instructions: List<Long>): String {
+    return instructions.mapIndexed { index, regx ->
+        if(abs(regx - index) <= 1) '█'
+        else ' '
+    }.joinToString("")
 }
 
 fun List<Long>.registerXAtCycle(cycle: Int): Long {
