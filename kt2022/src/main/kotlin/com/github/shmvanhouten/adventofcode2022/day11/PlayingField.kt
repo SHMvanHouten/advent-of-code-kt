@@ -1,13 +1,23 @@
 package com.github.shmvanhouten.adventofcode2022.day11
 
 class PlayingField(val monkeys: List<Monkey>) {
-    fun playRounds(nrOfRounds: Int) {
-        val allMonkeyValues = (2* 13* 5* 3* 11* 17* 7* 19).toBigInteger()
+
+    fun playSimpleRounds(
+        nrOfRounds: Int = 20,
+        simplificationOperation: (Long) -> Long = { it / 3 }
+    ) {
         repeat(nrOfRounds) {
             for (monkey in monkeys) {
-                monkey.doMonkeyBusiness(monkeys, allMonkeyValues)
+                monkey.doMonkeyBusiness(monkeys, simplificationOperation)
             }
         }
+    }
+
+    fun playRounds(nrOfRounds: Int = 10000) {
+        val monkeyTestValues = monkeys
+            .map { it.test }
+            .reduce(Long::times)
+        playSimpleRounds(nrOfRounds) { it % monkeyTestValues }
     }
 
     fun monkeyBusiness(): Long {
@@ -17,5 +27,4 @@ class PlayingField(val monkeys: List<Monkey>) {
             .take(2)
             .reduce(Long::times)
     }
-
 }

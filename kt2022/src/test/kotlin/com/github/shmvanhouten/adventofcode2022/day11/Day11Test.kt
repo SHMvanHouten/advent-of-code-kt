@@ -10,39 +10,38 @@ class Day11Test {
     @Nested
     inner class Part1 {
 
-//        @Test
-//        internal fun parse() {
-//            val monkeys = parse(example)
-//
-//            assertThat(monkeys).hasSize(4)
-//            val firstMonkey = monkeys.first()
-//            assertThat(firstMonkey.items).hasSize(2)
-//            assertThat(firstMonkey.items).contains(79, 98)
-//            assertThat(firstMonkey.operation(22)/22).isEqualTo(19)
-//            assertThat(monkeys[2].operation(5)).isEqualTo(5 * 5)
-//            assertThat(firstMonkey.test(23)).isTrue
-//            assertThat(firstMonkey.test(24)).isFalse
-//            assertThat(firstMonkey.trueMonkeyIndex).isEqualTo(2)
-//            assertThat(firstMonkey.falseMonkeyIndex).isEqualTo(3)
-//        }
+        @Test
+        internal fun parse() {
+            val monkeys = parse(example)
 
-//        @Test
-//        internal fun `after one round first monkey has 4 items`() {
-//            val monkeys = parse(example)
-//
-//            val playingField = PlayingField(monkeys)
-//            playingField.playRounds(1)
-//
-//            assertThat(playingField.monkeys.first().items).hasSize(4)
-//            assertThat(playingField.monkeys.first().items).contains(20, 23, 27, 26)
-//        }
+            assertThat(monkeys).hasSize(4)
+            val firstMonkey = monkeys.first()
+            assertThat(firstMonkey.items).hasSize(2)
+            assertThat(firstMonkey.items).contains(79, 98)
+            assertThat(firstMonkey.inspect(22)/22).isEqualTo(19)
+            assertThat(monkeys[2].inspect(5)).isEqualTo(5 * 5)
+            assertThat(firstMonkey.test).isEqualTo(23L)
+            assertThat(firstMonkey.trueMonkeyIndex).isEqualTo(2)
+            assertThat(firstMonkey.falseMonkeyIndex).isEqualTo(3)
+        }
+
+        @Test
+        internal fun `after one round first monkey has 4 items`() {
+            val monkeys = parse(example)
+
+            val playingField = PlayingField(monkeys)
+            playingField.playSimpleRounds(1)
+
+            assertThat(playingField.monkeys.first().items).hasSize(4)
+            assertThat(playingField.monkeys.first().items).contains(20, 23, 27, 26)
+        }
 
         @Test
         internal fun example() {
             val monkeys = parse(example)
 
             val playingField = PlayingField(monkeys)
-            playingField.playRounds(20)
+            playingField.playSimpleRounds(20)
             assertThat(playingField.monkeyBusiness()).isEqualTo(10605L)
         }
 
@@ -51,7 +50,7 @@ class Day11Test {
             val monkeys = parse(input)
 
             val playingField = PlayingField(monkeys)
-            playingField.playRounds(20)
+            playingField.playSimpleRounds(20)
             assertThat(playingField.monkeyBusiness()).isEqualTo(117624L)
         }
     }
@@ -74,7 +73,7 @@ class Day11Test {
 
             val playingField = PlayingField(monkeys)
             playingField.playRounds(10000)
-            assertThat(playingField.monkeyBusiness()).isEqualTo(2713310158L)
+            assertThat(playingField.monkeyBusiness()).isEqualTo(16792940265L)
         }
     }
 
