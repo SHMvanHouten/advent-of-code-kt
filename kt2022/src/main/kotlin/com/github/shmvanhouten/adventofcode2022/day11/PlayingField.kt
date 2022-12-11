@@ -15,7 +15,7 @@ class PlayingField(val monkeys: List<Monkey>) {
 
     fun playRounds(nrOfRounds: Int = 10000) {
         val monkeyTestValues = monkeys
-            .map { it.test }
+            .map { it.testValue }
             .reduce(Long::times)
         playSimpleRounds(nrOfRounds) { it % monkeyTestValues }
     }

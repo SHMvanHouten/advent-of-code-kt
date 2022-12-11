@@ -6,24 +6,26 @@ import com.github.shmvanhouten.adventofcode.utility.strings.words
 data class Monkey(
     val items: MutableList<WorryLevel>,
     val inspect: (WorryLevel) -> WorryLevel,
-    val test: Long,
+    val testValue: Long,
     val trueMonkeyIndex: Int,
     val falseMonkeyIndex: Int
 ) {
     var timesThrown: Long = 0
 
     fun doMonkeyBusiness(monkeys: List<Monkey>, dontWorry: (WorryLevel) -> WorryLevel) {
-        val trueMonkey = monkeys[trueMonkeyIndex]
-        val falseMonkey = monkeys[falseMonkeyIndex]
 
         for (item in items) {
             val inspectedItem: WorryLevel = inspect(item).let(dontWorry)
 
-            if(inspectedItem % test == 0L) trueMonkey.items.add(inspectedItem)
-            else falseMonkey.items.add(inspectedItem)
+            if(test(inspectedItem)) monkeys[trueMonkeyIndex].items.add(inspectedItem)
+            else monkeys[falseMonkeyIndex].items.add(inspectedItem)
         }
         timesThrown += items.size
         items.clear()
+    }
+
+    private fun test(worryLevel: WorryLevel): Boolean {
+        return worryLevel % testValue == 0L
     }
 }
 

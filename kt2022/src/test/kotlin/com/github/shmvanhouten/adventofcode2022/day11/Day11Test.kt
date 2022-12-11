@@ -20,7 +20,7 @@ class Day11Test {
             assertThat(firstMonkey.items).contains(79, 98)
             assertThat(firstMonkey.inspect(22)/22).isEqualTo(19)
             assertThat(monkeys[2].inspect(5)).isEqualTo(5 * 5)
-            assertThat(firstMonkey.test).isEqualTo(23L)
+            assertThat(firstMonkey.testValue).isEqualTo(23L)
             assertThat(firstMonkey.trueMonkeyIndex).isEqualTo(2)
             assertThat(firstMonkey.falseMonkeyIndex).isEqualTo(3)
         }
