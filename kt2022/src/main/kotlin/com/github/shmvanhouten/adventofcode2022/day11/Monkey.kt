@@ -4,20 +4,20 @@ import com.github.shmvanhouten.adventofcode.utility.strings.blocks
 import com.github.shmvanhouten.adventofcode.utility.strings.words
 
 data class Monkey(
-    val items: MutableList<Long>,
-    val inspect: (Long) -> Long,
+    val items: MutableList<WorryLevel>,
+    val inspect: (WorryLevel) -> WorryLevel,
     val test: Long,
     val trueMonkeyIndex: Int,
     val falseMonkeyIndex: Int
 ) {
     var timesThrown: Long = 0
 
-    fun doMonkeyBusiness(monkeys: List<Monkey>, dontWorry: (Long) -> Long) {
+    fun doMonkeyBusiness(monkeys: List<Monkey>, dontWorry: (WorryLevel) -> WorryLevel) {
         val trueMonkey = monkeys[trueMonkeyIndex]
         val falseMonkey = monkeys[falseMonkeyIndex]
 
         for (item in items) {
-            val inspectedItem: Long = inspect(item).let(dontWorry)
+            val inspectedItem: WorryLevel = inspect(item).let(dontWorry)
 
             if(inspectedItem % test == 0L) trueMonkey.items.add(inspectedItem)
             else falseMonkey.items.add(inspectedItem)
@@ -58,3 +58,5 @@ fun toOperation(line: String): (Long) -> Long {
     return if (words[5] == "old") { it -> operation(it, it) }
     else { it -> operation(it, words[5].toLong())}
 }
+
+typealias WorryLevel = Long

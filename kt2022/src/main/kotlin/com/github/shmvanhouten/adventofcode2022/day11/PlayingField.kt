@@ -4,11 +4,11 @@ class PlayingField(val monkeys: List<Monkey>) {
 
     fun playSimpleRounds(
         nrOfRounds: Int = 20,
-        simplificationOperation: (Long) -> Long = { it / 3 }
+        unWorryOperation: (WorryLevel) -> WorryLevel = { it / 3 }
     ) {
         repeat(nrOfRounds) {
             for (monkey in monkeys) {
-                monkey.doMonkeyBusiness(monkeys, simplificationOperation)
+                monkey.doMonkeyBusiness(monkeys, unWorryOperation)
             }
         }
     }
