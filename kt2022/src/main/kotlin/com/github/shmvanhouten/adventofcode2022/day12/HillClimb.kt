@@ -12,12 +12,14 @@ fun shortestPath(input: String): Set<Coordinate> {
 }
 
 fun shortestPath(coordinates: Map<Coordinate, Char>, end: Coordinate): Set<Coordinate> {
-    val paths = priorityQueueOf(Path(mutableSetOf(startingPosition(coordinates)), currentHeight = 'a'))
+    val startingPosition = startingPosition(coordinates)
+    val paths = priorityQueueOf(Path(mutableSetOf(startingPosition), currentHeight = 'a'))
     val finished: MutableSet<Path> = mutableSetOf()
+    val visitedCoordinatesShortestPath = mutableMapOf(startingPosition to 1)
     while (paths.isNotEmpty()) {
         val path = paths.poll()
         if(finished.isNotEmpty() && path.size > finished.last().size) {
-            break
+            println("path too long!")
         } else {
             val current = path.current
             current.getSurrounding()
@@ -27,10 +29,14 @@ fun shortestPath(coordinates: Map<Coordinate, Char>, end: Coordinate): Set<Coord
                 .filter { it.second != null }.map { (a, b) -> a to b!! }
                 .filter { (_, height) -> height <= path.currentHeight + 1 }
                 .map { path.add(it) }
+                .filter { it.size < (visitedCoordinatesShortestPath[it.current] ?: Int.MAX_VALUE) }
                 .toList()
                 .forEach { p ->
-                    if (p.current == end) finished += p
-                    else paths += p
+                    visitedCoordinatesShortestPath += p.current to p.size
+                    if (p.current == end) {
+                        println(path.size)
+                        finished += p
+                    } else paths += p
                 }
         }
     }

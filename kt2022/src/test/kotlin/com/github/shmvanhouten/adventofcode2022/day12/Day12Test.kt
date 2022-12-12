@@ -26,7 +26,7 @@ class Day12Test {
         @Test
         internal fun `part 1`() {
             val shortestPath = shortestPath(input)
-            assertThat(shortestPath.size - 1).isEqualTo(31)
+            assertThat(shortestPath.size - 1).isEqualTo(504)
         }
     }
 
