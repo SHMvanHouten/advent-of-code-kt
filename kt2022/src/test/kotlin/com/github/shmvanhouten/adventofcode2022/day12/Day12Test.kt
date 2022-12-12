@@ -34,13 +34,22 @@ class Day12Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1).isEqualTo(1)
+        internal fun example() {
+            val example = """
+                Sabqponm
+                abcryxxl
+                accszExk
+                acctuvwj
+                abdefghi
+            """.trimIndent()
+            val shortestPath = shortestPathFromAnyATile(example)
+            assertThat(shortestPath.size - 1).isEqualTo(29)
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1).isEqualTo(1)
+            val shortestPath = shortestPathFromAnyATile(input)
+            assertThat(shortestPath.size - 1).isEqualTo(500)
         }
     }
 

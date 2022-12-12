@@ -7,19 +7,37 @@ import java.util.PriorityQueue
 
 fun shortestPath(input: String): Set<Coordinate> {
     val coords = input.toCoordinateMap()
-    val coordinates = coords.mapValues { if(it.value == 'E') 'z' else it.value }
-    return shortestPath(coordinates, coords.entries.first { it.value == 'E' }.key)
+    val coordinates = coords
+        .mapValues { if(it.value == 'E') 'z' else it.value }
+        .mapValues { if(it.value == 'S') 'a' else it.value }
+    return shortestPath(
+        coordinates,
+        coords.entries.first { it.value == 'S' }.key,
+        coords.entries.first { it.value == 'E' }.key
+    )
 }
 
-fun shortestPath(coordinates: Map<Coordinate, Char>, end: Coordinate): Set<Coordinate> {
-    val startingPosition = startingPosition(coordinates)
-    val paths = priorityQueueOf(Path(mutableSetOf(startingPosition), currentHeight = 'a'))
+fun shortestPathFromAnyATile(input: String): Set<Coordinate> {
+    val coords = input.toCoordinateMap()
+    val end = coords.entries.first { it.value == 'E' }.key
+    val coordinates = coords
+        .mapValues { if(it.value == 'E') 'z' else it.value }
+        .mapValues { if(it.value == 'S') 'a' else it.value }
+    return coordinates.filter { it.value == 'a' }
+        .keys
+        .map { shortestPath(coordinates, it, end) }
+        .filter { it.isNotEmpty() }
+        .minByOrNull { it.size }?: error("no shortest path found!")
+}
+
+fun shortestPath(coordinates: Map<Coordinate, Char>, start: Coordinate, end: Coordinate): Set<Coordinate> {
+    val paths = priorityQueueOf(Path(mutableSetOf(start), currentHeight = 'a'))
     val finished: MutableSet<Path> = mutableSetOf()
-    val visitedCoordinatesShortestPath = mutableMapOf(startingPosition to 1)
+    val visitedCoordinatesShortestPath = mutableMapOf(start to 1)
     while (paths.isNotEmpty()) {
         val path = paths.poll()
         if(finished.isNotEmpty() && path.size > finished.last().size) {
-            println("path too long!")
+            // do nothing
         } else {
             val current = path.current
             current.getSurrounding()
@@ -40,7 +58,7 @@ fun shortestPath(coordinates: Map<Coordinate, Char>, end: Coordinate): Set<Coord
                 }
         }
     }
-    return finished.map { it.coordinates }.minByOrNull { it.size }?: error("no paths found!")
+    return finished.map { it.coordinates }.minByOrNull { it.size }?: emptySet()
 }
 
 fun priorityQueueOf(path: Path): PriorityQueue<Path> {
@@ -56,9 +74,6 @@ class PathComparator: Comparator<Path> {
     }
 
 }
-
-private fun startingPosition(coordinates: Map<Coordinate, Char>) =
-    coordinates.entries.find { it.value == 'S' }?.key?: error("no starting position found!")
 
 data class Path(
     val coordinates: Set<Coordinate>,
