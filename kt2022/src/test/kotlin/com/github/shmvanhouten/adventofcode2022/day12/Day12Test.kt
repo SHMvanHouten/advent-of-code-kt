@@ -1,7 +1,9 @@
 package com.github.shmvanhouten.adventofcode2022.day12
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import com.github.shmvanhouten.adventofcode.utility.coordinate.draw
+import com.github.shmvanhouten.adventofcode.utility.collectors.extremes
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -50,7 +52,7 @@ class Day12Test {
         @Test
         internal fun `part 2`() {
             val shortestPath = shortestPathFromAnyATile(input)
-            println(draw(shortestPath.coordinates))
+            printOut(shortestPath, input.toCoordinateMap())
             assertThat(shortestPath.length).isEqualTo(500)
         }
     }
