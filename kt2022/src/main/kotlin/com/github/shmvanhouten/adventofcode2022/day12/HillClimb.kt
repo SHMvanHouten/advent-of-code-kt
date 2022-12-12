@@ -2,14 +2,13 @@ package com.github.shmvanhouten.adventofcode2022.day12
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
+import com.github.shmvanhouten.adventofcode.utility.pairs.nullablePair
 import java.util.Comparator
 import java.util.PriorityQueue
 
-fun shortestPath(input: String): Set<Coordinate> {
+fun shortestPath(input: String): Path {
     val coords = input.toCoordinateMap()
-    val coordinates = coords
-        .mapValues { if(it.value == 'E') 'z' else it.value }
-        .mapValues { if(it.value == 'S') 'a' else it.value }
+    val coordinates = coordinatesWithStartAndEndAsHeights(coords)
     return shortestPath(
         coordinates,
         coords.entries.first { it.value == 'S' }.key,
@@ -17,51 +16,52 @@ fun shortestPath(input: String): Set<Coordinate> {
     )
 }
 
-fun shortestPathFromAnyATile(input: String): Set<Coordinate> {
+fun shortestPathFromAnyATile(input: String): Path {
     val coords = input.toCoordinateMap()
     val end = coords.entries.first { it.value == 'E' }.key
-    val coordinates = coords
-        .mapValues { if(it.value == 'E') 'z' else it.value }
-        .mapValues { if(it.value == 'S') 'a' else it.value }
+    val coordinates = coordinatesWithStartAndEndAsHeights(coords)
+
     return coordinates.filter { it.value == 'a' }
         .keys
-        .map { shortestPath(coordinates, it, end) }
-        .filter { it.isNotEmpty() }
-        .minByOrNull { it.size }?: error("no shortest path found!")
+        .fold(emptyPath()) { acc, start -> shortestPath(coordinates, start, end, acc) }
 }
 
-fun shortestPath(coordinates: Map<Coordinate, Char>, start: Coordinate, end: Coordinate): Set<Coordinate> {
+fun shortestPath(coordinates: Map<Coordinate, Char>, start: Coordinate, end: Coordinate, shortestPathSoFar: Path = emptyPath()): Path {
     val paths = priorityQueueOf(Path(mutableSetOf(start), currentHeight = 'a'))
-    val finished: MutableSet<Path> = mutableSetOf()
-    val visitedCoordinatesShortestPath = mutableMapOf(start to 1)
+    var shortestPath: Path? = null
+    val shortestPathByCoordinate = mutableMapOf(start to 0)
+    if(shortestPathSoFar.isNotEmpty()) {
+        shortestPath = shortestPathSoFar
+        shortestPathByCoordinate += shortestPathSoFar.current to shortestPathSoFar.length
+    }
     while (paths.isNotEmpty()) {
         val path = paths.poll()
-        if(finished.isNotEmpty() && path.size > finished.last().size) {
-            // do nothing
-        } else {
-            val current = path.current
-            current.getSurrounding()
-                .asSequence()
-                .filter { !path.contains(it) }
-                .map { it to coordinates[it] }
-                .filter { it.second != null }.map { (a, b) -> a to b!! }
-                .filter { (_, height) -> height <= path.currentHeight + 1 }
-                .map { path.add(it) }
-                .filter { it.size < (visitedCoordinatesShortestPath[it.current] ?: Int.MAX_VALUE) }
-                .toList()
-                .forEach { p ->
-                    visitedCoordinatesShortestPath += p.current to p.size
-                    if (p.current == end) {
-                        println(path.size)
-                        finished += p
-                    } else paths += p
-                }
-        }
+        val current = path.current
+        current.getSurroundingManhattan()
+            .filter { !path.contains(it) }
+            .mapNotNull { nullablePair(it, coordinates[it]) }
+            .filter { (_, height) -> height <= path.currentHeight + 1 }
+            .map { path + it }
+            .filter { it.length < (shortestPathByCoordinate[it.current] ?: Int.MAX_VALUE) }
+            .forEach { p ->
+                shortestPathByCoordinate += p.current to p.length
+                if (p.current == end) shortestPath = p
+                else paths += p
+            }
     }
-    return finished.map { it.coordinates }.minByOrNull { it.size }?: emptySet()
+    return shortestPath?: error("no paths found!")
 }
 
-fun priorityQueueOf(path: Path): PriorityQueue<Path> {
+private fun coordinatesWithStartAndEndAsHeights(coords: Map<Coordinate, Char>) =
+    coords
+        .mapValues { if (it.value == 'E') 'z' else it.value }
+        .mapValues { if (it.value == 'S') 'a' else it.value }
+
+fun emptyPath(): Path {
+    return Path(emptySet(), Coordinate(0, 0), 'Z')
+}
+
+private fun priorityQueueOf(path: Path): PriorityQueue<Path> {
     val queue = PriorityQueue(PathComparator())
     queue.add(path)
     return queue
@@ -70,22 +70,27 @@ fun priorityQueueOf(path: Path): PriorityQueue<Path> {
 class PathComparator: Comparator<Path> {
     override fun compare(one: Path?, other: Path?): Int {
         if (one == null || other == null) error("paths are null?")
-        return one.size.compareTo(other.size)
+        return one.length.compareTo(other.length)
     }
 
 }
 
 data class Path(
     val coordinates: Set<Coordinate>,
-    val size: Int = coordinates.size,
     val current: Coordinate = coordinates.last(),
     val currentHeight: Char
 ) {
+    val length: Int = coordinates.size - 1
+
     fun contains(it: Coordinate): Boolean {
         return coordinates.contains(it)
     }
 
-    fun add(nextStep: Pair<Coordinate, Char>): Path {
+    fun isNotEmpty(): Boolean {
+        return coordinates.isNotEmpty()
+    }
+
+    operator fun plus(nextStep: Pair<Coordinate, Char>): Path {
         return Path(
             coordinates + nextStep.first,
             current = nextStep.first,

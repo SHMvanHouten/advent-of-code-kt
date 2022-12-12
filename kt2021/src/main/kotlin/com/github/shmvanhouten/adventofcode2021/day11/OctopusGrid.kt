@@ -48,6 +48,6 @@ class OctopusGrid(val octopuses: Map<Coordinate, Octopus>, val flashes: Long = 0
     }
 
     private fun getSurroundingOctopuses(flashy: Octopus) =
-        flashy.location.getSurroundingDiag()
+        flashy.location.getSurrounding()
             .mapNotNull { octopuses[it] }
 }
