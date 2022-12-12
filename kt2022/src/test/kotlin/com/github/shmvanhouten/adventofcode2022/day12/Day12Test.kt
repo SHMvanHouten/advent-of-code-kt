@@ -46,6 +46,7 @@ class Day12Test {
                 abdefghi
             """.trimIndent()
             val shortestPath = shortestPathFromAnyATile(example)
+            printOut(shortestPath, example.toCoordinateMap())
             assertThat(shortestPath.length).isEqualTo(29)
         }
 
@@ -54,6 +55,38 @@ class Day12Test {
             val shortestPath = shortestPathFromAnyATile(input)
             printOut(shortestPath, input.toCoordinateMap())
             assertThat(shortestPath.length).isEqualTo(500)
+        }
+    }
+
+    private fun printOut(shortestPath: Path, map: Map<Coordinate, Char>) {
+        var pathBefore: Path? = shortestPath
+        val fullPath = mutableSetOf<Coordinate>()
+        while (pathBefore != null) {
+            fullPath += pathBefore.current.coord
+            pathBefore = pathBefore.stepsBefore
+        }
+        val (minY, maxY) = map.keys.map { it.y }.extremes() ?: error("empty collection $fullPath")
+        val (minX, maxX) = map.keys.map { it.x }.extremes() ?: error("empty collection $fullPath")
+        (minY..maxY).forEach { y ->
+            (minX..maxX).forEach { x ->
+                printColored(map[Coordinate(x, y)])
+                if (fullPath.contains(Coordinate(x, y))) print('X')
+                else print('█')
+                print("\u001b[30m")
+            }
+            println()
+        }
+    }
+
+    private fun printColored(c: Char?) {
+        when (c) {
+            'a' -> print("\u001b[37m") // white-gray
+            'b' -> print("\u001b[36m") // cyan
+            in 'c'..'f' -> print("\u001b[34m") // blue
+            in 'g'..'l' -> print("\u001b[33m") // yellow
+            in 'm'..'q' -> print("\u001b[32m") // Green
+            in 'r'..'u' -> print("\u001b[31m") // red
+            in 'v'..'z' -> print("\u001b[30m") // black
         }
     }
 
