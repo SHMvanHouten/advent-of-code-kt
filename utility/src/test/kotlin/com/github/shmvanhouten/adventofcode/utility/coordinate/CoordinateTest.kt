@@ -20,7 +20,7 @@ internal class CoordinateTest {
 
         @Test
         fun `gets all 8 coordinates surrounding the coordinate`() {
-            val surrounding = Coordinate(1, 1).getSurrounding()
+            val surrounding = Coordinate(1, 1).getSurroundingDiag()
             assertThat(surrounding, hasSize(equalTo(8)))
             assertThat(surrounding, hasElement(Coordinate(0, 0)))
             assertThat(surrounding, hasElement(Coordinate(1, 0)))
@@ -34,7 +34,7 @@ internal class CoordinateTest {
 
         @Test
         internal fun `gets surrounding coordinates for negative coordinates`() {
-            val surrounding = Coordinate(-1, -1).getSurrounding()
+            val surrounding = Coordinate(-1, -1).getSurroundingDiag()
             assertThat(surrounding, hasSize(equalTo(8)))
             assertThat(surrounding, hasElement(Coordinate(0, 0)))
             assertThat(surrounding, hasElement(Coordinate(-1, 0)))

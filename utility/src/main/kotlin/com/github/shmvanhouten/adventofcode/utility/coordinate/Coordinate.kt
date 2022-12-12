@@ -7,7 +7,7 @@ import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition.
 import kotlin.math.abs
 
 data class Coordinate(val x: Int, val y: Int) {
-    fun getSurrounding(): Set<Coordinate> {
+    fun getSurroundingDiag(): Set<Coordinate> {
         return setOf(
             this + TOP.coordinate,
             this + TOP_RIGHT.coordinate,
@@ -19,6 +19,16 @@ data class Coordinate(val x: Int, val y: Int) {
             this + TOP_LEFT.coordinate
         )
     }
+
+    fun getSurrounding(): Set<Coordinate> {
+        return setOf(
+            this + TOP.coordinate,
+            this + RIGHT.coordinate,
+            this + BOTTOM.coordinate,
+            this + LEFT.coordinate,
+        )
+    }
+
 
     fun getNeighbour(directionPointed: Direction): Coordinate {
         return when (directionPointed) {
