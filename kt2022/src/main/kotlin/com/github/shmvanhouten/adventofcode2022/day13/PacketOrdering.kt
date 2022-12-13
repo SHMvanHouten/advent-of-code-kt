@@ -32,31 +32,34 @@ fun orderedCorrectly(l: String, r: String): Boolean {
     }
 }
 
-private fun compare(left: String, right: String): Int {
-    if (!left.hasNext() && right.hasNext()) return 1
-    else if (!left.hasNext()) return 0
-    else if (!right.hasNext()) return -1
-    if (isAList(left) && !isAList(right)) {
-        val compare = compare(left, right.addBracketsAroundFirst())
-        return if(compare == 0) orderedCorrectlyAfter(left, right, rightClosingBracket = right.indexOfLast { it.isDigit() })
-        else  compare
-    } else if (isAList(right) && !isAList(left)) {
-        val compare = compare(left.addBracketsAroundFirst(), right)
-        return if(compare == 0) orderedCorrectlyAfter(left, right, leftClosingBracket = left.indexOfLast { it.isDigit() })
-        else compare
-    } else if (isAList(left)) {
-        val orderedCorrectly = compare(
-            left.substring(1, left.findClosingBracketIndex()),
-            right.substring(1, right.findClosingBracketIndex())
+fun compare(left: String, right: String): Int {
+    if (left.isEmpty() && right.isEmpty()) return 0
+    if (left.isEmpty()) return 1
+    if (right.isEmpty()) return -1
+    if (left.first() == '[' && right.first() != '[') return compare(left, right.addBracketsAroundFirst())
+    if (left.first() != '[' && right.first() == '[') return compare(left.addBracketsAroundFirst(), right)
+    if(left.first() == '[' && right.first() == '[') {
+        val leftClosingBracketIndex = left.findClosingBracketIndex()
+        val rightClosingBracketIndex = right.findClosingBracketIndex()
+        val compare = compare(
+            left.substring(1, leftClosingBracketIndex),
+            right.substring(1, rightClosingBracketIndex)
         )
-        if(orderedCorrectly == 0) return orderedCorrectlyAfter(left, right)
-        else return orderedCorrectly
+        if(compare == 0) return compare(left.stringAfter(leftClosingBracketIndex), right.stringAfter(rightClosingBracketIndex))
+        else return compare
     }
     val leftNr = left.substringBefore(',').toInt()
     val rightNr = right.substringBefore(',').toInt()
     if (leftNr < rightNr) return 1
     if (leftNr > rightNr) return -1
+    if(!left.contains(',') && !right.contains(',')) return 0
     return compare(left.substringAfter(',', ""), right.substringAfter(',', ""))
+
+}
+
+private fun String.stringAfter(index: Int): String {
+    if(index == this.lastIndex) return ""
+    else return this.substring(index + 2) // 2 chars: ],
 }
 
 private fun String.addBracketsAroundFirst(): String {
@@ -65,25 +68,6 @@ private fun String.addBracketsAroundFirst(): String {
     val nrWithBrackets = "[${this.substring(0, afterNr)}]"
     return if(afterNr >= this.lastIndex) nrWithBrackets
     else "$nrWithBrackets${this.substring(afterNr)}"
-}
-
-private fun orderedCorrectlyAfter(
-    left: String,
-    right: String,
-    leftClosingBracket: Int = left.findClosingBracketIndex(),
-    rightClosingBracket: Int = right.findClosingBracketIndex()
-): Int {
-    val leftSubAfter = subStringAfterOrEmpty(left, leftClosingBracket)
-    val rightSubAfter = subStringAfterOrEmpty(right, rightClosingBracket)
-    return if (leftSubAfter.isEmpty() && rightSubAfter.isNotEmpty()) -1
-    else if (leftSubAfter.isEmpty() && rightSubAfter.isEmpty()) 0
-    else if(leftSubAfter.isNotEmpty() && rightSubAfter.isEmpty()) 1
-    else compare(leftSubAfter.trimStart(','), rightSubAfter.trimStart(','))
-}
-
-fun subStringAfterOrEmpty(s: String, closingBracketIndex: Int = s.findClosingBracketIndex()): String {
-    return if(closingBracketIndex == s.lastIndex ) ""
-    else s.substring(closingBracketIndex + 1)
 }
 
 private fun String.findClosingBracketIndex(): Int {

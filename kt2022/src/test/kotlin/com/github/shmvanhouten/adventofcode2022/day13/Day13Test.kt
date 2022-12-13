@@ -162,6 +162,24 @@ class Day13Test {
         }
 
         @Test
+        internal fun `debugging part 2`() {
+            val input = """
+                [[[[7]],2]]
+                [[7,2],[],[[5,7,3],[],[[2,2],[],9,[2,6,7]]]]
+            """.trimIndent().lines()
+            assertThat(orderedCorrectly(input[0],input[1])).isTrue
+        }
+
+        @Test
+        internal fun `more debugging`() {
+            val input = """
+                [[[[7]],2]]
+                [[7,2]]
+            """.trimIndent().lines()
+            assertThat(compare(input[0],input[1])).isEqualTo(0)
+        }
+
+        @Test
         internal fun `part 1`() {
             assertThat(findIndicesOfCorrectPacketPairs(input).sum()).isEqualTo(6070)
             // 4820 too low
@@ -227,9 +245,9 @@ class Day13Test {
         @Test
         internal fun `part 2`() {
             val sorted = sortedWithDividers(input)
-//            sorted.forEach { println(it) }
             assertThat(sorted.decoderKey()).isLessThan(21978)
-            assertThat(sorted.decoderKey()).isGreaterThan(20160)
+            assertThat(sorted.decoderKey()).isEqualTo(20160)
+            assertThat(sorted.decoderKey()).isEqualTo(20758)
         }
     }
 
