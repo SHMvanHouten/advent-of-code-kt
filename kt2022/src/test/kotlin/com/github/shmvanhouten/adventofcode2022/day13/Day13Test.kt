@@ -172,13 +172,64 @@ class Day13Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1).isEqualTo(1)
+        internal fun example() {
+            val input = """
+                [1,1,3,1,1]
+                [1,1,5,1,1]
+
+                [[1],[2,3,4]]
+                [[1],4]
+
+                [9]
+                [[8,7,6]]
+
+                [[4,4],4,4]
+                [[4,4],4,4,4]
+
+                [7,7,7,7]
+                [7,7,7]
+
+                []
+                [3]
+
+                [[[]]]
+                [[]]
+
+                [1,[2,[3,[4,[5,6,7]]]],8,9]
+                [1,[2,[3,[4,[5,6,0]]]],8,9]
+            """.trimIndent()
+            val sorted = sortedWithDividers(input)
+            assertThat(sorted).isEqualTo(
+                """
+                    []
+                    [[]]
+                    [[[]]]
+                    [1,1,3,1,1]
+                    [1,1,5,1,1]
+                    [[1],[2,3,4]]
+                    [1,[2,[3,[4,[5,6,0]]]],8,9]
+                    [1,[2,[3,[4,[5,6,7]]]],8,9]
+                    [[1],4]
+                    [[2]]
+                    [3]
+                    [[4,4],4,4]
+                    [[4,4],4,4,4]
+                    [[6]]
+                    [7,7,7]
+                    [7,7,7,7]
+                    [[8,7,6]]
+                    [9]
+                """.trimIndent().lines()
+            )
+            assertThat(sorted.decoderKey()).isEqualTo(140)
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1).isEqualTo(1)
+            val sorted = sortedWithDividers(input)
+//            sorted.forEach { println(it) }
+            assertThat(sorted.decoderKey()).isLessThan(21978)
+            assertThat(sorted.decoderKey()).isGreaterThan(20160)
         }
     }
 
