@@ -15,14 +15,19 @@ fun findBeaconCoordinates(input: String) : Set<Coordinate> {
 fun findWhereSensorCannotBe(input: String): Set<Coordinate> {
     return input.lines()
         .map { toSensorBeaconPair(it) }
-        .flatMap { findWhereSensorCannotBe(it).flatten() }
+        .flatMap { findWhereSensorCannotBe(it).map { toCoordinateProgression(it) }.flatten() }
         .toSet()
 }
 
-fun findWhereSensorCannotBeAtY(input: String, y: Int): Set<CoordinateProgression> {
+fun toCoordinateProgression(pair: Pair<IntRange, Int>): CoordinateProgression {
+    val (xrange, y) = pair
+    return CoordinateProgression(Coordinate(xrange.first(), y), Coordinate(xrange.last, y))
+}
+
+fun findWhereSensorCannotBeAtY(input: String, y: Int): Set<Int> {
     return input.lines()
         .map { toSensorBeaconPair(it) }
-        .flatMap { findWhereSensorCannotBe(it).filter { it.first().y == y }.filterOutOverlapping() }
+        .flatMap { findWhereSensorCannotBe(it).filter { it.second == y }.flatMap { it.first } }
         .toSet()
 }
 
@@ -52,11 +57,11 @@ fun merge(ranges: Set<CoordinateProgression>, newRange: CoordinateProgression): 
     else error("how did we get here?")
 }
 
-fun findWhereSensorCannotBe(input: Pair<Coordinate, Coordinate>): List<CoordinateProgression> {
+fun findWhereSensorCannotBe(input: Pair<Coordinate, Coordinate>): List<Pair<IntRange, Int>> {
     val (sensor, beacon) = input
     val distanceBetween = (sensor - beacon).let { abs(it.x) + abs(it.y) }
     return ((sensor.y - (distanceBetween))..(sensor.y + distanceBetween)).map{y ->
-        Coordinate((sensor.x - distanceBetween) + (abs(sensor.y - y)), y)..Coordinate(((sensor.x + distanceBetween) - (abs(sensor.y - y))), y)
+        ((sensor.x - distanceBetween) + (abs(sensor.y - y)))..((sensor.x + distanceBetween) - (abs(sensor.y - y))) to y
     }
 }
 

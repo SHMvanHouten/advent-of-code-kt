@@ -66,17 +66,19 @@ class Day15Test {
 
         @Test
         internal fun example() {
-            val impossibleSpots = findWhereSensorCannotBeAtY(exampleInput, 10)
-            val beaconCoordinates = findBeaconCoordinates(exampleInput)
-            assertThat((impossibleSpots.flatten() - beaconCoordinates)).hasSize(26)
+            val targetY = 10
+            val impossibleSpots = findWhereSensorCannotBeAtY(exampleInput, targetY)
+            val beaconCoordinates = findBeaconCoordinates(exampleInput).filter { it.y == targetY }.map { it.x }
+            assertThat((impossibleSpots - beaconCoordinates)).hasSize(26)
 
         }
 
         @Test
         internal fun `part 1`() {
-            val impossibleSpots = findWhereSensorCannotBeAtY(input, 2_000_000)
-            val beaconCoordinates = findBeaconCoordinates(exampleInput)
-            assertThat(impossibleSpots - beaconCoordinates).hasSizeLessThan(5832529)
+            val targetY = 2_000_000
+            val impossibleSpots = findWhereSensorCannotBeAtY(input, targetY)
+            val beaconCoordinates = findBeaconCoordinates(input).filter { it.y == targetY }.map { it.x }
+            assertThat(impossibleSpots - beaconCoordinates).hasSize(5832528)
         }
     }
 
