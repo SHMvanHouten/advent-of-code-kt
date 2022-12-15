@@ -1,8 +1,22 @@
 package com.github.shmvanhouten.adventofcode.utility.coordinate
 
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 class CoordinateProgression(private val start: Coordinate, private val end: Coordinate) : Iterable<Coordinate> {
+    val minX: Int
+        get() {
+            return min(start.x, end.x)
+        }
+
+    val maxX: Int
+        get() {
+            return max(start.x, end.x)
+        }
+
+    val xRange: IntRange = minX..maxX
+
     override fun iterator(): Iterator<Coordinate> = CoordinateIterator(start, end)
 
     fun isVertical(): Boolean {

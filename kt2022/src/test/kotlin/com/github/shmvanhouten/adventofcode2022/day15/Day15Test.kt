@@ -4,6 +4,7 @@ import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.draw
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -65,15 +66,17 @@ class Day15Test {
 
         @Test
         internal fun example() {
-            val impossibleSpots = findWhereSensorCannotBe(exampleInput)
+            val impossibleSpots = findWhereSensorCannotBeAtY(exampleInput, 10)
             val beaconCoordinates = findBeaconCoordinates(exampleInput)
-            assertThat(impossibleSpots.filter { it.y == 10 } - beaconCoordinates).hasSize(26)
+            assertThat((impossibleSpots.flatten() - beaconCoordinates)).hasSize(26)
 
         }
 
         @Test
         internal fun `part 1`() {
-            val impossibleSpots = findWhereSensorCannotBe(input)
+            val impossibleSpots = findWhereSensorCannotBeAtY(input, 2_000_000)
+            val beaconCoordinates = findBeaconCoordinates(exampleInput)
+            assertThat(impossibleSpots - beaconCoordinates).hasSizeLessThan(5832529)
         }
     }
 
