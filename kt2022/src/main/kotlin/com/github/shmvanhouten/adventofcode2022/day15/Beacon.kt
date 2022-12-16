@@ -4,6 +4,8 @@ import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.CoordinateProgression
 import com.github.shmvanhouten.adventofcode.utility.strings.splitIntoTwo
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 fun findBeaconCoordinates(input: String) : Set<Coordinate> {
     return input.lines()
@@ -31,32 +33,6 @@ fun findWhereSensorCannotBeAtY(input: String, y: Int): Set<Int> {
         .toSet()
 }
 
-private fun List<CoordinateProgression>.filterOutOverlapping(): Set<CoordinateProgression> {
-    return this.fold(setOf()) { acc: Set<CoordinateProgression>, newRange ->
-        merge(acc, newRange)
-    }
-}
-
-fun merge(ranges: Set<CoordinateProgression>, newRange: CoordinateProgression): Set<CoordinateProgression> {
-    val rangeThatContainsStart = ranges.find { it.contains(newRange.first()) }
-    val rangeThatContainsEnd = ranges.find { it.contains(newRange.last()) }
-    return if(rangeThatContainsStart == null && rangeThatContainsEnd == null) {
-        val rangesInNewRange = ranges.filter { newRange.contains(it.first()) || newRange.contains(it.last()) }
-        val rangesToMerge = rangesInNewRange + setOf(newRange)
-        val xRange = rangesToMerge.map { it.xRange }.flatten()
-        setOf(Coordinate(xRange.min(), newRange.first().y)..Coordinate(xRange.max(), newRange.first().y))
-    }
-    else if(rangeThatContainsEnd == rangeThatContainsStart) ranges
-    else if(rangeThatContainsStart != null && rangeThatContainsEnd != null) {
-        ranges - setOf(rangeThatContainsStart, rangeThatContainsEnd) + setOf(CoordinateProgression(rangeThatContainsStart.first(), rangeThatContainsEnd.last()))
-    } else if(rangeThatContainsStart != null) {
-        ranges - setOf(rangeThatContainsStart) + setOf(CoordinateProgression(rangeThatContainsStart.first(), newRange.last()))
-    } else if(rangeThatContainsEnd != null) {
-        ranges - setOf(rangeThatContainsEnd) + setOf(CoordinateProgression(newRange.first(), rangeThatContainsEnd.last()))
-    }
-    else error("how did we get here?")
-}
-
 fun findWhereSensorCannotBe(input: Pair<Coordinate, Coordinate>): List<Pair<IntRange, Int>> {
     val (sensor, beacon) = input
     val distanceBetween = (sensor - beacon).let { abs(it.x) + abs(it.y) }
@@ -75,4 +51,47 @@ fun toCoordinate(input: String): Coordinate {
         x = input.substringAfter("x=").substringBefore(',').toInt(),
         y = input.substringAfter("y=").substringBefore(':').toInt()
         )
+}
+
+fun findWhereSensorIsInRange(input: String, min: Int = 0, max: Int = 4000000): Coordinate {
+    val sensorRanges = input.lines()
+        .map { toSensorRange(it, min, max) }
+
+    sensorRanges.forEach { range ->
+
+        val find = range.edges.find { edgeLoc -> (sensorRanges).none { it.isInRangeOf(edgeLoc) } }
+        if(find != null) return find
+    }
+    error("nothing found")
+}
+
+fun toSensorRange(input: String, min: Int, max: Int): SensorRange {
+    val (sensor, beacon) = input.splitIntoTwo(":")
+    return SensorRange(toCoordinate(sensor), toCoordinate(beacon), min, max)
+}
+
+data class SensorRange(
+    val sensor: Coordinate,
+    val beacon: Coordinate,
+    val min: Int = 0,
+    val max: Int = 4000000
+) {
+    val sensorToBeaconDistance = sensor.distanceFrom(beacon)
+    fun isInRangeOf(edgeLoc: Coordinate): Boolean {
+        return sensor.distanceFrom(edgeLoc) <= sensorToBeaconDistance
+    }
+
+    val edges: Sequence<Coordinate> by lazy {
+        val distanceBetween = (sensor - beacon).let { abs(it.x) + abs(it.y) }
+        sequence {
+            (max(sensor.y - 1 - distanceBetween, min)..min(sensor.y + 1 + distanceBetween, max)).map { y ->
+                yield(Coordinate((max((sensor.x - 1 - distanceBetween) + (abs(sensor.y - y)), min)), y))
+                yield(Coordinate((min((sensor.x + 1 + distanceBetween) - (abs(sensor.y - y)), max)), y))
+            }
+        }
+    }
+}
+
+fun Coordinate.frequency(): Long {
+    return 4000000L * x + y
 }

@@ -4,7 +4,6 @@ import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.draw
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -86,13 +85,16 @@ class Day15Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1).isEqualTo(1)
+        internal fun example() {
+            val sensor = findWhereSensorIsInRange(exampleInput, 0, 20)
+            assertThat(sensor).isEqualTo(Coordinate(14, 11))
+            assertThat(sensor.frequency()).isEqualTo(56000011L)
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1).isEqualTo(1)
+            val sensor = findWhereSensorIsInRange(input)
+            assertThat(sensor.frequency()).isEqualTo(13360899249595L)
         }
     }
 
