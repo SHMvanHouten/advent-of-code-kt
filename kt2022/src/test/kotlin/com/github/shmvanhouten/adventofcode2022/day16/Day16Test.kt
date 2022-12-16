@@ -37,14 +37,14 @@ class Day16Test {
         internal fun example() {
             val valves = parse(exampleInput)
             val bestPath = findMostEfficientReleasePath(valves)
-            assertThat(bestPath.pressureReleased + bestPath.pressurePerMinute).isEqualTo(1651L)
+            assertThat(bestPath.pressureReleased).isEqualTo(1707L)
         }
 
         @Test
         internal fun `part 1`() {
             val valves = parse(input)
             val bestPath = findMostEfficientReleasePath(valves)
-            assertThat(bestPath.pressureReleased + bestPath.pressurePerMinute).isEqualTo(1906L)
+            assertThat(bestPath.pressureReleased).isEqualTo(2548L)
         }
     }
 
