@@ -5,6 +5,8 @@ import java.util.*
 fun findMostEfficientReleasePath(valves: Map<String, Valve>): ValvePath {
     val paths = priorityQueueOf(ValvePath(valves["AA"]!!))
     var bestPath: ValvePath? = null
+    val nrOfValvesThatCanFlow = valves.filter { it.value.canFlow }.size
+    val maxTime = 30
 
     while (paths.isNotEmpty()) {
         val path = paths.poll()
@@ -17,11 +19,13 @@ fun findMostEfficientReleasePath(valves: Map<String, Valve>): ValvePath {
         else if(path.minute > 20 && (path.pressureReleased/(path.minute.toDouble() * path.minute) < 1.7)) {
             // drop it
         }
-        else if(path.hasHitMinute(30)) {
+        else if(path.hasHitMinute(maxTime)) {
             if(bestPath == null || path.pressureReleased > bestPath.pressureReleased) {
                 bestPath = path
                 println(bestPath.pressureReleased)
             }
+        } else if(path.onValves.size == nrOfValvesThatCanFlow) {
+            paths.add(path.finish(maxTime))
         } else {
 
             val currentValve = path.currentValve
@@ -59,6 +63,9 @@ data class ValvePath(
     }
 
     fun hasHitMinute(minute: Int): Boolean = this.minute == minute
+    fun finish(maxTime: Int): ValvePath {
+        return this.copy(pressureReleased = pressureReleased + (pressurePerMinute * (maxTime - minute)), minute = maxTime)
+    }
 }
 
 data class Valve(
@@ -82,8 +89,7 @@ private fun priorityQueueOf(valvePath: ValvePath): PriorityQueue<ValvePath> {
 class PathComparator: Comparator<ValvePath> {
     override fun compare(one: ValvePath?, other: ValvePath?): Int {
         if (one == null || other == null) error("null paths")
-        return if(one.minute == other.minute) (other.pressureReleased / other.minute * other.minute).compareTo(one.pressureReleased / one.minute * one.minute)
-        else (one.minute).compareTo(other.minute)
+        return (other.pressureReleased / other.minute * other.minute).compareTo(one.pressureReleased / one.minute * one.minute)
     }
 
 }
