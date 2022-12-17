@@ -16,17 +16,12 @@ fun findMostEfficientReleasePath(valves: Map<String, Valve>): ValvePath {
     while (paths.isNotEmpty()) {
         val path = paths.poll()
 
-        if(path.minute > 5 && (path.pressureReleased/(path.minute * path.minute) < 1)) {
-            // drop it
-        }
-        else if(path.minute > 10 && (path.pressureReleased/(path.minute.toDouble() * path.minute) < 2.2)) {
-            // drop it
-        }
         if (path.hasHitMinute(maxTime + 1)) {
 
             if (bestPath == null || path.pressureReleased > bestPath.pressureReleased) {
                 bestPath = path
                 println("${bestPath.pressureReleased} with ${bestPath.onValves.size} valves on")
+                if(path.pressureReleased == 2548L) println(bestPath.log)
             }
         } else if (path.onValves.size == nrOfValvesThatCanFlow) {
             paths.add(path.finish(maxTime + 1))
@@ -119,7 +114,7 @@ data class ValvePath(
             pressurePerMinute = pressurePerMinute + goalFor1.first.flowRate,
             goalFor1 = null,
             current1 = goalFor1.first,
-            log = log + "\n 1: turning on ${goalFor1.first.name} with flow ${goalFor1.first.flowRate} at minute $minute"
+//            log = log + "\n 1: turning on ${goalFor1.first.name} with flow ${goalFor1.first.flowRate} at minute $minute"
         )
     }
 
@@ -129,7 +124,7 @@ data class ValvePath(
             pressurePerMinute = pressurePerMinute + goalFor2.first.flowRate,
             goalFor2 = null,
             current2 = goalFor2.first,
-            log = log + "\n 2: turning on ${goalFor2.first.name} with flow ${goalFor2.first.flowRate} at minute $minute"
+//            log = log + "\n 2: turning on ${goalFor2.first.name} with flow ${goalFor2.first.flowRate} at minute $minute"
         )
     }
 
@@ -148,7 +143,8 @@ data class ValvePath(
         else tick1.tick2()
         return tick2.copy(
             pressureReleased = pressureReleased + pressurePerMinute,
-            minute = minute + 1
+            minute = minute + 1,
+//            log = log + "\n start of minute ${minute + 1}, pressurePerMinute = ${pressurePerMinute}, pressureReleased = ${pressurePerMinute + pressureReleased}"
         )
     }
 
