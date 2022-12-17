@@ -1,7 +1,6 @@
 package com.github.shmvanhouten.adventofcode2022.day17
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import com.github.shmvanhouten.adventofcode.utility.collectors.extremes
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -132,13 +131,89 @@ class Day17Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1).isEqualTo(1)
+        internal fun `example pattern should repeat at some point`() {
+            val input = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>"
+            val drawn = draw(Cavern().simulate(input, 150))
+            assertThat(drawn).contains(exampleRepeating)
+            assertThat(drawn).contains(exampleRepeating + "\n" + exampleRepeating)
+            assertThat(drawn).contains(exampleRepeating + "\n" + exampleRepeating + "\n" + exampleRepeating)
+        }
+
+        @Test
+        internal fun `example_ at block 37 and 38 the pattern starts repeating`() {
+            val input = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>"
+
+            val drawn37 = draw(Cavern().simulate(input, 37))
+            assertThat(drawn37.lines()).doesNotContain("|.######|")
+
+            val drawn38 = draw(Cavern().simulate(input, 38))
+            assertThat(drawn38.lines()).contains("|.######|") // + on the right + reverse L next to it
+        }
+
+        @Test
+        internal fun `then at block 72 the pattern repeats again`() {
+            val input = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>"
+
+            val drawn72 = draw(Cavern().simulate(input, 73, "|.######|"))
+            assertThat(drawn72.lines().count { it == "|.######|" }).isEqualTo(2)
+        }
+
+        @Test
+        internal fun example() {
+            val input = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>"
+            val target = 1000000000000L
+
+            val startOfRepeating = "|.######|"
+
+            val repeatsAt = 37
+            val repeatsAtAgain = 72
+            val repetitions = (target - repeatsAt) / (repeatsAtAgain - repeatsAt)
+            println(repetitions)
+            val remaining = (target - repeatsAt) % (repeatsAtAgain - repeatsAt)
+            println(remaining)
+            val draw = draw(Cavern().simulate(input, repeatsAtAgain + remaining.toInt()))
+            val remainingHeight = draw.lines().size
+            val repeatingBlock = (draw.substringAfter(startOfRepeating).substringBefore(startOfRepeating) + startOfRepeating).trim()
+            assertThat(repeatingBlock).isEqualTo(exampleRepeating)
+            val sizeOfRepeatingBlock = repeatingBlock.lines().size
+            val repetitionsSize = (repetitions- 1) * sizeOfRepeatingBlock
+
+            val expected = 1514285714288L
+            assertThat(repetitionsSize + remainingHeight).isEqualTo(expected)
+        }
+
+        private val startOfRepeating = """
+            |###..#.|
+            |.#####.|
+            |..###..|
+            |..###..|
+            |..#.#..|
+            |..#.#..|
+        """.trimIndent()
+        @Test
+        internal fun findActualInputRepeating() {
+            val drawn = draw(Cavern().simulate(input, 11000, startOfRepeating))
+            println(drawn)
+            println()
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1).isEqualTo(1)
+            val target = 1000000000000L
+            val repeatsAt = 284
+            val repeatsAtAgain = 2039
+            val repetitions = (target - repeatsAt) / (repeatsAtAgain - repeatsAt)
+            println(repetitions)
+            val remaining = (target - repeatsAt) % (repeatsAtAgain - repeatsAt)
+
+            val draw = draw(Cavern().simulate(input, repeatsAtAgain + remaining.toInt()))
+            val remainingHeight = draw.lines().size
+            val repeatingBlock = (draw.substringAfter(startOfRepeating).substringBefore(startOfRepeating) + startOfRepeating).trim()
+            val sizeOfRepeatingBlock = repeatingBlock.lines().size
+            val repetitionsSize = (repetitions- 1) * sizeOfRepeatingBlock
+
+            val expected = 1577207977186L
+            assertThat(repetitionsSize + remainingHeight).isEqualTo(expected)
         }
     }
 
@@ -146,13 +221,58 @@ class Day17Test {
 
 }
 
-fun draw(coordinates: Collection<Coordinate>, hit: Char = '#', miss: Char = '.'): String {
-    val (minY, maxY) = coordinates.map { it.y }.extremes() ?: error("empty collection $coordinates")
-    val (minX, maxX) = 0 to 6
-    return maxY.downTo(minY).joinToString("\n") { y ->
-        (minX..maxX).map { x ->
-            if (coordinates.contains(Coordinate(x, y))) hit
-            else miss
-        }.joinToString("", prefix = "|", postfix = "|")
-    }
-}
+val exampleRepeating = """
+    |.#####.|
+    |....#..|
+    |....#..|
+    |....#..|
+    |....#..|
+    |.##.#..|
+    |.##.#..|
+    |..###..|
+    |....#..|
+    |...###.|
+    |#...#..|
+    |#####..|
+    |#.#....|
+    |#.#....|
+    |####...|
+    |..#####|
+    |...#.##|
+    |..####.|
+    |.##....|
+    |.##...#|
+    |..#...#|
+    |..#.###|
+    |..#..#.|
+    |..#.###|
+    |.#####.|
+    |....#..|
+    |....#..|
+    |....#..|
+    |....#..|
+    |.##.#..|
+    |.##.#..|
+    |..###..|
+    |...#...|
+    |..###..|
+    |...#...|
+    |..####.|
+    |..###..|
+    |..###..|
+    |..####.|
+    |....###|
+    |.....#.|
+    |.#####.|
+    |.#..#..|
+    |.#..#..|
+    |.####.#|
+    |.####.#|
+    |###.###|
+    |.#####.|
+    |.###...|
+    |.###...|
+    |.#.#...|
+    |.#.#.#.|
+    |.######|
+""".trimIndent()

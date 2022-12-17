@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2022.day17
 
+import com.github.shmvanhouten.adventofcode.utility.collectors.extremes
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 
 // Y is descending! so -y means going down, +y means going up!
@@ -18,18 +19,32 @@ enum class Rock(val coordinates: List<Coordinate>) {
     }
 
 }
+
 class Cavern {
     private val cavern = mutableSetOf<Coordinate>()
-    fun simulate(gasJets: String, nrOfRocks: Int): Set<Coordinate> {
+    fun simulate(gasJets: String, nrOfRocks: Int, untilRepeats: String? = null): Set<Coordinate> {
         var remainingJets = gasJets
 
         var currentShape = Rock.BEAM
-        repeat(nrOfRocks) {
+        var hasPrinted = false
+        repeat(nrOfRocks) {i ->
             val (rock, jets) = dropRock(currentShape.coordinates, remainingJets)
             remainingJets = jets
             if(remainingJets.length < gasJets.length) remainingJets += gasJets
             cavern += rock
             currentShape = currentShape.next()
+            val drawing = draw(cavern)
+            if(!hasPrinted && untilRepeats != null && drawing.contains(untilRepeats)) {
+                hasPrinted = true
+                println("first time block contains: ${i + 1}")
+            }
+//            println(drawing)
+//            println("--------")
+//            println()
+            if(drawing.containsTwice(untilRepeats)) {
+                println("finished at rock ${i + 1}")
+                return cavern
+            }
         }
         return cavern
     }
@@ -109,5 +124,24 @@ class Cavern {
     private fun getHighestBlock(cavern: MutableSet<Coordinate>): Int {
         return if (cavern.isEmpty()) 0
         else cavern.maxOf { it.y }
+    }
+}
+
+private fun String.containsTwice(untilRepeats: String?): Boolean {
+    if(untilRepeats == null) return false
+    val firstTimeRepeat = indexOf(untilRepeats)
+    return if(firstTimeRepeat != -1) {
+        substring(firstTimeRepeat + 1).contains(untilRepeats)
+    } else false
+}
+
+fun draw(coordinates: Collection<Coordinate>, hit: Char = '#', miss: Char = '.'): String {
+    val (minY, maxY) = coordinates.map { it.y }.extremes() ?: error("empty collection $coordinates")
+    val (minX, maxX) = 0 to 6
+    return maxY.downTo(minY).joinToString("\n") { y ->
+        (minX..maxX).map { x ->
+            if (coordinates.contains(Coordinate(x, y))) hit
+            else miss
+        }.joinToString("", prefix = "|", postfix = "|")
     }
 }
