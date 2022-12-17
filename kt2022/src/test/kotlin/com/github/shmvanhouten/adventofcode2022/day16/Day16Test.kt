@@ -52,13 +52,17 @@ class Day16Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1).isEqualTo(1)
+        internal fun example() {
+            val valves = parse(exampleInput)
+            val bestPath = findMostEfficientReleasePath(valves)
+            assertThat(bestPath.pressureReleased).isEqualTo(1707L)
         }
 
         @Test
-        internal fun `part 2`() {
-            assertThat(1).isEqualTo(1)
+        internal fun `part 1`() {
+            val valves = parse(input)
+            val bestPath = findMostEfficientReleasePath(valves)
+            assertThat(bestPath.pressureReleased).isEqualTo(2548L)
         }
     }
 
