@@ -87,7 +87,7 @@ class Day09Test {
             assertThat(bridge.countPlacesTailVisited())
                 .isEqualTo(36)
 
-            assertThat(draw(bridge.placesVisitedByTail, '#').replace(' ', '.'))
+            assertThat(draw(bridge.placesVisitedByTail, '#', '.').replace(' ', '.'))
                 .isEqualTo(
                     """
                         #.....................

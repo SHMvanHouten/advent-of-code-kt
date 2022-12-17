@@ -2,6 +2,7 @@ package com.github.shmvanhouten.adventofcode2022.day16
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -34,6 +35,7 @@ class Day16Test {
         }
 
         @Test
+        @Disabled("slow")
         internal fun example() {
             val valves = parse(exampleInput)
             val bestPath = findMostEfficientReleasePath(valves)
@@ -41,6 +43,7 @@ class Day16Test {
         }
 
         @Test
+        @Disabled("slow")
         internal fun `part 1`() {
             val valves = parse(input)
             val bestPath = findMostEfficientReleasePath(valves)
@@ -52,6 +55,7 @@ class Day16Test {
     inner class Part2 {
 
         @Test
+        @Disabled("slow")
         internal fun example() {
             val valves = parse(exampleInput)
             val bestPath = findMostEfficientReleasePath(valves)
@@ -59,6 +63,7 @@ class Day16Test {
         }
 
         @Test
+        @Disabled("slow")
         internal fun `part 1`() {
             val valves = parse(input)
             val bestPath = findMostEfficientReleasePath(valves)
