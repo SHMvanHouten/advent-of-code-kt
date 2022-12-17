@@ -5,15 +5,15 @@ import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 
 // Y is descending! so -y means going down, +y means going up!
 
-enum class Rock(val coordinates: List<Coordinate>) {
-    BEAM(listOf(Coordinate(2, 0),Coordinate(3, 0), Coordinate(4, 0), Coordinate(5, 0))),
-    PLUS(listOf(Coordinate(3, 0),Coordinate(2, 1), Coordinate(3, 1), Coordinate(4, 1), Coordinate(3,2))),
-    BACKL(listOf(Coordinate(2, 0),Coordinate(3, 0), Coordinate(4, 0), Coordinate(4, 1), Coordinate(4,2))),
-    POST(listOf(Coordinate(2,0), Coordinate(2,1), Coordinate(2,2), Coordinate(2,3))),
-    BLOCK(listOf(Coordinate(2,0), Coordinate(3,0), Coordinate(2,1), Coordinate(3,1)));
+enum class Shape(val rock: Rock) {
+    BEAM(Rock(Coordinate(2, 0),Coordinate(3, 0), Coordinate(4, 0), Coordinate(5, 0))),
+    PLUS(Rock(Coordinate(3, 0),Coordinate(2, 1), Coordinate(3, 1), Coordinate(4, 1), Coordinate(3,2))),
+    BACKL(Rock(Coordinate(2, 0),Coordinate(3, 0), Coordinate(4, 0), Coordinate(4, 1), Coordinate(4,2))),
+    POST(Rock(Coordinate(2,0), Coordinate(2,1), Coordinate(2,2), Coordinate(2,3))),
+    BLOCK(Rock(Coordinate(2,0), Coordinate(3,0), Coordinate(2,1), Coordinate(3,1)));
 
-    fun next(): Rock {
-        val values = Rock.values()
+    fun next(): Shape {
+        val values = Shape.values()
         val nextOrdinal = (this.ordinal + 1) % values.size
         return values[nextOrdinal]
     }
@@ -25,110 +25,66 @@ class Cavern {
     fun simulate(gasJets: String, nrOfRocks: Int, untilRepeats: String? = null): Set<Coordinate> {
         var remainingJets = gasJets
 
-        var currentShape = Rock.BEAM
+        var currentShape = Shape.BEAM
         var hasPrinted = false
         repeat(nrOfRocks) {i ->
-            val (rock, jets) = dropRock(currentShape.coordinates, remainingJets)
+            val (rock, jets) = dropRock(currentShape.rock, remainingJets)
             remainingJets = jets
             if(remainingJets.length < gasJets.length) remainingJets += gasJets
-            cavern += rock
+            cavern += rock.rock
             currentShape = currentShape.next()
-            val drawing = draw(cavern)
-            if(!hasPrinted && untilRepeats != null && drawing.contains(untilRepeats)) {
-                hasPrinted = true
-                println("first time block contains: ${i + 1}")
-            }
-//            println(drawing)
-//            println("--------")
-//            println()
-            if(drawing.containsTwice(untilRepeats)) {
-                println("finished at rock ${i + 1}")
-                return cavern
+
+            if(untilRepeats != null) {
+                val drawing = draw(cavern)
+                if (!hasPrinted && drawing.contains(untilRepeats)) {
+                    hasPrinted = true
+                    println("first time block contains: ${i + 1}")
+                }
+                if (drawing.containsTwice(untilRepeats)) {
+                    println("finished at rock ${i + 1}")
+                    return cavern
+                }
             }
         }
         return cavern
     }
 
     private fun dropRock(
-        nextRock: List<Coordinate>,
+        nextRock: Rock,
         gasJets: String
-    ): Pair<List<Coordinate>, String> {
-        var remainingJets = gasJets
-        val startingY = getHighestBlock(cavern) + 4
-        var rock = nextRock
-        rock = rock.moveUp(startingY)
-        rock = freeFall(remainingJets.substring(0, 4), rock)
-        remainingJets = remainingJets.substring(4)
+    ): Pair<Rock, String> {
+        val startingY = getHighestBlock() + 4
 
-        return dropUntilBottomIsHit(rock, remainingJets)
-    }
+        val rock = nextRock
+            .moveUp(startingY)
+             .freeFall(gasJets.substring(0, 4), cavern)
 
-    private fun freeFall(
-        gasJets: String,
-        rock: List<Coordinate>
-    ): List<Coordinate> {
-        var rock1 = rock
-        for (gasJet in gasJets.substring(0, gasJets.lastIndex)) {
-            rock1 = rock1.move(gasJet)
-            rock1 = rock1.fall()
-        }
-        return rock1.move(gasJets.last())
+        return dropUntilBottomIsHit(rock, gasJets.substring(4))
     }
 
     private fun dropUntilBottomIsHit(
-        startingRock: List<Coordinate>,
+        startingRock: Rock,
         jets: String
-    ): Pair<List<Coordinate>, String> {
+    ): Pair<Rock, String> {
         var rock = startingRock
         var remainingJets = jets
         while (true) {
             val newRock = rock.fall()
-            if (newRock.any { it.y == 0 || cavern.contains(it) }) return rock to remainingJets
+            if (newRock.rock.any { it.y == 0 || cavern.contains(it) }) return rock to remainingJets
             else rock = newRock
 
-            rock = rock.move(remainingJets.first())
+            rock = rock.move(remainingJets.first(), cavern)
             remainingJets = remainingJets.substring(1)
         }
     }
 
-    private fun List<Coordinate>.move(gasJet: Char): List<Coordinate> {
-        return when (gasJet) {
-            '<' -> this.moveLeft()
-            '>' -> this.moveRight()
-            else -> error("unknown direction $gasJet")
-        }
-    }
-
-    private fun List<Coordinate>.moveRight(): List<Coordinate> {
-        if (maxOf { it.x } >= 6) return this
-        val moved = map { it.copy(x = it.x + 1) }
-        return if(moved.any { cavern.contains(it) }) this
-        else moved
-    }
-
-    private fun List<Coordinate>.moveLeft(): List<Coordinate> {
-        if (minOf { it.x } == 0) return this
-        val moved = map { it.copy(x = it.x - 1) }
-        return if(moved.any { cavern.contains(it) }) this
-        else moved
-    }
-
-    private fun List<Coordinate>.moveUp(upBy: Int): List<Coordinate> {
-        return map { it.copy(y = it.y + upBy) }.toList()
-    }
-
-    private fun List<Coordinate>.fall(): List<Coordinate> {
-        return map { it.copy(y = it.y - 1) }
-    }
-
-    private fun getHighestBlock(cavern: MutableSet<Coordinate>): Int {
+    private fun getHighestBlock(): Int {
         return if (cavern.isEmpty()) 0
         else cavern.maxOf { it.y }
     }
 }
 
-private fun String.containsTwice(untilRepeats: String?): Boolean {
-    if(untilRepeats == null) return false
+private fun String.containsTwice(untilRepeats: String): Boolean {
     val firstTimeRepeat = indexOf(untilRepeats)
     return if(firstTimeRepeat != -1) {
         substring(firstTimeRepeat + 1).contains(untilRepeats)
@@ -143,5 +99,53 @@ fun draw(coordinates: Collection<Coordinate>, hit: Char = '#', miss: Char = '.')
             if (coordinates.contains(Coordinate(x, y))) hit
             else miss
         }.joinToString("", prefix = "|", postfix = "|")
+    }
+}
+
+data class Rock(
+    val rock: List<Coordinate>
+) {
+    constructor(vararg coordinates: Coordinate): this(coordinates.toList())
+
+    fun move(gasJet: Char, cavern: Set<Coordinate>): Rock {
+        return when (gasJet) {
+            '<' -> this.moveLeft(cavern)
+            '>' -> this.moveRight(cavern)
+            else -> error("unknown direction $gasJet")
+        }
+    }
+
+    fun freeFall(
+        gasJets: String,
+        cavern: MutableSet<Coordinate>
+    ): Rock {
+        var rock = this
+        for (gasJet in gasJets.substring(0, gasJets.lastIndex)) {
+            rock = rock.move(gasJet, cavern)
+            rock = rock.fall()
+        }
+        return rock.move(gasJets.last(), cavern)
+    }
+
+    fun moveUp(upBy: Int): Rock {
+        return Rock(rock.map { it.copy(y = it.y + upBy) })
+    }
+
+    fun fall(): Rock {
+        return Rock(rock.map { it.copy(y = it.y - 1) })
+    }
+
+    private fun moveRight(cavern: Set<Coordinate>): Rock {
+        if (rock.maxOf { it.x } >= 6) return this
+        val moved = rock.map { it.copy(x = it.x + 1) }
+        return if(moved.any { cavern.contains(it) }) this
+        else Rock(moved)
+    }
+
+    private fun moveLeft(cavern: Set<Coordinate>): Rock {
+        if (rock.minOf { it.x } == 0) return this
+        val moved = rock.map { it.copy(x = it.x - 1) }
+        return if(moved.any { cavern.contains(it) }) this
+        else Rock(moved)
     }
 }
