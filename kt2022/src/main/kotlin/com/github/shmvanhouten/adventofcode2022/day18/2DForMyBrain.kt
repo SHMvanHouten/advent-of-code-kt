@@ -4,13 +4,10 @@ import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinate
 
 fun countExposedSides(cubes: Set<Coordinate>): Int {
-    val occupiedSpace = cubes
-    return cubes.sumOf { c1 -> countConnectedAndAirPockets(c1, occupiedSpace) }
-
+    return cubes.sumOf { c1 -> countConnectedAndAirPockets(c1, cubes) }
 }
 
 fun countConnectedAndAirPockets(droplet: Coordinate, occupiedSpace: Set<Coordinate>): Int {
-//    val directions = airPockets.filter { it.manhattanDistanceTo(droplet) == 1 }.map { it - droplet }
     val unAttached = droplet.getSurroundingManhattan()
         .filter { !occupiedSpace.contains(it) }
     return unAttached.size - unAttached
@@ -28,9 +25,11 @@ private fun isSurroundedInVerticalSpace(
     occupiedSpace: Set<Coordinate>
 ): Boolean {
     val (x, y) = bubble
-    val vertical = occupiedSpace.filter { it.x == x }
-    return vertical.filter { it.y < y }.maxOfOrNull { it.y } != null && vertical.filter { it.y > y }
-        .minOfOrNull { it.y } != null
+    val vertical = occupiedSpace.filter { it.x == x }.map { it.y }
+    val top = vertical.filter { it < y }.maxOrNull()
+    val bottom = vertical.filter { it > y }.minOrNull()
+    return top != null && (y - top == 1 || isSurrounded(Coordinate(x, y - 1), occupiedSpace + bubble))
+            && bottom != null && (bottom - y == 1 || isSurrounded(Coordinate(x, y + 1), occupiedSpace + bubble))
 }
 
 private fun isSurroundedInHorizontalSpace(
