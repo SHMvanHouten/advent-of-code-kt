@@ -4,7 +4,6 @@ import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3d
 import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.to3DCoordinateMap
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -75,7 +74,7 @@ class Day18Test {
         @Test
         internal fun `part 1`() {
             val cubes = parse(input)
-            assertThat(countExposedSidesNoBubble(cubes)).isEqualTo(64)
+            assertThat(countExposedSidesNoBubble(cubes)).isEqualTo(4628)
         }
     }
 
@@ -146,10 +145,9 @@ class Day18Test {
         }
 
         @Test
-        @Disabled
         internal fun `part 2`() {
             val cubes = parse(input)
-            assertThat(countExposedSides(cubes)).isEqualTo(58)
+            assertThat(countExposedSides(cubes)).isEqualTo(2582)
         }
     }
 
