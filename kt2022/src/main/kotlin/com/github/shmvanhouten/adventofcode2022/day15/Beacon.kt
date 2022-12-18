@@ -21,11 +21,6 @@ fun findWhereSensorCannotBe(input: String): Set<Coordinate> {
         .toSet()
 }
 
-fun toCoordinateProgression(pair: Pair<IntRange, Int>): CoordinateProgression {
-    val (xrange, y) = pair
-    return CoordinateProgression(Coordinate(xrange.first(), y), Coordinate(xrange.last, y))
-}
-
 fun findWhereSensorCannotBeAtY(input: String, y: Int): Set<Int> {
     return input.lines()
         .map { toSensorBeaconPair(it) }
@@ -33,7 +28,12 @@ fun findWhereSensorCannotBeAtY(input: String, y: Int): Set<Int> {
         .toSet()
 }
 
-fun findWhereSensorCannotBe(input: Pair<Coordinate, Coordinate>): List<Pair<IntRange, Int>> {
+private fun toCoordinateProgression(pair: Pair<IntRange, Int>): CoordinateProgression {
+    val (xrange, y) = pair
+    return CoordinateProgression(Coordinate(xrange.first(), y), Coordinate(xrange.last, y))
+}
+
+private fun findWhereSensorCannotBe(input: Pair<Coordinate, Coordinate>): List<Pair<IntRange, Int>> {
     val (sensor, beacon) = input
     val distanceBetween = (sensor - beacon).let { abs(it.x) + abs(it.y) }
     return ((sensor.y - (distanceBetween))..(sensor.y + distanceBetween)).map{y ->
@@ -41,12 +41,12 @@ fun findWhereSensorCannotBe(input: Pair<Coordinate, Coordinate>): List<Pair<IntR
     }
 }
 
-fun toSensorBeaconPair(input: String): Pair<Coordinate, Coordinate> {
+private fun toSensorBeaconPair(input: String): Pair<Coordinate, Coordinate> {
     val (sensor, beacon) = input.splitIntoTwo(":")
     return toCoordinate(sensor) to toCoordinate(beacon)
 }
 
-fun toCoordinate(input: String): Coordinate {
+private fun toCoordinate(input: String): Coordinate {
     return Coordinate(
         x = input.substringAfter("x=").substringBefore(',').toInt(),
         y = input.substringAfter("y=").substringBefore(':').toInt()
@@ -65,7 +65,7 @@ fun findWhereSensorIsInRange(input: String, min: Int = 0, max: Int = 4000000): C
     error("nothing found")
 }
 
-fun toSensorRange(input: String, min: Int, max: Int): SensorRange {
+private fun toSensorRange(input: String, min: Int, max: Int): SensorRange {
     val (sensor, beacon) = input.splitIntoTwo(":")
     return SensorRange(toCoordinate(sensor), toCoordinate(beacon), min, max)
 }
