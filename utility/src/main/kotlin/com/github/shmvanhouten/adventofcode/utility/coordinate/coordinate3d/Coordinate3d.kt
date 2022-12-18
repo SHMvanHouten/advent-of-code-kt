@@ -19,6 +19,17 @@ data class Coordinate3d(val x: Int, val y: Int, val z: Int) {
         return abs(x - other.x) + abs(y - other.y) + abs(z - other.z)
     }
 
+    fun getSurroundingManhattan(): Set<Coordinate3d> {
+        return setOf(
+            this + Coordinate3d(-1, 0, 0),
+            this + Coordinate3d(1, 0, 0),
+            this + Coordinate3d(0, -1, 0),
+            this + Coordinate3d(0, 1, 0),
+            this + Coordinate3d(0, 0, -1),
+            this + Coordinate3d(0, 0, 1),
+        )
+    }
+
 }
 
 class Coordinate3dComparator: Comparator<Coordinate3d> {
