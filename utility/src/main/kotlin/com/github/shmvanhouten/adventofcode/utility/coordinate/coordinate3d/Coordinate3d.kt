@@ -30,6 +30,14 @@ data class Coordinate3d(val x: Int, val y: Int, val z: Int) {
         )
     }
 
+    fun onSameAxis(axis: Axis, other: Coordinate3d): Boolean {
+        return when(axis) {
+            Axis.X -> this.y == other.y && this.z == other.z
+            Axis.Y -> this.x == other.x && this.z == other.z
+            Axis.Z -> this.x == other.x && this.y == other.y
+        }
+    }
+
 }
 
 class Coordinate3dComparator: Comparator<Coordinate3d> {
@@ -42,4 +50,18 @@ class Coordinate3dComparator: Comparator<Coordinate3d> {
         else c1.z.compareTo(c2.z)
     }
 
+}
+
+enum class Axis {
+    X,
+    Y,
+    Z;
+
+    fun valueOf(it: Coordinate3d): Int {
+        return when(this) {
+            X -> it.x
+            Y -> it.y
+            Z -> it.z
+        }
+    }
 }
