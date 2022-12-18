@@ -149,6 +149,7 @@ data class Coordinate(val x: Int, val y: Int) {
     operator fun rangeTo(otherCoordinate: Coordinate): CoordinateProgression {
         return CoordinateProgression(this, otherCoordinate)
     }
+
 }
 
 fun Int.negate(): Int {
