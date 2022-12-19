@@ -1,41 +1,17 @@
 package com.github.shmvanhouten.adventofcode2022.day19
 
-import com.github.shmvanhouten.adventofcode.utility.collections.arrayDequeOf
 import java.util.*
 
 fun qualityLevelOf(bluePrints: List<Blueprint>): Int {
-    return bluePrints.sumOf { bestGeodeProduction(it).qualityLevel() }
-}
-
-fun bestGeodeProduction(blueprint: Blueprint): Production {
-    val id = blueprint.id
-    println("at id $id")
-//    if(id == 1 || id ==  5 || id ==  6 || id ==  8 || id ==  9 || id ==  11 || id ==  12 || id ==  13 || id ==  18 || id ==  19 || id ==  23 || id ==  25 || id ==  29) return Production(id)
-
-    if(id == 10 || id == 27) {
-        val prod =
-            findMaximumGeodeProduction(blueprint, theBestProduction = Production(id = blueprint.id))
-        println("Blueprint ${prod.id} gave ${prod.inventory.geode} geodes")
-        return prod
-    }
-    var bestProduction = Production(id = blueprint.id)
-    for (i in 1..10) {
-        println("iteration $i")
-        val production = findFastestToObsidianBot(blueprint, i)
-        val newBest = findMaximumGeodeProduction(blueprint, production, bestProduction)
-        if (bestProduction == newBest) return newBest
-        else bestProduction = newBest
-    }
-    return bestProduction
+    return bluePrints.sumOf { findMaximumGeodeProduction(it).qualityLevel() }
 }
 
 fun findMaximumGeodeProduction(
     blueprint: Blueprint,
-    start: Production = Production(blueprint.id),
-    theBestProduction: Production
+    start: Production = Production(blueprint.id)
 ): Production {
     val productions = priorityQueueOf(start)
-    var bestProduction: Production? = theBestProduction
+    var bestProduction: Production? = null
     while (productions.isNotEmpty()) {
         val production = productions.poll()
         if (production.isFinished()) {
@@ -51,29 +27,8 @@ fun findMaximumGeodeProduction(
         }
 
     }
+    println("blueprint: ${blueprint.id} gave ${bestProduction?.inventory?.geode} geodes")
     return bestProduction ?: error("no production found")
-}
-
-fun findFastestToObsidianBot(
-    blueprint: Blueprint,
-    count: Int,
-    botType: Production.() -> Int = {obsidianRobots}
-): Production {
-    val productions = arrayDequeOf(Production(blueprint.id))
-    var bestProduction: Production? = null
-    while (productions.isNotEmpty()) {
-        val production = productions.removeFirst()
-        if (production.botType() >= count) {
-            if (bestProduction == null || production.minute < bestProduction.minute) {
-                bestProduction = production
-            }
-        } else if (bestProduction != null && bestProduction.minute <= production.minute) {
-            // drop
-        } else {
-            productions += production.createAllPossibleProductionPermutations(blueprint)
-        }
-    }
-    return bestProduction ?: error("no production found!")
 }
 
 data class Inventory(
@@ -149,28 +104,28 @@ data class Production(
 
     private fun permuteProductions(blueprint: Blueprint): List<Production> {
         val permutations = mutableListOf<Production>()
-        if (inventory.canProduceGeodeBot(blueprint)) {
+        if (blueprint.minOreRequirement > oreRobots && inventory.canProduceOreBot(blueprint)) {
             permutations += this.produce(
-                inventory = inventory.minus(blueprint.geodeRobot),
-                extraGeoBot = 1
+                inventory = inventory.minus(blueprint.oreRobot),
+                extraOreBot = 1
             )
         }
-//        if (inventory.canProduceOreBot(blueprint)) {
-//            permutations += this.produce(
-//                inventory = inventory.minus(blueprint.oreRobot),
-//                extraOreBot = 1
-//            )
-//        }
-        if (inventory.canProduceClayBot(blueprint)) {
+        if (blueprint.obsidianRobot.clay > clayRobots && inventory.canProduceClayBot(blueprint)) {
             permutations += this.produce(
                 inventory = inventory.minus(blueprint.clayRobot),
                 extraClayBot = 1
             )
         }
-        if (inventory.canProduceObsidianBot(blueprint)) {
+        if (blueprint.geodeRobot.obsidian > obsidianRobots && inventory.canProduceObsidianBot(blueprint)) {
             permutations += this.produce(
                 inventory = inventory.minus(blueprint.obsidianRobot),
                 extraObsBot = 1
+            )
+        }
+        if (inventory.canProduceGeodeBot(blueprint)) {
+            permutations += this.produce(
+                inventory = inventory.minus(blueprint.geodeRobot),
+                extraGeoBot = 1
             )
         }
 

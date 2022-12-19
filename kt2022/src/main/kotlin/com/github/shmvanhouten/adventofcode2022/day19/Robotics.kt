@@ -9,6 +9,10 @@ data class Blueprint(
     val obsidianRobot: ObsidianRobotCosts,
     val geodeRobot: GeodeRobotCosts
 ) {
+    val minOreRequirement: Int by lazy {
+        listOf(clayRobot, obsidianRobot, geodeRobot).maxOf { it.ore }
+    }
+
     fun canProduce(i: Int): Boolean {
         // 1 geode would require 2 ore and 7 obsidian at day 24
         // 2 ore and 7 obsidian at day 24 would require 3 * 1 = 21 + 2 ore and 14 * 1 = 98 clay at day 23
