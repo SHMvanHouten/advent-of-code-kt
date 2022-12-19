@@ -8,8 +8,19 @@ fun qualityLevelOf(bluePrints: List<Blueprint>): Int {
 }
 
 fun bestGeodeProduction(blueprint: Blueprint): Production {
-    var bestProduction: Production = Production(id = blueprint.id)
+    val id = blueprint.id
+    println("at id $id")
+//    if(id == 1 || id ==  5 || id ==  6 || id ==  8 || id ==  9 || id ==  11 || id ==  12 || id ==  13 || id ==  18 || id ==  19 || id ==  23 || id ==  25 || id ==  29) return Production(id)
+
+    if(id == 10 || id == 27) {
+        val prod =
+            findMaximumGeodeProduction(blueprint, theBestProduction = Production(id = blueprint.id))
+        println("Blueprint ${prod.id} gave ${prod.inventory.geode} geodes")
+        return prod
+    }
+    var bestProduction = Production(id = blueprint.id)
     for (i in 1..10) {
+        println("iteration $i")
         val production = findFastestToObsidianBot(blueprint, i)
         val newBest = findMaximumGeodeProduction(blueprint, production, bestProduction)
         if (bestProduction == newBest) return newBest
@@ -33,6 +44,8 @@ fun findMaximumGeodeProduction(
                 println("best production: ${production.inventory.geode}")
                 bestProduction = finishedProduction
             }
+        } else if(!production.hasAChance(bestProduction?.inventory?.geode?:0)) {
+            //drop it
         } else {
             productions += production.createAllPossibleProductionPermutations(blueprint)
         }
@@ -41,12 +54,16 @@ fun findMaximumGeodeProduction(
     return bestProduction ?: error("no production found")
 }
 
-fun findFastestToObsidianBot(blueprint: Blueprint, count: Int): Production {
+fun findFastestToObsidianBot(
+    blueprint: Blueprint,
+    count: Int,
+    botType: Production.() -> Int = {obsidianRobots}
+): Production {
     val productions = arrayDequeOf(Production(blueprint.id))
     var bestProduction: Production? = null
     while (productions.isNotEmpty()) {
         val production = productions.removeFirst()
-        if (production.obsidianRobots >= count) {
+        if (production.botType() >= count) {
             if (bestProduction == null || production.minute < bestProduction.minute) {
                 bestProduction = production
             }
@@ -138,12 +155,12 @@ data class Production(
                 extraGeoBot = 1
             )
         }
-        if (inventory.canProduceOreBot(blueprint)) {
-            permutations += this.produce(
-                inventory = inventory.minus(blueprint.oreRobot),
-                extraOreBot = 1
-            )
-        }
+//        if (inventory.canProduceOreBot(blueprint)) {
+//            permutations += this.produce(
+//                inventory = inventory.minus(blueprint.oreRobot),
+//                extraOreBot = 1
+//            )
+//        }
         if (inventory.canProduceClayBot(blueprint)) {
             permutations += this.produce(
                 inventory = inventory.minus(blueprint.clayRobot),
@@ -167,6 +184,12 @@ data class Production(
 
     fun qualityLevel(): Int {
         return id * inventory.geode
+    }
+
+    fun hasAChance(geode: Int): Boolean {
+        return true
+//        val minutesLeft = (25 - this.minute)
+//        return (minutesLeft * (geodeRobots + 2)) + inventory.geode >= geode
     }
 }
 
