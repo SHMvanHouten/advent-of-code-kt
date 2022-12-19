@@ -14,15 +14,15 @@ fun findMaximumGeodeProduction(
     var bestProduction: Production? = null
     while (productions.isNotEmpty()) {
         val production = productions.poll()
-        if (production.isFinished()) {
-            val finishedProduction = production.produce()
+        if (production.isFinished(blueprint)) {
+            val finishedProduction = production.finish(blueprint)
             if (bestProduction == null || finishedProduction.inventory.geode > bestProduction.inventory.geode) {
                 println("best production: ${production.inventory.geode}")
                 bestProduction = finishedProduction
             }
         } else if(!production.hasAChance(bestProduction?.inventory?.geode?:0)) {
-            //drop it
-        } else {
+            // drop
+        }else {
             productions += production.createAllPossibleProductionPermutations(blueprint)
         }
 
@@ -85,6 +85,14 @@ data class Production(
         return this.permuteProductions(blueprint)
     }
 
+    fun finish(blueprint: Blueprint): Production {
+        return if(this.minute < 32 && this.obsidianRobots >= blueprint.geodeRobot.obsidian) {
+            this.copy(
+                inventory = inventory.copy(geode = inventory.geode + geodeRobots + (32 - this.minute).downTo(1).reduce(Int::times))
+            )
+        } else produce()
+    }
+
     fun produce(
         inventory: Inventory = this.inventory,
         extraOreBot: Int = 0,
@@ -133,8 +141,8 @@ data class Production(
         return permutations
     }
 
-    fun isFinished(): Boolean {
-        return this.minute == 24
+    fun isFinished(blueprint: Blueprint): Boolean {
+        return this.minute == 33 || this.obsidianRobots >= blueprint.geodeRobot.obsidian
     }
 
     fun qualityLevel(): Int {
@@ -142,10 +150,17 @@ data class Production(
     }
 
     fun hasAChance(geode: Int): Boolean {
-        return true
+//        return true
+        return geode < inventory.geode + geodeRobots + (32 - this.minute).downTo(2).reduce(Int::times)
 //        val minutesLeft = (25 - this.minute)
 //        return (minutesLeft * (geodeRobots + 2)) + inventory.geode >= geode
     }
+
+}
+
+fun factorial(num: Int): Int {
+    if(num == 2) return 2
+    return num * factorial(num - 1)
 }
 
 fun priorityQueueOf(production: Production): PriorityQueue<Production> {
