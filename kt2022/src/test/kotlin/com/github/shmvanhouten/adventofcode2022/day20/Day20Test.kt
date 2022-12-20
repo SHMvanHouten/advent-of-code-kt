@@ -32,7 +32,7 @@ class Day20Test {
                 0
                 1
             """.trimIndent()
-            assertThat(mix(input)).isEqualTo(listOf(10, 1, 1, 0))
+            assertThat(mix(input)).isEqualTo(listOf(10L, 1, 1, 0))
         }
 
         @Test
@@ -43,13 +43,12 @@ class Day20Test {
                 0
                 1
             """.trimIndent()
-            assertThat(mix(input)).isEqualTo(listOf(0, 1, 1, -10))
+            assertThat(mix(input)).isEqualTo(listOf(0L, 1, 1, -10))
         }
 
         @Test
         internal fun `part 1`() {
-            assertThat(mix(input).groveCoordinates).isEqualTo(3)
-            // less than 8818
+            assertThat(mix(input).groveCoordinates).isEqualTo(6387L)
         }
     }
 
@@ -57,7 +56,7 @@ class Day20Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
+        internal fun example() {
             val input = """
                 1
                 2
@@ -67,12 +66,12 @@ class Day20Test {
                 0
                 4
             """.trimIndent()
-            assertThat(mix(input).groveCoordinates).isEqualTo(3)
+            assertThat(megaMix(input).groveCoordinates).isEqualTo(1623178306)
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1).isEqualTo(1)
+            assertThat(megaMix(input).groveCoordinates).isEqualTo(2455057187825L)
         }
     }
 
