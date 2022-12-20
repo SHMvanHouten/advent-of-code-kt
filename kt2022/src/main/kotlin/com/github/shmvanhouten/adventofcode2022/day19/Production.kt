@@ -87,9 +87,9 @@ data class Production(
 
     fun finish(blueprint: Blueprint): Production {
         return if(this.minute < 32 && this.obsidianRobots >= blueprint.geodeRobot.obsidian) {
-            this.copy(
-                inventory = inventory.copy(geode = inventory.geode + geodeRobots + (32 - this.minute).downTo(1).reduce(Int::times))
-            )
+            generateSequence(this) {
+                this.produce()
+            }.first { it.minute == 33 }
         } else produce()
     }
 
@@ -112,37 +112,38 @@ data class Production(
 
     private fun permuteProductions(blueprint: Blueprint): List<Production> {
         val permutations = mutableListOf<Production>()
-        if (blueprint.minOreRequirement > oreRobots && inventory.canProduceOreBot(blueprint)) {
-            permutations += this.produce(
-                inventory = inventory.minus(blueprint.oreRobot),
-                extraOreBot = 1
-            )
-        }
-        if (blueprint.obsidianRobot.clay > clayRobots && inventory.canProduceClayBot(blueprint)) {
-            permutations += this.produce(
-                inventory = inventory.minus(blueprint.clayRobot),
-                extraClayBot = 1
-            )
-        }
-        if (blueprint.geodeRobot.obsidian > obsidianRobots && inventory.canProduceObsidianBot(blueprint)) {
-            permutations += this.produce(
-                inventory = inventory.minus(blueprint.obsidianRobot),
-                extraObsBot = 1
-            )
-        }
         if (inventory.canProduceGeodeBot(blueprint)) {
             permutations += this.produce(
                 inventory = inventory.minus(blueprint.geodeRobot),
                 extraGeoBot = 1
             )
+        } else if (blueprint.geodeRobot.obsidian > obsidianRobots && inventory.canProduceObsidianBot(blueprint)) {
+            permutations += this.produce(
+                inventory = inventory.minus(blueprint.obsidianRobot),
+                extraObsBot = 1
+            )
+        } else {
+            if (blueprint.minOreRequirement > oreRobots && inventory.canProduceOreBot(blueprint)) {
+                permutations += this.produce(
+                    inventory = inventory.minus(blueprint.oreRobot),
+                    extraOreBot = 1
+                )
+            }
+            if (blueprint.obsidianRobot.clay > clayRobots && inventory.canProduceClayBot(blueprint)) {
+                permutations += this.produce(
+                    inventory = inventory.minus(blueprint.clayRobot),
+                    extraClayBot = 1
+                )
+            }
+
+            permutations += produce()
         }
 
-        permutations += produce()
         return permutations
     }
 
     fun isFinished(blueprint: Blueprint): Boolean {
-        return this.minute == 33 || this.obsidianRobots >= blueprint.geodeRobot.obsidian
+        return this.minute == 32 || this.obsidianRobots >= blueprint.geodeRobot.obsidian
     }
 
     fun qualityLevel(): Int {
@@ -150,8 +151,8 @@ data class Production(
     }
 
     fun hasAChance(geode: Int): Boolean {
-//        return true
-        return geode < inventory.geode + geodeRobots + (32 - this.minute).downTo(2).reduce(Int::times)
+        return true
+//        return geode < inventory.geode + geodeRobots + (32 - this.minute).downTo(2).reduce(Int::times)
 //        val minutesLeft = (25 - this.minute)
 //        return (minutesLeft * (geodeRobots + 2)) + inventory.geode >= geode
     }
