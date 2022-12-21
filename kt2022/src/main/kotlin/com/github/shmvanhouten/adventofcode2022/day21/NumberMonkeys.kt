@@ -7,7 +7,7 @@ fun shout(example: String): Long {
     return monkeys["root"]!!.getNumber(monkeys)
 }
 
-fun toMonkey(line: String): Monkey {
+private fun toMonkey(line: String): Monkey {
     val words = line.words()
     val name = words.first().substringBefore(':')
     return if (words.size == 2) NumberMonkey(name, words[1].toLong())
@@ -21,7 +21,7 @@ fun toMonkey(line: String): Monkey {
     }
 }
 
-private fun String.toOperation(): (Long, Long) -> Long {
+fun String.toOperation(): (Long, Long) -> Long {
     return when(this) {
         "+" -> {
             {one, other -> one + other}
