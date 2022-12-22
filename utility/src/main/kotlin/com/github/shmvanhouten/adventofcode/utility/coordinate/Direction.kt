@@ -46,6 +46,10 @@ enum class Direction {
             Turn.BACK -> this.turnBack()
         }
     }
+
+    fun opposite(): Direction {
+        return this.turnBack()
+    }
 }
 
 enum class RelativePosition(val coordinate: Coordinate) {
