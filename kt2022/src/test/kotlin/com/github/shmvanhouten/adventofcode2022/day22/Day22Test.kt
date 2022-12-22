@@ -106,7 +106,6 @@ class Day22Test {
             val board = Board(input)
             val (position, facing) = board.followInstructions()
             assertThat(password(position, facing)).isEqualTo(27436)
-            //115396 too high
         }
     }
 
@@ -161,12 +160,52 @@ x = 50
             val l = (Coordinate(0,100)..Coordinate(50,100)).zip(Coordinate(50,50)..Coordinate(50,100)) // RIGHT, LEFT
         }
 
+        /**
+         *     #A##B#
+         *     N####C
+         *     ####D#
+         *     ###
+         *     M#E
+         *     ###
+         *  #L####
+         *  K####F
+         *  ####G#
+         *  ###
+         *  J#H
+         *  #I#
+         */
+
+        @Test
+        internal fun `going North from A we end up in J facing East`() {
+
+        }
+
+        @Test
+        internal fun `going North from B we end up in I facing North`() {
+
+        }
+
+        @Test
+        internal fun `going East from C we end up in F facing west`() {
+
+        }
+
+        @Test
+        internal fun `going South from D we end up in E going west`() {
+
+        }
+
+        @Test
+        internal fun `going East from E we end up in D going North`() {
+
+        }
+
         @Test
         internal fun `part 2`() {
             val board = Board(input, true)
 
             val (position, facing) = board.followInstructions()
-            assertThat(password(position, facing)).isEqualTo(5031)
+            assertThat(password(position, facing)).isEqualTo(15426)
         }
     }
 
