@@ -108,13 +108,13 @@ private fun Char.toTurn(): Turn {
 
 class CubeMap {
     private val coordinatePairings: List<List<Pair<Coordinate,Coordinate>>> = listOf(
-        (Coordinate(50,0)..Coordinate(100,0)).zip(Coordinate(0,150)..Coordinate(0,200)), // RIGHT, LEFT
-        (Coordinate(100,0)..Coordinate(150,0)).zip(Coordinate(0,200)..Coordinate(50,200)), // SAME DIR
-        (Coordinate(150,0)..Coordinate(150,50)).zip(Coordinate(50,150)..Coordinate(100,150)), // REVERSE
-        (Coordinate(100,50)..Coordinate(150,50)).zip(Coordinate(100,50)..Coordinate(100,100)), // RIGHT,LEFT
-        (Coordinate(50,150)..Coordinate(100,150)).zip((Coordinate(50,150)..Coordinate(50,200))), // RIGHT< LEFT
-        (Coordinate(0, 100)..Coordinate(0,150)).zip(Coordinate(50,50)..Coordinate(50,0)), // REVERSE
-        (Coordinate(0,100)..Coordinate(50,100)).zip(Coordinate(50,50)..Coordinate(50,100)) // RIGHT, LEFT
+        (Coordinate(50,0)..Coordinate(99,0)).zip(Coordinate(0,150)..Coordinate(0,199)), // RIGHT, LEFT
+        (Coordinate(100,0)..Coordinate(149,0)).zip(Coordinate(0,199)..Coordinate(49,199)), // SAME DIR
+        (Coordinate(149,0)..Coordinate(149,49)).zip(Coordinate(50,150)..Coordinate(99,150)), // REVERSE
+        (Coordinate(100,49)..Coordinate(149,49)).zip(Coordinate(99,50)..Coordinate(99,99)), // RIGHT,LEFT
+        (Coordinate(50,149)..Coordinate(99,149)).zip((Coordinate(49,150)..Coordinate(49,199))), // RIGHT< LEFT
+        (Coordinate(0, 100)..Coordinate(0,149)).zip(Coordinate(50,49)..Coordinate(50,0)), // REVERSE
+        (Coordinate(0,100)..Coordinate(49,100)).zip(Coordinate(50,50)..Coordinate(50,99)) // RIGHT, LEFT
     )
 
     private val directionChanges: List<List<Pair<Direction, Direction>>> = listOf(
