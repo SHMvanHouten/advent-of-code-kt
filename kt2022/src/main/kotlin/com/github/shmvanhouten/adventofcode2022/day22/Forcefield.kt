@@ -22,9 +22,13 @@ fun facingScore(facing: Direction): Long {
     }
 }
 
-class Board(input: String) {
+class Board(
+    input: String,
+    private val isCube: Boolean = false
+) {
     private val map = input.blocks().first().toCoordinateMap().filter { it.value != ' ' }
     private val instructions = input.blocks()[1]
+    private val cubeMap = CubeMap()
 
     fun followInstructions(): Pair<Coordinate, Direction> {
         var currentPosition = topLeftPosition()
@@ -40,32 +44,48 @@ class Board(input: String) {
             } else {
                 val steps = instructions.takeWhile { it.isDigit() }
                 instructions = instructions.substring(steps.length)
-                currentPosition = move(currentPosition, currentFacing, steps.toInt())
+                val (newPosition, newDirection) = move(currentPosition, currentFacing, steps.toInt())
+                currentPosition = newPosition
+                currentFacing = newDirection
 //                println("current position: $currentPosition")
             }
         }
         return currentPosition to currentFacing
     }
 
-    private fun move(currentPosition: Coordinate, facing: Direction, steps: Int): Coordinate {
+    private fun move(currentPosition: Coordinate, facing: Direction, steps: Int): Pair<Coordinate, Direction> {
+        var direction = facing
         var position = currentPosition
         0.until(steps).forEach{
-            val newPosition = position.move(facing)
-            if(map.contains(newPosition) && map[newPosition] == '#') return position
+            val newPosition = position.move(direction)
+            if(map.contains(newPosition) && map[newPosition] == '#') return position to direction
             if(!map.contains(newPosition)) {
-                val new = farthestInDirection(position, facing.opposite())
-                if(map[new] == '#') return position
-                position = new
+                val (wrapped, newDir) = wrapAround(position, direction)
+                if(map[wrapped] == '#') return position to direction // not new direction! we did not wrap around!
+                position = wrapped
+                direction = newDir
             } else position = newPosition
         }
-        return position
+        return position to direction
     }
 
-    private fun farthestInDirection(position: Coordinate, direction: Direction): Coordinate {
+    private fun wrapAround(position: Coordinate, direction: Direction): Pair<Coordinate, Direction> {
+        return if(isCube) wrapCube(position, direction)
+        else farthestInDirection(position, direction.opposite()) to direction
+    }
+
+    private fun wrapCube(position: Coordinate, direction: Direction): Pair<Coordinate, Direction> {
+        return cubeMap.getNewPositionAndDirection(position, direction)
+    }
+
+    private fun farthestInDirection(
+        position: Coordinate,
+        direction: Direction
+    ): Coordinate {
         var pos = position
         while (true) {
             val move = pos.move(direction = direction)
-            if(!map.contains(move)) return pos
+            if (!map.contains(move)) return pos
             pos = move
         }
     }
@@ -83,5 +103,40 @@ private fun Char.toTurn(): Turn {
         'R' -> Turn.RIGHT
         'L' -> Turn.LEFT
         else -> error("unknown turn: $this")
+    }
+}
+
+class CubeMap {
+    private val coordinatePairings: List<List<Pair<Coordinate,Coordinate>>> = listOf(
+        (Coordinate(50,0)..Coordinate(100,0)).zip(Coordinate(0,150)..Coordinate(0,200)), // RIGHT, LEFT
+        (Coordinate(100,0)..Coordinate(150,0)).zip(Coordinate(0,200)..Coordinate(50,200)), // SAME DIR
+        (Coordinate(150,0)..Coordinate(150,50)).zip(Coordinate(50,150)..Coordinate(100,150)), // REVERSE
+        (Coordinate(100,50)..Coordinate(150,50)).zip(Coordinate(100,50)..Coordinate(100,100)), // RIGHT,LEFT
+        (Coordinate(50,150)..Coordinate(100,150)).zip((Coordinate(50,150)..Coordinate(50,200))), // RIGHT< LEFT
+        (Coordinate(0, 100)..Coordinate(0,150)).zip(Coordinate(50,50)..Coordinate(50,0)), // REVERSE
+        (Coordinate(0,100)..Coordinate(50,100)).zip(Coordinate(50,50)..Coordinate(50,100)) // RIGHT, LEFT
+    )
+
+    private val directionChanges: List<List<Pair<Direction, Direction>>> = listOf(
+        listOf((Direction.NORTH to Direction.EAST), (Direction.WEST to Direction.SOUTH)),
+        listOf((Direction.NORTH to Direction.NORTH), (Direction.SOUTH to Direction.SOUTH)),
+        listOf((Direction.EAST to Direction.WEST), (Direction.EAST to Direction.WEST)),
+        listOf((Direction.SOUTH to Direction.WEST), (Direction.EAST to Direction.NORTH)),
+        listOf((Direction.SOUTH to Direction.WEST), (Direction.EAST to Direction.NORTH)),
+        listOf((Direction.WEST to Direction.EAST), (Direction.WEST to Direction.EAST)),
+        listOf((Direction.NORTH to Direction.EAST), (Direction.WEST to Direction.SOUTH))
+
+    )
+    fun getNewPositionAndDirection(position: Coordinate, direction: Direction): Pair<Coordinate, Direction> {
+        val indexToCoordPair = coordinatePairings.mapIndexedNotNull { index, coordPairs ->
+            coordPairs.find { it.first == position || it.second == position }?.let { index to it }
+        }
+        assert(indexToCoordPair.size == 1)
+        val (i, pair) = indexToCoordPair.first()
+        val newDirection= directionChanges[i].first { it.first == direction }.second
+        val newPosition = if(pair.first == position) pair.second
+        else if(pair.second == position) pair.first
+        else error("this should not happen!")
+        return newPosition to newDirection
     }
 }

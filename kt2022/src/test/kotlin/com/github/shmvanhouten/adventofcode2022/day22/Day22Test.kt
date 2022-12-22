@@ -114,13 +114,59 @@ class Day22Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            assertThat(1).isEqualTo(1)
+        internal fun `example wrapped`() {
+            val input = """
+                |        ...#
+                |        .#..
+                |        #...
+                |        ....
+                |...#.......#
+                |........#...
+                |..#....#....
+                |..........#.
+                |        ...#....
+                |        .....#..
+                |        .#......
+                |        ......#.
+                |
+                |10R5L5R10L4R5L5
+            """.trimMargin("|")
+            val board = Board(input, true)
+
+            val (position, facing) = board.followInstructions()
+            assertThat(password(position, facing)).isEqualTo(5031)
+        }
+
+        @Test
+        internal fun scribblings() {
+            /*
+x = 50
+  |
+  v
+  #### <- x = 150, y = 0
+  ####
+  ##   <- y = 50
+  ##
+####   <- y = 100
+####
+##
+##
+             */
+            val a = (Coordinate(50,0)..Coordinate(100,0)).zip(Coordinate(0,150)..Coordinate(0,200)) // RIGHT, LEFT
+            val b = (Coordinate(100,0)..Coordinate(150,0)).zip(Coordinate(0,200)..Coordinate(50,200)) // SAME DIR
+            val c = (Coordinate(150,0)..Coordinate(150,50)).zip(Coordinate(50,150)..Coordinate(100,150)) // REVERSE
+            val d = (Coordinate(100,50)..Coordinate(150,50)).zip(Coordinate(100,50)..Coordinate(100,100)) // RIGHT,LEFT
+            val g = (Coordinate(50,150)..Coordinate(100,150)).zip((Coordinate(50,150)..Coordinate(50,200))) // RIGHT< LEFT
+            val k = (Coordinate(0, 100)..Coordinate(0,150)).zip(Coordinate(50,50)..Coordinate(50,0)) // REVERSE
+            val l = (Coordinate(0,100)..Coordinate(50,100)).zip(Coordinate(50,50)..Coordinate(50,100)) // RIGHT, LEFT
         }
 
         @Test
         internal fun `part 2`() {
-            assertThat(1).isEqualTo(1)
+            val board = Board(input, true)
+
+            val (position, facing) = board.followInstructions()
+            assertThat(password(position, facing)).isEqualTo(5031)
         }
     }
 
