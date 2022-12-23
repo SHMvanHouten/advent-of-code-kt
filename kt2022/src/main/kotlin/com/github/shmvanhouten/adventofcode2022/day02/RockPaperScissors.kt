@@ -10,7 +10,7 @@ class RockPaperScissors(private val input: String) {
             .map { it.words() }
             .map { it[0].toShape() to it[1].toShape() }
             .sumOf { (opponent, me) ->
-                me.value() + me.versus(opponent).score()
+                me.value() + me.versus(opponent).score
             }
 
     fun scoreWhenSecondEntryIsTheRequiredResult(): Long =
@@ -20,7 +20,7 @@ class RockPaperScissors(private val input: String) {
             .sumOf { (opponent, result) ->
                 findShapeNeededToGetResult(opponent, result)
                     .value()
-                    .plus(result.score())
+                    .plus(result.score)
             }
 
     private fun findShapeNeededToGetResult(opponentsShape: Shape, requiredResult: Result): Shape {
@@ -33,18 +33,10 @@ class RockPaperScissors(private val input: String) {
 
 }
 
-enum class Result {
-    LOSS,
-    DRAW,
-    WIN;
-
-    fun score(): Long {
-        return when (this) {
-            LOSS -> 0
-            DRAW -> 3
-            WIN -> 6
-        }
-    }
+enum class Result(val score: Int) {
+    LOSS(score = 0),
+    DRAW(score = 3),
+    WIN(score = 6);
 }
 
 private enum class Shape {
