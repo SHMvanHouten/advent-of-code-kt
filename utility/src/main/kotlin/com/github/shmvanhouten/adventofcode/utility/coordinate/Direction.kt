@@ -53,12 +53,12 @@ enum class Direction {
 }
 
 enum class RelativePosition(val coordinate: Coordinate) {
-    TOP(Coordinate(0, -1)),
-    TOP_RIGHT(Coordinate(1, -1)),
-    RIGHT(Coordinate(1, 0)),
-    BOTTOM_RIGHT(Coordinate(1, 1)),
-    BOTTOM(Coordinate(0, 1)),
-    BOTTOM_LEFT(Coordinate(-1, 1)),
-    LEFT(Coordinate(-1, 0)),
-    TOP_LEFT(Coordinate(-1, -1))
+    NORTH(Coordinate(0, -1)),
+    NORTH_EAST(Coordinate(1, -1)),
+    EAST(Coordinate(1, 0)),
+    SOUTH_EAST(Coordinate(1, 1)),
+    SOUTH(Coordinate(0, 1)),
+    SOUTH_WEST(Coordinate(-1, 1)),
+    WEST(Coordinate(-1, 0)),
+    NORTH_WEST(Coordinate(-1, -1))
 }

@@ -9,33 +9,33 @@ import kotlin.math.abs
 data class Coordinate(val x: Int, val y: Int) {
     fun getSurrounding(): Set<Coordinate> {
         return setOf(
-            this + TOP.coordinate,
-            this + TOP_RIGHT.coordinate,
-            this + RIGHT.coordinate,
-            this + BOTTOM_RIGHT.coordinate,
-            this + BOTTOM.coordinate,
-            this + BOTTOM_LEFT.coordinate,
-            this + LEFT.coordinate,
-            this + TOP_LEFT.coordinate
+            this + NORTH.coordinate,
+            this + NORTH_EAST.coordinate,
+            this + EAST.coordinate,
+            this + SOUTH_EAST.coordinate,
+            this + SOUTH.coordinate,
+            this + SOUTH_WEST.coordinate,
+            this + WEST.coordinate,
+            this + NORTH_WEST.coordinate
         )
     }
 
     fun getSurroundingManhattan(): Set<Coordinate> {
         return setOf(
-            this + TOP.coordinate,
-            this + RIGHT.coordinate,
-            this + BOTTOM.coordinate,
-            this + LEFT.coordinate,
+            this + NORTH.coordinate,
+            this + EAST.coordinate,
+            this + SOUTH.coordinate,
+            this + WEST.coordinate,
         )
     }
 
 
     fun getNeighbour(directionPointed: Direction): Coordinate {
         return when (directionPointed) {
-            Direction.NORTH -> this.inDirection(TOP)
-            Direction.EAST -> this.inDirection(RIGHT)
-            Direction.SOUTH -> this.inDirection(BOTTOM)
-            Direction.WEST -> this.inDirection(LEFT)
+            Direction.NORTH -> this.move(NORTH)
+            Direction.EAST -> this.move(EAST)
+            Direction.SOUTH -> this.move(SOUTH)
+            Direction.WEST -> this.move(WEST)
         }
     }
 
@@ -48,7 +48,7 @@ data class Coordinate(val x: Int, val y: Int) {
         }
     }
 
-    fun inDirection(direction: RelativePosition): Coordinate {
+    fun move(direction: RelativePosition): Coordinate {
         return this + direction.coordinate
     }
 

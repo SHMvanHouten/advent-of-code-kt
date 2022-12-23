@@ -47,15 +47,15 @@ private fun Coordinate.isOutOfBounds(bounds: Bounds): Boolean {
 
 private fun Coordinate.listTopLeftToBottomRight(): List<Coordinate> {
     return listOf(
-        this + TOP_LEFT.coordinate,
-        this + TOP.coordinate,
-        this + TOP_RIGHT.coordinate,
-        this + LEFT.coordinate,
+        this + NORTH_WEST.coordinate,
+        this + NORTH.coordinate,
+        this + NORTH_EAST.coordinate,
+        this + WEST.coordinate,
         this,
-        this + RIGHT.coordinate,
-        this + BOTTOM_LEFT.coordinate,
-        this + BOTTOM.coordinate,
-        this + BOTTOM_RIGHT.coordinate,
+        this + EAST.coordinate,
+        this + SOUTH_WEST.coordinate,
+        this + SOUTH.coordinate,
+        this + SOUTH_EAST.coordinate,
     )
 }
 
