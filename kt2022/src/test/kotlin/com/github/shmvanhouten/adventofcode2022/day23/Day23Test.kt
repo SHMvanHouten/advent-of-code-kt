@@ -1,10 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day23
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition
-import com.github.shmvanhouten.adventofcode.utility.coordinate.draw
-import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
+import com.github.shmvanhouten.adventofcode.utility.coordinate.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
@@ -119,7 +116,7 @@ class Day23Test {
                 MoveProposal(RelativePosition.WEST, listOf(RelativePosition.NORTH, RelativePosition.SOUTH)),
                 MoveProposal(RelativePosition.EAST, listOf(RelativePosition.NORTH, RelativePosition.SOUTH)),
                 MoveProposal(RelativePosition.NORTH, listOf(RelativePosition.WEST, RelativePosition.EAST))
-            ).asSequence()).tick()
+            )).tick()
             assertThat(draw(grove.elves, '#', '.')).isEqualTo("""
                 ......#....
                 ...#.....#.
@@ -195,13 +192,13 @@ class Day23Test {
                 ............
                 ...#..#..#..
             """.trimIndent())
-            assertThat(grove.emptySpaces()).isEqualTo(110)
+            assertThat(grove.elves.countUnoccupiedSpaces()).isEqualTo(110)
         }
 
         @Test
         internal fun `part 1`() {
             val grove = Grove(input).tick(10)
-            assertThat(grove.emptySpaces()).isEqualTo(4049)
+            assertThat(grove.elves.countUnoccupiedSpaces()).isEqualTo(4049)
         }
     }
 

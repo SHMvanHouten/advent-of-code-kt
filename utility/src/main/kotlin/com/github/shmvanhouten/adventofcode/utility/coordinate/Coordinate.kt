@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode.utility.coordinate
 
+import com.github.shmvanhouten.adventofcode.utility.collectors.extremes
 import com.github.shmvanhouten.adventofcode.utility.coordinate.ClockDirection.CLOCKWISE
 import com.github.shmvanhouten.adventofcode.utility.coordinate.ClockDirection.COUNTER_CLOCKWISE
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Degree.*
@@ -162,6 +163,12 @@ fun Int.negate(): Int {
 fun Set<Coordinate>.orientFromTopLeftMostCoordinate(): Set<Coordinate> {
     val topLeftMost = this.top().minByOrNull { it.x }!!
     return this.map { it.minus(topLeftMost) }.toSet()
+}
+
+fun Set<Coordinate>.countUnoccupiedSpaces(): Int {
+    val (minY, maxY) = this.map { it.y }.extremes() ?: error("empty collection $this")
+    val (minX, maxX) = this.map { it.x }.extremes() ?: error("empty collection $this")
+    return ((maxX + 1 - minX) * (maxY + 1 - minY)) - size
 }
 
 fun Set<Coordinate>.top(): Set<Coordinate> {
