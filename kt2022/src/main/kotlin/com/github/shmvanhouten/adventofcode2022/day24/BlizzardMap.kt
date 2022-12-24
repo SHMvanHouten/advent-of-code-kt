@@ -1,14 +1,19 @@
 package com.github.shmvanhouten.adventofcode2022.day24
 
+import com.github.shmvanhouten.adventofcode.utility.compositenumber.leastCommonMultiple
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction
 import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
 
 class BlizzardMap(input:String) {
     private val states = listOf(MapState(input)).toMutableList()
+    private val patterRepeatsAt = leastCommonMultiple(
+        (input.lines()[0].length - 2).toBigInteger(),
+        (input.lines().size - 2).toBigInteger()
+    ).toInt()
 
     operator fun get(i: Int): MapState = when {
-        i <= states.lastIndex -> states[i]
+        i % patterRepeatsAt <= states.lastIndex -> states[i % patterRepeatsAt]
         i == states.lastIndex + 1 -> {
             val newState = states.last().tick()
             states += newState

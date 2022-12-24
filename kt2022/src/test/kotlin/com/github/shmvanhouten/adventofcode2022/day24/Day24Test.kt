@@ -94,6 +94,15 @@ class Day24Test {
         }
 
         @Test
+        fun `after 300 blizzard the pattern should repeat for the input`() {
+            val blizzardMap = BlizzardMap(input)
+            repeat(300) {
+                blizzardMap[it]
+            }
+            expectThat(blizzardMap[300].draw()).isEqualTo(blizzardMap[0].draw())
+        }
+
+        @Test
         fun example() {
             val input = """
                 #.######
