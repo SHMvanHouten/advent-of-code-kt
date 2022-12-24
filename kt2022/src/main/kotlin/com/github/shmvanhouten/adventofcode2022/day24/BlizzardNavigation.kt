@@ -2,72 +2,76 @@ package com.github.shmvanhouten.adventofcode2022.day24
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import java.util.*
+import kotlin.math.max
 
-private const val minX = 0
-private const val minY = 0
+private const val MIN_X = 0
+private const val MIN_Y = 0
 
 fun thereAndBackAndThere(input: String): Int {
-    val blizzardMap = BlizzardMap(input)
-    val (there, blizzardMap1) = fastestPathThroughBlizzard(blizzardMap)
-    val (back, blizzardMap2) = fastestPathThroughBlizzard(
-        blizzardMap1,
-        start = there.current,
-        target = Coordinate(1,0),
-        minute = there.minute
-        )
-    val (thereAgain, _) = fastestPathThroughBlizzard(
-        blizzardMap2,
-        minute = back.minute
-    )
-    return thereAgain.minute
+    val blizzardStates = BlizzardMap(input)
+    return moveThroughBlizzard(blizzardStates)
+        .let { moveThroughBlizzard(blizzardStates, start = it.current, target = Coordinate(1, 0), time = it.time) }
+        .let { moveThroughBlizzard(blizzardStates, time = it.time) }
+        .time
 }
 
-fun fastestPathThroughBlizzard(input: String): Pair<Path, BlizzardMap> {
+fun moveThroughBlizzard(input: String): Path {
     val blizzardMap = BlizzardMap(input)
-    return fastestPathThroughBlizzard(blizzardMap)
+    return moveThroughBlizzard(blizzardMap)
 }
 
-private fun fastestPathThroughBlizzard(
-    blizzardMap: BlizzardMap,
+private fun moveThroughBlizzard(
+    blizzardStates: BlizzardMap,
     start: Coordinate = Coordinate(1, 0),
-    target: Coordinate = targetLocation(blizzardMap),
-    minute: Int = 0
-): Pair<Path, BlizzardMap> {
-    val (maxX, maxY) = blizzardMap.getState(0).bottomRight
-    val paths = priorityQueueOf(Path(start, minute))
+    target: Coordinate = exitLocation(blizzardStates),
+    time: Minute = 0
+): Path {
+    val paths = priorityQueueOf(Path(start, time))
     var shortestPath: Path? = null
     val visited = mutableSetOf<Path>()
 
     while (paths.isNotEmpty()) {
         val path = paths.poll()
-        if (path.current == target) {
-            if (shortestPath == null || path.minute < shortestPath.minute) {
-                shortestPath = path
-                println("found path")
-                println(path)
+        when {
+            path.current == target -> {
+                if (shortestPath == null || path.time < shortestPath.time) {
+                    shortestPath = path
+                }
             }
-        } else if (path.minute > (shortestPath?.minute ?: (minute + 1000))) continue
-        else if (visited.contains(path)) continue
-        else {
-            visited += path
-            val nextBlizzardState = blizzardMap.getState(path.minute + 1)
-            (path.current.getSurroundingManhattan() + path.current)
-                .filter { it == target || it == start || it.x in (minX + 1) until maxX && it.y in minY + 1 until maxY }
-                .filter { nextBlizzardState.hasNoBlizzardAt(it) }
-                .map { path.moveTo(it) }
-                .forEach { paths += it }
+
+            path.time > (shortestPath?.time ?: (time + 1000)) -> continue
+            visited.contains(path) -> continue
+            else -> {
+                visited += path
+                val nextBlizzardState = blizzardStates[path.time + 1]
+                paths += (path.current.getSurroundingManhattan() + path.current)
+                    .filter { isInBounds(it, target, start) }
+                    .filter { nextBlizzardState.hasNoBlizzardAt(it) }
+                    .map { path.moveTo(it) }
+            }
         }
     }
-    if (shortestPath == null) error("no path found")
-    return shortestPath to blizzardMap
+    return shortestPath ?: error("no path found")
 }
 
-fun targetLocation(blizzardMap: BlizzardMap): Coordinate {
-    val bottomRight = blizzardMap.getState(0).bottomRight
+private fun isInBounds(
+    loc: Coordinate,
+    target: Coordinate,
+    start: Coordinate
+): Boolean {
+    val xRange = (MIN_X + 1) until max(target.x, start.x) + 1
+    val yRange = MIN_Y + 1 until max(target.y, start.y)
+    return loc == target ||
+            loc == start ||
+            loc.x in xRange && loc.y in yRange
+}
+
+private fun exitLocation(blizzardMap: BlizzardMap): Coordinate {
+    val bottomRight = blizzardMap[0].bottomRight
     return bottomRight.copy(x = bottomRight.x - 1)
 }
 
-fun priorityQueueOf(path: Path): PriorityQueue<Path> {
+private fun priorityQueueOf(path: Path): PriorityQueue<Path> {
     val queue = PriorityQueue(PathComparator())
     queue.add(path)
     return queue
@@ -75,17 +79,14 @@ fun priorityQueueOf(path: Path): PriorityQueue<Path> {
 
 data class Path(
     val current: Coordinate,
-    val minute: Int,
-//    val previous: List<Coordinate>
+    val time: Minute
 ) {
-
-    val value: Int = current.value - minute
+    val value: Int = current.x + current.y - time
 
     fun moveTo(nextLocation: Coordinate): Path {
         return this.copy(
-            nextLocation,
-            minute + 1,
-//            previous + current
+            current = nextLocation,
+            time = time + 1
         )
     }
 
@@ -94,16 +95,9 @@ data class Path(
 class PathComparator : Comparator<Path> {
     override fun compare(one: Path?, other: Path?): Int {
         if (one == null || other == null) error("null paths")
-        return (other.current).compareTo(one.current)
+        return (other.value).compareTo(one.value)
     }
 
 }
 
-private fun Coordinate.compareTo(other: Coordinate): Int {
-    return (x + y).compareTo(other.x + other.y)
-}
-
-private val Coordinate.value: Int
-    get() {
-        return x + y
-    }
+typealias Minute = Int

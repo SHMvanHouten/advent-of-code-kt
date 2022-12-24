@@ -150,6 +150,9 @@ data class Coordinate(val x: Int, val y: Int) {
         return CoordinateProgression(this, otherCoordinate)
     }
 
+    override fun toString(): String {
+        return "($x,$y)"
+    }
 }
 
 fun Int.negate(): Int {

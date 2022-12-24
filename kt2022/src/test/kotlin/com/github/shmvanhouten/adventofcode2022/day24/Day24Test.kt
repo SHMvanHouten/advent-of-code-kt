@@ -23,10 +23,11 @@ class Day24Test {
                 #####.#
             """.trimIndent()
             val blizzardMap = BlizzardMap(input)
-            expectThat(blizzardMap.getState(0).draw()).isEqualTo(input)
-            val mapState: MapState = blizzardMap.getState(1)
+            expectThat(blizzardMap[0].draw()).isEqualTo(input)
+            val mapState: MapState = blizzardMap[1]
             expectThat(mapState.draw())
-                .isEqualTo("""
+                .isEqualTo(
+                    """
                     #.#####
                     #.....#
                     #.>...#
@@ -34,7 +35,8 @@ class Day24Test {
                     #.....#
                     #...v.#
                     #####.#
-                """.trimIndent())
+                """.trimIndent()
+                )
         }
 
         @Test
@@ -49,9 +51,10 @@ class Day24Test {
                 #####.#
             """.trimIndent()
             val blizzardMap = BlizzardMap(input)
-            blizzardMap.getState(1) // so that we can get 2
-            val state = blizzardMap.getState(2)
-            expectThat(state.draw()).isEqualTo("""
+            blizzardMap[1] // so that we can get 2
+            val state = blizzardMap[2]
+            expectThat(state.draw()).isEqualTo(
+                """
                 #.#####
                 #...v.#
                 #..>..#
@@ -59,7 +62,8 @@ class Day24Test {
                 #.....#
                 #.....#
                 #####.#
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
 
         @Test
@@ -74,9 +78,10 @@ class Day24Test {
                 #####.#
             """.trimIndent()
             val blizzardMap = BlizzardMap(input)
-            blizzardMap.getState(1) // so that we can get 2
-            val state = blizzardMap.getState(2)
-            expectThat(state.draw()).isEqualTo("""
+            blizzardMap[1] // so that we can get 2
+            val state = blizzardMap[2]
+            expectThat(state.draw()).isEqualTo(
+                """
                 #.#####
                 #.....#
                 #....>#
@@ -84,7 +89,8 @@ class Day24Test {
                 #.....#
                 #.....#
                 #####.#
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
 
         @Test
@@ -97,13 +103,13 @@ class Day24Test {
                 #<^v^^>#
                 ######.#
             """.trimIndent()
-            expectThat(fastestPathThroughBlizzard(input).first.minute)
+            expectThat(moveThroughBlizzard(input).time)
                 .isEqualTo(18)
         }
 
         @Test
         internal fun `part 1`() {
-            expectThat(fastestPathThroughBlizzard(input).first.minute)
+            expectThat(moveThroughBlizzard(input).time)
                 .isEqualTo(373)
         }
     }
@@ -132,6 +138,6 @@ class Day24Test {
         }
     }
 
-    private val input by lazy { readFile("/input-day24.txt")}
+    private val input by lazy { readFile("/input-day24.txt") }
 
 }
