@@ -6,26 +6,48 @@ import java.util.*
 private const val minX = 0
 private const val minY = 0
 
+fun thereAndBackAndThere(input: String): Int {
+    val blizzardMap = BlizzardMap(input)
+    val (there, blizzardMap1) = fastestPathThroughBlizzard(blizzardMap)
+    val (back, blizzardMap2) = fastestPathThroughBlizzard(
+        blizzardMap1,
+        start = there.current,
+        target = Coordinate(1,0),
+        minute = there.minute
+        )
+    val (thereAgain, _) = fastestPathThroughBlizzard(
+        blizzardMap2,
+        minute = back.minute
+    )
+    return thereAgain.minute
+}
+
 fun fastestPathThroughBlizzard(input: String): Pair<Path, BlizzardMap> {
     val blizzardMap = BlizzardMap(input)
+    return fastestPathThroughBlizzard(blizzardMap)
+}
+
+private fun fastestPathThroughBlizzard(
+    blizzardMap: BlizzardMap,
+    start: Coordinate = Coordinate(1, 0),
+    target: Coordinate = targetLocation(blizzardMap),
+    minute: Int = 0
+): Pair<Path, BlizzardMap> {
     val (maxX, maxY) = blizzardMap.getState(0).bottomRight
-    val target = targetLocation(blizzardMap)
-    val start = Coordinate(1,0)
-    val paths = priorityQueueOf(Path(start))
+    val paths = priorityQueueOf(Path(start, minute))
     var shortestPath: Path? = null
     val visited = mutableSetOf<Path>()
 
     while (paths.isNotEmpty()) {
         val path = paths.poll()
-        if(path.current == target) {
-            if(shortestPath == null || path.minute < shortestPath.minute) {
+        if (path.current == target) {
+            if (shortestPath == null || path.minute < shortestPath.minute) {
                 shortestPath = path
                 println("found path")
                 println(path)
             }
-        }
-        else if (path.minute > (shortestPath?.minute ?: 504)) continue
-        else if(visited.contains(path)) continue
+        } else if (path.minute > (shortestPath?.minute ?: (minute + 1000))) continue
+        else if (visited.contains(path)) continue
         else {
             visited += path
             val nextBlizzardState = blizzardMap.getState(path.minute + 1)
@@ -36,7 +58,7 @@ fun fastestPathThroughBlizzard(input: String): Pair<Path, BlizzardMap> {
                 .forEach { paths += it }
         }
     }
-    if(shortestPath == null) error("no path found")
+    if (shortestPath == null) error("no path found")
     return shortestPath to blizzardMap
 }
 
@@ -53,7 +75,7 @@ fun priorityQueueOf(path: Path): PriorityQueue<Path> {
 
 data class Path(
     val current: Coordinate,
-    val minute: Int = 0,
+    val minute: Int,
 //    val previous: List<Coordinate>
 ) {
 

@@ -104,7 +104,7 @@ class Day24Test {
         @Test
         internal fun `part 1`() {
             expectThat(fastestPathThroughBlizzard(input).first.minute)
-                .isEqualTo(504)
+                .isEqualTo(373)
         }
     }
 
@@ -113,12 +113,22 @@ class Day24Test {
 
         @Test
         internal fun example() {
-            expectThat(1).isEqualTo(1)
+            val input = """
+                #.######
+                #>>.<^<#
+                #.<..<<#
+                #>v.><>#
+                #<^v^^>#
+                ######.#
+            """.trimIndent()
+            expectThat(thereAndBackAndThere(input))
+                .isEqualTo(54)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(thereAndBackAndThere(input))
+                .isEqualTo(997)
         }
     }
 
