@@ -1,111 +1,73 @@
 package com.github.shmvanhouten.adventofcode2022.day21
 
-import com.github.shmvanhouten.adventofcode.utility.strings.words
-
 fun shout(input: String): Long {
-    val monkeys = input.lines().map { toMonkey(it) }.associateBy { it.name }
-    return monkeys["root"]!!.getNumber(monkeys)
+    val monkeys = initMonkeys(input)
+
+    return monkeys["root"]!!.number
 }
 
-internal fun toMonkey(line: String): Monkey {
-    val words = line.words()
-    val name = words.first().substringBefore(':')
-    return if (words.size == 2) NumberMonkey(name, words[1].toLong())
-    else {
-        OperationMonkey(
-            name,
-            words[2],
-            words[1],
-            words[3]
-        )
-    }
-}
+fun humanMonkeyValue2(input: String): Long {
+    val monkeys = initMonkeys(input)
 
-fun String.toOperation(): (Long, Long) -> Long {
-    return when(this) {
-        "+" -> {
-            {one, other -> one + other}
-        }
-        "-" -> {one, other -> one - other}
-        "*" -> {one, other -> one * other}
-        "/" -> {one, other -> one / other}
-        else -> error("unknow operation: $this")
-    }
-}
-
-fun String.toReverseOperation(): (Long, Long) -> Long {
-    return when(this) {
-        "+" -> {
-            {one, other -> one - other}
-        }
-        "-" -> {one, other -> one + other}
-        "*" -> {one, other -> one / other}
-        "/" -> {one, other -> one * other}
-        else -> error("unknow operation: $this")
+    val root = monkeys["root"]!! as OperationMonkey
+    return if (root.leftMonkey.hasHumanInChain) {
+        root.leftMonkey.doReverseOperation(root.rightMonkey.number)
+    } else {
+        root.rightMonkey.doReverseOperation(root.leftMonkey.number)
     }
 }
 
 sealed interface Monkey {
 
-    fun getNumber(monkeys: Map<String, Monkey>): Long
+    val number: Long
 
-    fun hasAHumanInChain(monkeys: Map<String, Monkey>): Boolean {
-        return this.name == HUMAN
-    }
-
-    fun doReverseOperation(monkeys: Map<String, Monkey>, checkNr: Long): Long
+    val hasHumanInChain: Boolean
+    fun doReverseOperation(checkNr: Long): Long
     val name: String
 }
 
-data class NumberMonkey(override val name: String, val number: Long): Monkey {
+data class NumberMonkey(override val name: String, override val number: Long): Monkey {
 
-    override fun getNumber(monkeys: Map<String, Monkey>): Long {
-        return this.number
-    }
-    override fun doReverseOperation(monkeys: Map<String, Monkey>, checkNr: Long): Long {
-        if(name == HUMAN) {
-            println(checkNr)
-            return checkNr
-        }
-        return this.number
+    override val hasHumanInChain: Boolean
+        get() = this.name == HUMAN
+    override fun doReverseOperation(checkNr: Long): Long {
+        return if(name == HUMAN) checkNr
+        else this.number
     }
 }
 
 data class OperationMonkey(
     override val name: String,
     val operation: String,
-    val monkey1: String,
-    val monkey2: String
+    val leftMonkeyName: String,
+    val rightMonkeyName: String,
+    var monkeys: Map<String, Monkey>? = null
 ): Monkey {
+    val leftMonkey: Monkey by lazy { monkeys!![leftMonkeyName]!! }
+    val rightMonkey: Monkey by lazy { monkeys!![rightMonkeyName]!! }
 
-    override fun getNumber(monkeys: Map<String, Monkey>): Long {
-        val number1 = monkeys[this.monkey1]!!.getNumber(monkeys)
-        val number2 = monkeys[this.monkey2]!!.getNumber(monkeys)
-        return operation.toOperation().invoke(
-            number1,
-            number2
+    override val hasHumanInChain: Boolean by lazy {
+        this.name == HUMAN || leftMonkey.hasHumanInChain || rightMonkey.hasHumanInChain
+    }
+
+    override val number: Long by lazy {
+        operation.toOperation().invoke(
+            leftMonkey.number,
+            rightMonkey.number
         )
     }
-
-    override fun hasAHumanInChain(monkeys: Map<String, Monkey>): Boolean {
-        return super.hasAHumanInChain(monkeys) || monkeys[monkey1]!!.hasAHumanInChain(monkeys) || monkeys[monkey2]!!.hasAHumanInChain(monkeys)
-    }
-
-    override fun doReverseOperation(monkeys: Map<String, Monkey>, checkNr: Long): Long {
+    override fun doReverseOperation(checkNr: Long): Long {
         if(name == HUMAN) {
-            println(checkNr)
             return checkNr
         }
-        val monkey1 = monkeys[monkey1]!!
-        val monkey2 = monkeys[monkey2]!!
-        return if(monkey1.hasAHumanInChain(monkeys)) {
-            val number = monkey2.getNumber(monkeys)
-            val result = operation.toReverseOperation().invoke(number, checkNr)
-            monkey1.doReverseOperation(monkeys, result)
+        return if(leftMonkey.hasHumanInChain) {
+            val result = operation.toReverseOperation().invoke(checkNr, rightMonkey.number)
+            leftMonkey.doReverseOperation(result)
         } else {
-            val number = monkey1.getNumber(monkeys)
-            val result = operation.toReverseOperation().invoke(number, checkNr)
-            monkey2.doReverseOperation(monkeys, result)
+            val result = if(operation == "/" || operation == "-") {
+                operation.toOperation().invoke(leftMonkey.number, checkNr)
+            } else operation.toReverseOperation().invoke(checkNr, leftMonkey.number)
+            rightMonkey.doReverseOperation(result)
         }
     }
 }

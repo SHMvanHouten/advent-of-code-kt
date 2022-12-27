@@ -48,21 +48,19 @@ class Day21Test {
             """.trimIndent()
             // 24=(360/(34-humn))
             assertThat(humanMonkeyValue(example)).isEqualTo(19)
-        }
-
-        @Test
-        internal fun `part 2 print`() {
-            println(printMonkeys(input))
+            assertThat(humanMonkeyValue2(example)).isEqualTo(19)
         }
 
         @Test
         internal fun example() {
             assertThat(humanMonkeyValue(example)).isEqualTo(301)
+            assertThat(humanMonkeyValue2(example)).isEqualTo(301)
         }
 
         @Test
         internal fun part1() {
             assertThat(humanMonkeyValue(input)).isEqualTo(3555057453229)
+            assertThat(humanMonkeyValue2(input)).isEqualTo(3555057453229)
         }
     }
 
