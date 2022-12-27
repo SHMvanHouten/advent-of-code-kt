@@ -127,16 +127,14 @@ class CubeMap {
 /*L*/   listOf((Direction.NORTH to Direction.EAST), (Direction.WEST to Direction.SOUTH))
 
     )
+
     fun getNewPositionAndDirection(position: Coordinate, direction: Direction): Pair<Coordinate, Direction> {
         val indexToCoordPair = coordinatePairings.mapIndexedNotNull { index, coordPairs ->
             coordPairs.find { it.first == position || it.second == position }?.let { index to it }
         }
-        println(position)
-        println(direction)
         assert(indexToCoordPair.isNotEmpty() && indexToCoordPair.size < 3)
         val (i, pair) = getCoordinatePairingForDirection(indexToCoordPair, direction)
         val pairs = directionChanges[i]
-        println(pairs)
         val newDirection = pairs.first { it.first == direction }.second
         val newPosition = if(pair.first == position) pair.second
         else if(pair.second == position) pair.first

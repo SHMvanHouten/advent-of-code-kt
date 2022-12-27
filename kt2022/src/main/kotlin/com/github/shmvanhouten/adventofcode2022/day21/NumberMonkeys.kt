@@ -1,7 +1,6 @@
 package com.github.shmvanhouten.adventofcode2022.day21
 
 import com.github.shmvanhouten.adventofcode.utility.strings.words
-import java.math.BigInteger
 
 fun shout(input: String): Long {
     val monkeys = input.lines().map { toMonkey(it) }.associateBy { it.name }
@@ -30,19 +29,6 @@ fun String.toOperation(): (Long, Long) -> Long {
         "-" -> {one, other -> one - other}
         "*" -> {one, other -> one * other}
         "/" -> {one, other -> one / other}
-        else -> error("unknow operation: $this")
-    }
-}
-
-
-fun String.toReverseOperationBi(): (BigInteger, BigInteger) -> BigInteger {
-    return when(this) {
-        "+" -> {
-            {one, other -> one - other}
-        }
-        "-" -> {one, other -> one + other}
-        "*" -> {one, other -> one / other}
-        "/" -> {one, other -> one * other}
         else -> error("unknow operation: $this")
     }
 }

@@ -1,87 +1,62 @@
 package com.github.shmvanhouten.adventofcode2022.day21
 
 import com.github.shmvanhouten.adventofcode.utility.strings.words
-import java.math.BigInteger
 
 internal const val HUMAN = "humn"
 
-fun humanMonkeyValue(input: String): BigInteger {
+fun humanMonkeyValue(input: String): Long {
     val printMonkeys = printMonkeys(input)
     println(printMonkeys)
     return humanValue(printMonkeys)
 }
 
-fun humanValue(printMonkeys: String): BigInteger {
-    val (left, rightSide) = printMonkeys.split('=')
-    var remaining: BigInteger
-    var remainingEquation = left
-    if (left.first().isDigit()) {
-        remaining = left.toLong().toBigInteger()
-        remainingEquation = rightSide
+fun humanValue(printMonkeys: String): Long {
+    var (result: Long, equation: String) = splitEquationAndResult(printMonkeys)
+    while (equation != HUMAN) {
+        val (valueAfterOp, equationAfterOp) = doReverseOperation(removeBrackets(equation), result)
+        result = valueAfterOp
+        equation = equationAfterOp
+    }
+
+    return result
+}
+
+private fun removeBrackets(equation: String) = equation.substring(1, equation.lastIndex)
+
+private fun doReverseOperation(remainingEquation: String, remaining: Long): Pair<Long, String> {
+    val (left, operation, right) = splitAroundOperation(remainingEquation)
+    return if (right.contains(HUMAN) && (operation == "/" || operation == "-")) {
+        // if remaining = left (-/) x
+        // x = left (-/) remaining
+        operation.toOperation().invoke(left.toLong(), remaining) to right
     } else {
-        remaining = rightSide.toBigInteger()
-    }
-    while (remainingEquation.contains('(')) {
-        remainingEquation = remainingEquation.substring(1, remainingEquation.lastIndex)
-        if (remainingEquation.first().isLetter() || remainingEquation.last().isLetter()) {
-            return getHumanValue(remainingEquation, remaining)
-        }
-        val firstOperation = remainingEquation.first { !it.isDigit() && !it.isLetter() && it != '(' && it != ')' }.toString()
-        if ((firstOperation == "/") && remainingEquation.substringAfter(firstOperation).contains(HUMAN)) {
-            val number = remainingEquation.takeWhile { it.isDigit() }.toBigInteger()
-            remainingEquation = "${remainingEquation.substringAfter(firstOperation)})"
-            remaining = number / remaining
-        } else if (firstOperation == "-" && remainingEquation.substringAfter(firstOperation).contains(HUMAN)) {
-            val number = remainingEquation.takeWhile { it.isDigit() }.toBigInteger()
-            remainingEquation = remainingEquation.substringAfter("-")
-            remaining = number - remaining
-        } else {
-            val (number, op, whatIsLeft) = getNumberOperationAndRemaining(remainingEquation)
-            remainingEquation = whatIsLeft
-            remaining = doOperation(op, remaining, number)
-        }
-    }
-
-    return remaining
-}
-
-fun getHumanValue(remainingEquation: String, remaining: BigInteger): BigInteger {
-    if (remainingEquation.first().isLetter()) {
-        val (i, c) = remainingEquation.withIndex().first { !it.value.isLetter() }
-        val number = remainingEquation.substring(i + 1).toLong()
-        return doOperation(c.toString(), remaining, number)
-    } else {
-        val number = remainingEquation.takeWhile { it.isDigit() }.toLong()
-        val operation = remainingEquation.first { !it.isDigit() }.toString()
-        if(operation == "-") {
-            return number.toBigInteger() - remaining
-        } else if(operation == "/") {
-            return number.toBigInteger() / remaining
-        }
-        return doOperation(operation, remaining, number)
+        val number = if (left.first().isDigit()) left.toLong() else right.toLong()
+        operation.toReverseOperation().invoke(remaining, number) to if (right.first().isDigit()) left else right
     }
 }
 
-private fun doOperation(
-    operation: String,
-    remaining: BigInteger,
-    number: Long
-): BigInteger {
-    return operation.toReverseOperationBi().invoke(remaining, number.toBigInteger())
-}
-
-fun getNumberOperationAndRemaining(equation: String): Triple<Long, String, String> {
-    if (equation.first().isDigit()) {
+fun splitAroundOperation(equation: String): Triple<String, String, String> {
+    return if (equation.first().isDigit()) {
         val number = equation.takeWhile { it.isDigit() }
-        val operation = equation.substring(number.length, number.length + 1)
-        val remaining = equation.substring(number.length + 1)
-        return Triple(number.toLong(), operation, remaining)
+        val operation = equation.first { isOperation(it) }.toString()
+        val remaining = equation.substringAfter(operation)
+        Triple(number, operation, remaining)
     } else {
-        val lastClosingBracket = equation.lastIndexOf(')')
-        val remaining = equation.substring(0..lastClosingBracket)
-        val operation = equation.substring(lastClosingBracket + 1, lastClosingBracket + 2)
-        val number = equation.substring(lastClosingBracket + 2).toLong()
-        return Triple(number, operation, remaining)
+        val (indexOfOperation, operation) = equation.withIndex().last { isOperation(it.value) }
+        val remaining = equation.substring(0, indexOfOperation)
+        val number = equation.substring(indexOfOperation + 1)
+        Triple(remaining, operation.toString(), number)
+    }
+}
+
+private fun isOperation(it: Char) = it == '+' || it == '-' || it == '*' || it == '/'
+
+private fun splitEquationAndResult(printMonkeys: String): Pair<Long, String> {
+    val (left, right) = printMonkeys.split('=')
+    return if (left.first().isDigit()) {
+        left.toLong() to right
+    } else {
+        right.toLong() to left
     }
 }
 
