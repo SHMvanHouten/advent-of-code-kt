@@ -2,7 +2,6 @@ package com.github.shmvanhouten.adventofcode2022.day19
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -22,10 +21,10 @@ Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsid
             assertThat(blueprints.first()).isEqualTo(
                 Blueprint(
                     id = 1,
-                    OreRobotCosts(ore = 4),
-                    ClayRobotCosts(ore = 2),
-                    ObsidianRobotCosts(ore = 3, clay = 14),
-                    GeodeRobotCosts(ore = 2, obsidian = 7)
+                    OreRobotCosts(oreCost = 4),
+                    ClayRobotCosts(oreCost = 2),
+                    ObsidianRobotCosts(oreCost = 3, clayCost = 14),
+                    GeodeRobotCosts(oreCost = 2, obsidianCost = 7)
                 )
             )
         }
@@ -72,7 +71,6 @@ Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsid
         }
 
         @Test
-        @Disabled("slow, 9 seconds")
         internal fun `part 1`() {
             val bluePrints = toBlueprints(input)
             assertThat(qualityLevelOf(bluePrints)).isEqualTo(1681)
@@ -83,7 +81,6 @@ Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsid
     inner class Part2 {
 
         @Test
-        @Disabled("fails, need to fix that!")
         internal fun example() {
             val blueprints = toBlueprints(example)
             val result = findMaximumGeodeProduction(blueprints.first(), timeConstraint = 32)
@@ -98,7 +95,6 @@ Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsid
         }
 
         @Test
-        @Disabled("slow, 1 minute")
         internal fun `part 2`() {
             val blueprints = toBlueprints(inputp2)
             val firstBlueprint = blueprints.first()

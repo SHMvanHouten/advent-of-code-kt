@@ -19,15 +19,18 @@ fun findMaximumGeodeProduction(
     var bestProduction: Production? = null
     while (productions.isNotEmpty()) {
         val production = productions.poll()
+        if(production.inventory.geode < (bestProduction?.inventory?.geode?: 0)
+            && (production.geodeRobots + (maxMinutes - production.minute) < (bestProduction?.geodeRobots?: 0))
+        ) {
+            continue
+        }
         if (production.isFinished(blueprint)) {
             val finishedProduction = production.finish(blueprint)
             if (bestProduction == null || finishedProduction.inventory.geode > bestProduction.inventory.geode) {
                 println("best production: ${production.inventory.geode}")
                 bestProduction = finishedProduction
             }
-        } else if(!production.hasAChance(bestProduction?.inventory?.geode?:0)) {
-            // drop
-        }else {
+        } else {
             productions += production.createAllPossibleProductionPermutations(blueprint)
         }
 
@@ -42,27 +45,30 @@ data class Inventory(
     val obsidian: Int = 0,
     val geode: Int = 0
 ) {
-    fun canProduceOreBot(blueprint: Blueprint): Boolean {
-        return blueprint.oreRobot.ore <= ore
+    fun canProduceOreBotSinceThisTurn(blueprint: Blueprint, oreRobots: Int): Boolean {
+        return blueprint.oreRobot.oreCost <= ore
+                && blueprint.oreRobot.oreCost > (ore - oreRobots)
     }
 
-    fun canProduceClayBot(blueprint: Blueprint): Boolean {
-        return blueprint.clayRobot.ore <= ore
+    fun canProduceClayBotSinceThisTurn(blueprint: Blueprint, oreRobots: Int): Boolean {
+        return blueprint.clayRobot.oreCost <= ore
+                && blueprint.clayRobot.oreCost >= (ore - oreRobots)
     }
 
-    fun canProduceObsidianBot(blueprint: Blueprint): Boolean {
-        return blueprint.obsidianRobot.ore <= ore && blueprint.obsidianRobot.clay <= clay
+    fun canProduceObsidianBotSinceThisTurn(blueprint: Blueprint, oreRobots: Int, clayRobots: Int): Boolean {
+        return blueprint.obsidianRobot.oreCost <= ore && blueprint.obsidianRobot.clayCost <= clay
+                && (blueprint.obsidianRobot.oreCost >= (ore - oreRobots) || blueprint.obsidianRobot.clayCost >= (clay - clayRobots - 3))
     }
 
     fun canProduceGeodeBot(blueprint: Blueprint): Boolean {
-        return blueprint.geodeRobot.ore <= ore && blueprint.geodeRobot.obsidian <= obsidian
+        return blueprint.geodeRobot.oreCost <= ore && blueprint.geodeRobot.obsidianCost <= obsidian
     }
 
     fun minus(botCosts: RobotCosts): Inventory {
         return this.copy(
-            ore = ore - botCosts.ore,
-            clay = clay - botCosts.clay,
-            obsidian = obsidian - botCosts.obsidian
+            ore = ore - botCosts.oreCost,
+            clay = clay - botCosts.clayCost,
+            obsidian = obsidian - botCosts.obsidianCost
         )
     }
 
@@ -91,14 +97,14 @@ data class Production(
     }
 
     fun finish(blueprint: Blueprint): Production {
-        return if(this.minute < maxMinutes && this.obsidianRobots >= blueprint.geodeRobot.obsidian) {
+        return if(this.minute < maxMinutes && this.obsidianRobots >= blueprint.geodeRobot.obsidianCost) {
             generateSequence(this) {
                 this.produce()
-            }.first { it.minute == 33 }
+            }.first { it.minute == maxMinutes + 1 }
         } else produce()
     }
 
-    fun produce(
+    private fun produce(
         inventory: Inventory = this.inventory,
         extraOreBot: Int = 0,
         extraClayBot: Int = 0,
@@ -122,19 +128,20 @@ data class Production(
                 inventory = inventory.minus(blueprint.geodeRobot),
                 extraGeoBot = 1
             )
-        } else if (blueprint.geodeRobot.obsidian > obsidianRobots && inventory.canProduceObsidianBot(blueprint)) {
-            permutations += this.produce(
-                inventory = inventory.minus(blueprint.obsidianRobot),
-                extraObsBot = 1
-            )
         } else {
-            if (blueprint.minOreRequirement > oreRobots && inventory.canProduceOreBot(blueprint)) {
+            if (blueprint.geodeRobot.obsidianCost > obsidianRobots && inventory.canProduceObsidianBotSinceThisTurn(blueprint, oreRobots, clayRobots) && minute < (maxMinutes - 2)) {
+                permutations += this.produce(
+                    inventory = inventory.minus(blueprint.obsidianRobot),
+                    extraObsBot = 1
+                )
+            }
+            if (blueprint.minOreRequirement > oreRobots && inventory.canProduceOreBotSinceThisTurn(blueprint, oreRobots) && minute < (maxMinutes - 12)) {
                 permutations += this.produce(
                     inventory = inventory.minus(blueprint.oreRobot),
                     extraOreBot = 1
                 )
             }
-            if (blueprint.obsidianRobot.clay > clayRobots && inventory.canProduceClayBot(blueprint)) {
+            if (blueprint.obsidianRobot.clayCost > clayRobots && inventory.canProduceClayBotSinceThisTurn(blueprint, oreRobots) && minute < (maxMinutes - 4)) {
                 permutations += this.produce(
                     inventory = inventory.minus(blueprint.clayRobot),
                     extraClayBot = 1
@@ -148,18 +155,11 @@ data class Production(
     }
 
     fun isFinished(blueprint: Blueprint): Boolean {
-        return this.minute == maxMinutes || this.obsidianRobots >= blueprint.geodeRobot.obsidian
+        return this.minute == maxMinutes || this.obsidianRobots >= blueprint.geodeRobot.obsidianCost
     }
 
     fun qualityLevel(): Int {
         return id * inventory.geode
-    }
-
-    fun hasAChance(geode: Int): Boolean {
-        return true
-//        return geode < inventory.geode + geodeRobots + (32 - this.minute).downTo(2).reduce(Int::times)
-//        val minutesLeft = (25 - this.minute)
-//        return (minutesLeft * (geodeRobots + 2)) + inventory.geode >= geode
     }
 
 }
