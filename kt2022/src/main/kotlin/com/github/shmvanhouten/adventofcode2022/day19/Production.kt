@@ -2,14 +2,19 @@ package com.github.shmvanhouten.adventofcode2022.day19
 
 import java.util.*
 
+private var maxMinutes: Int = 32
+
 fun qualityLevelOf(bluePrints: List<Blueprint>): Int {
+    maxMinutes = 24
     return bluePrints.sumOf { findMaximumGeodeProduction(it).qualityLevel() }
 }
 
 fun findMaximumGeodeProduction(
     blueprint: Blueprint,
-    start: Production = Production(blueprint.id)
+    start: Production = Production(blueprint.id),
+    timeConstraint: Int = 24
 ): Production {
+    maxMinutes = timeConstraint
     val productions = priorityQueueOf(start)
     var bestProduction: Production? = null
     while (productions.isNotEmpty()) {
@@ -86,7 +91,7 @@ data class Production(
     }
 
     fun finish(blueprint: Blueprint): Production {
-        return if(this.minute < 32 && this.obsidianRobots >= blueprint.geodeRobot.obsidian) {
+        return if(this.minute < maxMinutes && this.obsidianRobots >= blueprint.geodeRobot.obsidian) {
             generateSequence(this) {
                 this.produce()
             }.first { it.minute == 33 }
@@ -143,7 +148,7 @@ data class Production(
     }
 
     fun isFinished(blueprint: Blueprint): Boolean {
-        return this.minute == 32 || this.obsidianRobots >= blueprint.geodeRobot.obsidian
+        return this.minute == maxMinutes || this.obsidianRobots >= blueprint.geodeRobot.obsidian
     }
 
     fun qualityLevel(): Int {
@@ -157,11 +162,6 @@ data class Production(
 //        return (minutesLeft * (geodeRobots + 2)) + inventory.geode >= geode
     }
 
-}
-
-fun factorial(num: Int): Int {
-    if(num == 2) return 2
-    return num * factorial(num - 1)
 }
 
 fun priorityQueueOf(production: Production): PriorityQueue<Production> {
