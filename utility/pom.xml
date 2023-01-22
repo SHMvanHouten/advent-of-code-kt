@@ -24,6 +24,13 @@
             <version>1.8.0.1</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.strikt</groupId>
+            <artifactId>strikt-core</artifactId>
+            <version>0.34.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
