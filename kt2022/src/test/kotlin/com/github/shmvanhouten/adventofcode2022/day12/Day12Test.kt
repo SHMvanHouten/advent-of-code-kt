@@ -1,9 +1,9 @@
 package com.github.shmvanhouten.adventofcode2022.day12
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import com.github.shmvanhouten.adventofcode.utility.collectors.extremes
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
+import com.github.shmvanhouten.adventofcode.utility.grid.Coord
+import com.github.shmvanhouten.adventofcode.utility.grid.Grid
+import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -46,39 +46,39 @@ class Day12Test {
                 abdefghi
             """.trimIndent()
             val shortestPath = shortestPathFromAnyATile(example)
-            printOut(shortestPath, example.toCoordinateMap())
+            printOut(shortestPath, charGrid(example))
             assertThat(shortestPath.length).isEqualTo(29)
         }
 
         @Test
         internal fun `part 2`() {
             val shortestPath = shortestPathFromAnyATile(input)
-            printOut(shortestPath, input.toCoordinateMap())
+            printOut(shortestPath, charGrid(input))
             assertThat(shortestPath.length).isEqualTo(500)
         }
     }
 
-    private fun printOut(shortestPath: Path, map: Map<Coordinate, Char>) {
+    private fun printOut(shortestPath: Path, map: Grid<Char>) {
         var pathBefore: Path? = shortestPath
-        val fullPath = mutableSetOf<Coordinate>()
+        val fullPath = mutableSetOf<Coord>()
         while (pathBefore != null) {
             fullPath += pathBefore.current.coord
             pathBefore = pathBefore.stepsBefore
         }
-        val (minY, maxY) = map.keys.map { it.y }.extremes() ?: error("empty collection $fullPath")
-        val (minX, maxX) = map.keys.map { it.x }.extremes() ?: error("empty collection $fullPath")
-        (minY..maxY).forEach { y ->
-            (minX..maxX).forEach { x ->
-                printColored(map[Coordinate(x, y)])
-                if (fullPath.contains(Coordinate(x, y))) print('X')
+        map.grid.forEachIndexed { y, line ->
+            line.forEachIndexed { x, c ->
+                selectColor(c)
+
+                if (fullPath.contains(Coord(x, y))) print('X')
                 else print('█')
+
                 print("\u001b[30m")
             }
             println()
         }
     }
 
-    private fun printColored(c: Char?) {
+    private fun selectColor(c: Char?) {
         when (c) {
             'a' -> print("\u001b[37m") // white-gray
             'b' -> print("\u001b[36m") // cyan
@@ -90,6 +90,6 @@ class Day12Test {
         }
     }
 
-    private val input by lazy { readFile("/input-day12.txt")}
+    private val input by lazy { readFile("/input-day12.txt") }
 
 }

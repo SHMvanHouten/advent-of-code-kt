@@ -1,5 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day08.grid
 
+import com.github.shmvanhouten.adventofcode.utility.collections.allAfter
+import com.github.shmvanhouten.adventofcode.utility.collections.allBefore
 import com.github.shmvanhouten.adventofcode.utility.grid.Coord
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import com.github.shmvanhouten.adventofcode.utility.grid.intGridWithCoord
@@ -10,7 +12,8 @@ fun visibleTrees(input: String): List<Tree> {
 }
 
 fun visibleTrees(grid: Grid<Pair<Coord, Int>>): List<Tree> {
-    return grid.map { Tree(it.first, it.second) }
+    return grid
+        .map { (location, height) -> Tree(location, height) }
         .filterTreesVisibleFromAnySide()
 }
 
@@ -24,9 +27,8 @@ fun bestTreeScenicScore(grid: Grid<Tree>): Int {
 }
 
 private fun Grid<Tree>.filterTreesVisibleFromAnySide(): List<Tree> {
-    // todo: make ComparableGrid to be able to make these transforms/filters more generic
 
-    return grid.mapIndexed{ y, row ->
+    return this.grid.mapIndexed{ y, row ->
         row.filterIndexed { x, _ ->
             grid[y].positionIsVisible(x) || getColumn(x).positionIsVisible(y)
         }
@@ -71,7 +73,7 @@ private fun <E> List<E>.takeUntil(predicate: (E) -> Boolean): List<E> {
 
 private fun List<Tree>.positionIsVisible(i: Int): Boolean {
     val tree = this[i]
-    return isAtEdge(i) || subList(0, i).all { it < tree } || subList(i + 1, this.size).all { it < tree }
+    return isAtEdge(i) || this.allBefore(i) { it < tree } || allAfter(i) { it < tree }
 }
 
 private fun <E> List<E>.isAtEdge(i: Int): Boolean = i == 0 || i == lastIndex

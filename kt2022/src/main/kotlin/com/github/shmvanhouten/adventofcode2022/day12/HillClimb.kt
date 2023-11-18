@@ -1,30 +1,31 @@
 package com.github.shmvanhouten.adventofcode2022.day12
 
 import com.github.shmvanhouten.adventofcode.utility.collections.arrayDequeOf
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
+import com.github.shmvanhouten.adventofcode.utility.grid.Coord
+import com.github.shmvanhouten.adventofcode.utility.grid.Grid
+import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 
 fun shortestPath(input: String): Path {
-    val coords = input.toCoordinateMap()
-    return shortestPathBackward(coords) {
-        current.coord == coords.entries.first { it.value == 'S' }.key
+    val grid = charGrid(input)
+    return shortestPathBackward(grid) {
+        current.coord == grid.firstCoordinateMatching { it == 'S' }
     }
 }
 
 fun shortestPathFromAnyATile(input: String): Path {
-    return shortestPathBackward(input.toCoordinateMap()) { current.height == 'a' }
+    return shortestPathBackward(charGrid(input)) { current.height == 'a' }
 }
 
-private fun shortestPathBackward(coords: Map<Coordinate, Char>, finishCriterium: Path.() -> Boolean): Path {
+private fun shortestPathBackward(coords: Grid<Char>, finishCriterion: Path.() -> Boolean): Path {
     return shortestPathBackward(
-        coordinatesWithStartAndEndAsHeights(coords),
-        finishCriterium,
-        Point(coords.entries.first { it.value == 'E' }.key, height = 'z')
+        replaceStartAndEndWithHeights(coords),
+        finishCriterion,
+        Point(coords.firstCoordinateMatching { it == 'E' }!!, height = 'z')
     )
 }
 
 fun shortestPathBackward(
-    coordinates: Map<Coordinate, Char>,
+    grid: Grid<Char>,
     hasFinished: Path.() -> Boolean,
     start: Point
 ): Path {
@@ -37,7 +38,7 @@ fun shortestPathBackward(
 
         val current = path.current.coord
         current.getSurroundingManhattan()
-            .mapNotNull { nullablePoint(it, coordinates[it]) }
+            .mapNotNull { nullablePoint(it, grid.getOrNull(it)) }
             .filter { (_, height) -> height + 1 >= path.current.height }
             .map { path + it }
             .filter { !shortestPathByCoordinate.contains(it.current.coord) }
@@ -50,14 +51,14 @@ fun shortestPathBackward(
     error("no paths found!")
 }
 
-private fun coordinatesWithStartAndEndAsHeights(coords: Map<Coordinate, Char>) =
+private fun replaceStartAndEndWithHeights(coords: Grid<Char>): Grid<Char> =
     coords
-        .mapValues { if (it.value == 'E') 'z' else it.value }
-        .mapValues { if (it.value == 'S') 'a' else it.value }
+        .replaceElements('E', replacement = 'Z')
+        .replaceElements('S', replacement = 'a')
 
-data class Point(val coord: Coordinate, val height: Height)
+data class Point(val coord: Coord, val height: Height)
 
-fun nullablePoint(coord: Coordinate, height: Height?): Point? {
+fun nullablePoint(coord: Coord, height: Height?): Point? {
     return if (height == null) null
     else Point(coord, height)
 }

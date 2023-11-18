@@ -6,6 +6,7 @@ import com.github.shmvanhouten.adventofcode.utility.grid.Coord
 import com.github.shmvanhouten.adventofcode2022.day08.grid.bestTreeScenicScore
 import com.github.shmvanhouten.adventofcode2022.day08.grid.visibleTrees
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expect
@@ -115,6 +116,7 @@ class Day08Test {
             }
 
             @Test
+            @Disabled("2 seconds: grid is much faster")
             internal fun `part 1`() {
                 assertThat(treesVisible(input)).hasSize(1736)
             }

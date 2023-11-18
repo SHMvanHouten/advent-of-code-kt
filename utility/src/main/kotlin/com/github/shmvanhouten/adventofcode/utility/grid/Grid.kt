@@ -1,22 +1,23 @@
 package com.github.shmvanhouten.adventofcode.utility.grid
 
 import com.github.shmvanhouten.adventofcode.utility.collections.joinToEvenlySpaced
+import com.github.shmvanhouten.adventofcode.utility.grid.RelativePosition.*
 
 fun intGridFromSpaceDelimitedString(input: String) = Grid(input) { row -> row.split(' ').map { it.toInt() } }
 fun intGridWithCoord(input: String) = Grid(input) { y, row -> row.mapIndexed { x, item ->
     Coord(x, y) to item.digitToInt()
 }}
+fun charGrid(input: String) = Grid(input, String::toList)
 
-open class Grid<T> (val grid: MutableList<MutableList<T>>){
+class Grid<T> (val grid: List<List<T>>){
 
     constructor(input: String, mappingOperation: (String) -> List<T>) : this(input.lines()
         .map(mappingOperation)
-        .map { it.toMutableList() }.toMutableList())
+        .map { it })
 
     constructor(input: String, mappingOperation: (index: Int, String) -> List<T>): this(input.lines()
         .mapIndexed (mappingOperation)
-        .map { it.toMutableList() }
-        .toMutableList())
+        .map { it })
 
     fun <R: Comparable<R>> maxOf(predicate: Grid<T>.(Coord) -> R): R {
         return (0 until height)
@@ -25,13 +26,15 @@ open class Grid<T> (val grid: MutableList<MutableList<T>>){
     }
 
     fun <RESULT> map(transform: (T) -> RESULT): Grid<RESULT> {
-        return Grid(grid.map { it.map(transform).toMutableList() }.toMutableList())
+        return Grid(grid.map { it.map(transform) })
     }
 
     fun filter(function: (T) -> Boolean): List<T> {
         grid.map {  }
         return grid.flatten().filter(function)
     }
+
+    fun getOrNull(coord: Coord): T? = grid.getOrNull(coord.y)?.getOrNull(coord.x)
 
     operator fun get(x: Int, y: Int): T {
         return grid[y][x]
@@ -117,10 +120,58 @@ open class Grid<T> (val grid: MutableList<MutableList<T>>){
         }
     }
 
+    fun firstCoordinateMatching(matchingFunction: (T) -> Boolean): Coord? {
+        this.grid.forEachIndexed { y, line ->
+            val x = line.indexOfFirst(matchingFunction::invoke)
+            if(x >= 0) return Coord(x, y)
+        }
+        return null
+    }
+
+    fun replaceElements(orig: T, replacement: T): Grid<T> {
+        return this.grid.map{ line ->
+            line.map{ t ->
+                if(t == orig) replacement
+                else t
+            }
+        }.let { Grid(it) }
+    }
+
+    fun toMutableGrid(): MutableGrid<T> = grid.map { it.toMutableList() }.toMutableList()
+
     val width: Int by lazy { grid.first().size }
 
     val height: Int by lazy { grid.size }
 
 }
 
-data class Coord(val x: Int, val y: Int)
+typealias MutableGrid<T> = MutableList<MutableList<T>>
+
+data class Coord(val x: Int, val y: Int) {
+
+    operator fun plus(otherCoord: Coord): Coord {
+        val x = this.x + otherCoord.x
+        val y = this.y + otherCoord.y
+        return Coord(x, y)
+    }
+
+    fun getSurroundingManhattan(): Set<Coord> {
+        return setOf(
+            this + NORTH.coordinate,
+            this + EAST.coordinate,
+            this + SOUTH.coordinate,
+            this + WEST.coordinate,
+        )
+    }
+}
+
+enum class RelativePosition(val coordinate: Coord) {
+    NORTH(Coord(0, -1)),
+    NORTH_EAST(Coord(1, -1)),
+    EAST(Coord(1, 0)),
+    SOUTH_EAST(Coord(1, 1)),
+    SOUTH(Coord(0, 1)),
+    SOUTH_WEST(Coord(-1, 1)),
+    WEST(Coord(-1, 0)),
+    NORTH_WEST(Coord(-1, -1))
+}
