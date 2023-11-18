@@ -1,7 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day14
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction
+import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition.*
 
 private val SAND_SOURCE = Coordinate(500, 0)
 data class Cave(
@@ -45,7 +45,7 @@ data class Cave(
         var grain = SAND_SOURCE
         while (true) {
             if(grain.y >= lowestRockY) return sandLocations
-            val south = grain.move(Direction.SOUTH)
+            val south = grain.move(SOUTH)
             val (southWest, southEast) = eitherSideFrom(south)
             grain = when {
                 locationIsNotOccupied(south) -> south
@@ -61,7 +61,7 @@ data class Cave(
         !rockLocations.contains(location) && !sandLocations.contains(location)
 
     private fun eitherSideFrom(location: Coordinate): Pair<Coordinate, Coordinate> {
-        return Pair(location.move(Direction.WEST), location.move(Direction.EAST))
+        return Pair(location.move(WEST), location.move(EAST))
     }
 }
 

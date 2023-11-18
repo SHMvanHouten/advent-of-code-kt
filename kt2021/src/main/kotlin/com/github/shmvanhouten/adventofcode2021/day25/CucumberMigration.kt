@@ -1,8 +1,8 @@
 package com.github.shmvanhouten.adventofcode2021.day25
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction.EAST
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction.SOUTH
+import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition.EAST
+import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition.SOUTH
 
 fun countStepsUntilMigrationHasStopped(fieldOfSeaCucumbers: FieldOfSeaCucumbers): Int {
     return generateSequence(fieldOfSeaCucumbers) { field ->

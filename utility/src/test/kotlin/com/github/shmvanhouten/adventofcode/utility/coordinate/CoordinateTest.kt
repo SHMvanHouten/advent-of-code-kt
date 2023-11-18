@@ -79,7 +79,7 @@ internal class CoordinateTest {
                 "SOUTH, 1, 2"]
         )
         internal fun `gets the neighbour of Coordinate(1, 1) in the specified direction`(
-            direction: Direction,
+            direction: RelativePosition,
             x: Int,
             y: Int
         ) {
@@ -98,7 +98,7 @@ internal class CoordinateTest {
         )
         internal fun `moves from Coordinate(1, 1) in the specified direction`(
             distance: Int,
-            direction: Direction,
+            direction: RelativePosition,
             x: Int,
             y: Int
         ) {

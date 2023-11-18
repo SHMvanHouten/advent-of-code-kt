@@ -1,7 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.day09
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction.*
 import java.util.*
 
 fun locateBasins(heights: Map<Coordinate, Height>): Set<Set<Coordinate>> {
@@ -40,13 +39,6 @@ private fun allNeighboursAreHigher(
     .filter { heights.containsKey(it) }
     .all { neighbour -> value < heights[neighbour]!! }
 
-fun getNeighbours(coordinate: Coordinate): Set<Coordinate> {
-    return setOf(
-        coordinate.move(NORTH),
-        coordinate.move(EAST),
-        coordinate.move(SOUTH),
-        coordinate.move(WEST)
-    )
-}
+fun getNeighbours(coordinate: Coordinate): Set<Coordinate> = coordinate.getSurroundingManhattan()
 
 typealias Height = Int

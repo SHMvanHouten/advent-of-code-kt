@@ -49,8 +49,8 @@ data class Coordinate(val x: Int, val y: Int) {
         }
     }
 
-    fun move(direction: RelativePosition): Coordinate {
-        return this + direction.coordinate
+    fun move(direction: RelativePosition, distance: Int = 1): Coordinate {
+        return this + direction.coordinate * distance
     }
 
     operator fun plus(otherCoordinate: Coordinate): Coordinate {
@@ -75,7 +75,7 @@ data class Coordinate(val x: Int, val y: Int) {
         return abs(this.x - other.x) + abs(this.y - other.y)
     }
 
-    fun times(amount: Int): Coordinate {
+    operator fun times(amount: Int): Coordinate {
         return Coordinate(this.x * amount, this.y * amount)
     }
 

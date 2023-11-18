@@ -1,7 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day09
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction
+import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition
 import com.github.shmvanhouten.adventofcode.utility.strings.words
 import kotlin.math.abs
 
@@ -16,7 +16,7 @@ class LongRopeBridge(private val amountOfKnots: Int = 2) {
             .let { follow(it) }
     }
 
-    private fun follow(instructions: List<Pair<Direction, Int>>): LongRopeBridge {
+    private fun follow(instructions: List<Pair<RelativePosition, Int>>): LongRopeBridge {
         instructions
             .forEach { (direction, nrOfSteps) ->
                 moveRope(direction, nrOfSteps)
@@ -29,7 +29,7 @@ class LongRopeBridge(private val amountOfKnots: Int = 2) {
         return placesVisitedByTail.count()
     }
 
-    private fun moveRope(direction: Direction, nrOfSteps: Int) {
+    private fun moveRope(direction: RelativePosition, nrOfSteps: Int) {
         repeat(nrOfSteps) {
             var knotAheadPreviousPosition = knotPositions[0]
             knotPositions[0] = knotPositions[0].move(direction)
@@ -67,12 +67,12 @@ class LongRopeBridge(private val amountOfKnots: Int = 2) {
 
 }
 
-private fun String.toDirection(): Direction {
+private fun String.toDirection(): RelativePosition {
     return when(this) {
-        "R" -> Direction.EAST
-        "L" -> Direction.WEST
-        "U" -> Direction.NORTH
-        "D" -> Direction.SOUTH
+        "R" -> RelativePosition.EAST
+        "L" -> RelativePosition.WEST
+        "U" -> RelativePosition.NORTH
+        "D" -> RelativePosition.SOUTH
         else -> error("unknown direction $this")
     }
 }

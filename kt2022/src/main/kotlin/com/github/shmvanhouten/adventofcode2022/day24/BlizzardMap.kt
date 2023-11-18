@@ -2,7 +2,7 @@ package com.github.shmvanhouten.adventofcode2022.day24
 
 import com.github.shmvanhouten.adventofcode.utility.compositenumber.leastCommonMultiple
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction
+import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition
 import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
 
 class BlizzardMap(input:String) {
@@ -78,12 +78,12 @@ fun blizzardCoordinateSet(blizzards: String): List<Pair<Coordinate, Blizzard>> {
         .map { it.first to Blizzard(it.second) }
 }
 
-data class Blizzard(val char: Char, val direction: Direction = toDirection(char))
+data class Blizzard(val char: Char, val direction: RelativePosition = toRelativePosition(char))
 
-fun toDirection(char: Char): Direction = when(char) {
-    '^' -> Direction.NORTH
-    '>' -> Direction.EAST
-    'v' -> Direction.SOUTH
-    '<' -> Direction.WEST
+fun toRelativePosition(char: Char): RelativePosition = when(char) {
+    '^' -> RelativePosition.NORTH
+    '>' -> RelativePosition.EAST
+    'v' -> RelativePosition.SOUTH
+    '<' -> RelativePosition.WEST
     else -> error("unknown direction $char")
 }
