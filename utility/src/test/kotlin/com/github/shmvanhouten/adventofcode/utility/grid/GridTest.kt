@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode.utility.grid
 
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -7,7 +8,7 @@ import strikt.assertions.isEqualTo
 class GridTest {
     private val grid: Grid<Int>
         get() {
-            val grid = spaceDelimitedIntGrid(input)
+            val grid = intGridFromSpaceDelimitedString(input)
             return grid
         }
 
@@ -103,7 +104,7 @@ class GridTest {
             9 10 11 12
             13 14 15 16
         """.trimIndent()
-        val grid = spaceDelimitedIntGrid(tinyGrid)
+        val grid = intGridFromSpaceDelimitedString(tinyGrid)
         val windows = grid.windowedDiagonal(2)
         expectThat(windows.size)
             .isEqualTo(3 * 3)
@@ -118,7 +119,7 @@ class GridTest {
             9 10 11 12
             13 14 15 16
         """.trimIndent()
-        val grid = spaceDelimitedIntGrid(tinyGrid)
+        val grid = intGridFromSpaceDelimitedString(tinyGrid)
         val windows = grid.windowedDiagonalReverse(2)
         expectThat(windows.size)
             .isEqualTo(3 * 3)
@@ -127,6 +128,54 @@ class GridTest {
             .isEqualTo(listOf(2, 5))
         expectThat(windows.last())
             .isEqualTo(listOf(12, 15))
+    }
+
+    @Nested
+    inner class Print {
+
+        @Test
+        fun `we can print the int grid`() {
+            // GIVEN
+            val tinyGrid = """
+            1 2 3 4
+            5 6 7 8
+            9 10 11 12
+            13 14 15 16
+        """.trimIndent()
+
+            val grid = intGridFromSpaceDelimitedString(tinyGrid)
+
+            // WHEN
+            val result = grid.toString(" ")
+
+            // THEN
+            expectThat(result).isEqualTo(tinyGrid)
+        }
+
+        @Test
+        fun `we can print evenly spaced`() {
+            // GIVEN
+            val tinyGrid = """
+            1 2 3 4
+            5 6 7 8
+            9 10 11 12
+            13 14 15 16
+        """.trimIndent()
+
+            val grid = intGridFromSpaceDelimitedString(tinyGrid)
+
+            // WHEN
+            val result = grid.toStringEvenlySpaced()
+
+            // THEN
+            val expected = """
+                1  2  3  4
+                5  6  7  8
+                9  10 11 12
+                13 14 15 16
+            """.trimIndent()
+            expectThat(result).isEqualTo(expected)
+        }
     }
 }
 

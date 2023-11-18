@@ -1,11 +1,13 @@
 package com.github.shmvanhouten.adventofcode.utility.grid
 
-fun spaceDelimitedIntGrid(input: String) = Grid(input) {  row -> row.split(' ').map { it.toInt() } }
+import com.github.shmvanhouten.adventofcode.utility.collections.joinToEvenlySpaced
+
+fun intGridFromSpaceDelimitedString(input: String) = Grid(input) { row -> row.split(' ').map { it.toInt() } }
 fun intGridWithCoord(input: String) = Grid(input) { y, row -> row.mapIndexed { x, item ->
     Coord(x, y) to item.digitToInt()
 }}
 
-class Grid<T> (val grid: MutableList<MutableList<T>>){
+open class Grid<T> (val grid: MutableList<MutableList<T>>){
 
     constructor(input: String, mappingOperation: (String) -> List<T>) : this(input.lines()
         .map(mappingOperation)
@@ -97,6 +99,21 @@ class Grid<T> (val grid: MutableList<MutableList<T>>){
         return (0 .. height - length).flatMap {y ->
             (length- 1 until width).map{ x -> Coord(x, y)}
                 .map { revDiagonalLineFrom(it, length) }
+        }
+    }
+
+    override fun toString(): String {
+        return toString("")
+    }
+
+    fun toString(delimiter: String): String {
+        return grid.joinToString("\n"){ it.joinToString(delimiter) }
+    }
+
+    fun toStringEvenlySpaced(): String {
+        val maxSpacingSize = grid.flatten().maxOfOrNull { it.toString().length }!! + 1
+        return grid.joinToString("\n") {
+            it.joinToEvenlySpaced(spaceSize = maxSpacingSize)
         }
     }
 
