@@ -147,6 +147,18 @@ class Grid<T> (val grid: List<List<T>>){
 
 typealias MutableGrid<T> = MutableList<MutableList<T>>
 
+operator fun <T> MutableGrid<T>.set(coord: Coord, item: T) {
+    this[coord.y][coord.x] = item
+}
+
+operator fun <T> MutableGrid<T>.get(coord: Coord): T {
+    return this[coord.y][coord.x]
+}
+
+fun <T> MutableGrid<T>.hasElementAt(coord: Coord): Boolean {
+    return this.getOrNull(coord.y)?.getOrNull(coord.x) != null
+}
+
 data class Coord(val x: Int, val y: Int) {
 
     operator fun plus(otherCoord: Coord): Coord {
@@ -162,6 +174,10 @@ data class Coord(val x: Int, val y: Int) {
             this + SOUTH.coordinate,
             this + WEST.coordinate,
         )
+    }
+
+    fun move(direction: RelativePosition): Coord {
+        return this + direction.coordinate
     }
 }
 

@@ -4,6 +4,7 @@ import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.draw
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -91,6 +92,7 @@ class Day14Test {
         }
 
         @Test
+        @Disabled("Use Day14GridTest instead (this takes 5 seconds vs 100 ms)")
         internal fun `part 2`() {
             val cave = Cave(parse(input)).plusBedRock()
 

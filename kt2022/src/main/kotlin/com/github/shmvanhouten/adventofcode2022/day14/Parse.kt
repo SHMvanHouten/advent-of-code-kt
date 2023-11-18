@@ -7,7 +7,23 @@ fun parse(input: String): Set<Coordinate> {
     return input.lines().flatMap { listRockCoordinates(it) }.toSet()
 }
 
-fun listRockCoordinates(input: String): List<Coordinate> {
+fun parseToGrid(input: String): CaveGrid {
+    val rockLocations = parse(input)
+    val minX = 0
+    val maxX = rockLocations.maxOf { it.x } + 200
+    val minY = 0
+    val floor = rockLocations.maxOf { it.y } + 2
+
+    val grid = (minY..floor).map { y ->
+        (minX..maxX).map { x ->
+            if (rockLocations.contains(Coordinate(x, y))) ROCK
+            else AIR
+        }.toMutableList()
+    }.toMutableList()
+    return CaveGrid(grid, floor)
+}
+
+private fun listRockCoordinates(input: String): List<Coordinate> {
     return input.split(" -> ")
         .map{it.toCoordinate()}
         .windowed(2)
