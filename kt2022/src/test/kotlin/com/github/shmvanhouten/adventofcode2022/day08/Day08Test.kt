@@ -8,6 +8,7 @@ import com.github.shmvanhouten.adventofcode2022.day08.grid.visibleTrees
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import strikt.api.expect
 import strikt.api.expectThat
 import strikt.assertions.contains
 import strikt.assertions.doesNotContain
@@ -32,24 +33,26 @@ class Day08Test {
             """.trimMargin()
 
                 val visibleTrees = visibleTrees(example)
-                expectThat(visibleTrees).hasSize(21)
-                expectThat(visibleTrees.map { it.location }).doesNotContain(
-                    Coord(3,1),
-                    Coord(2,2),
-                    Coord(1,3),
-                    Coord(3,3)
-                )
-                expectThat(visibleTrees.map { it.location }).contains(
-                    Coord(1, 1),
-                    Coord(2, 1),
-                    Coord(1, 2),
-                    Coord(3, 2),
-                    Coord(2, 3)
-                )
+                expect {
+                    that(visibleTrees).hasSize(21)
+                    that(visibleTrees.map { it.location }).doesNotContain(
+                        Coord(3, 1),
+                        Coord(2, 2),
+                        Coord(1, 3),
+                        Coord(3, 3)
+                    )
+                    that(visibleTrees.map { it.location }).contains(
+                        Coord(1, 1),
+                        Coord(2, 1),
+                        Coord(1, 2),
+                        Coord(3, 2),
+                        Coord(2, 3)
+                    )
+                }
             }
 
             @Test
-            internal fun `part 1`() {
+            fun `part 1`() {
                 assertThat(visibleTrees(input)).hasSize(1736)
             }
 

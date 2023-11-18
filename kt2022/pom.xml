@@ -14,17 +14,11 @@
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <artifactId>kotlin-stdlib</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.shmvanhouten.adventofcode</groupId>
             <artifactId>utility</artifactId>
-        </dependency>
-
-        <dependency>
-            <artifactId>project-euler</artifactId>
-            <groupId>com.github.shmvanhouten</groupId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
