@@ -3,6 +3,7 @@ package com.github.shmvanhouten.adventofcode.utility.grid
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
 
 class GridTest {
@@ -21,6 +22,20 @@ class GridTest {
             .isEqualTo(20)
         expectThat(grid.height)
             .isEqualTo(20)
+    }
+
+    @Test
+    fun `foreach indexed`() {
+        val mutableList = mutableListOf<String>()
+
+        grid.forEachIndexed { x, y, element -> mutableList.add("$x,$y,$element") }
+
+        expectThat(mutableList)
+            .hasSize(400)
+        expectThat(mutableList.first())
+            .isEqualTo("0,0,8")
+        expectThat(mutableList.last())
+            .isEqualTo("19,19,48")
     }
 
     @Test
@@ -109,7 +124,6 @@ class GridTest {
         expectThat(windows.size)
             .isEqualTo(3 * 3)
     }
-
 
     @Test
     fun `tiny grid diagonal windowed reverse`() {

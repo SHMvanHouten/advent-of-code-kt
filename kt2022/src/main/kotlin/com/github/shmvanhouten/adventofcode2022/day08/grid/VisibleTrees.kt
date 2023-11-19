@@ -28,11 +28,9 @@ fun bestTreeScenicScore(grid: Grid<Tree>): Int {
 
 private fun Grid<Tree>.filterTreesVisibleFromAnySide(): List<Tree> {
 
-    return this.grid.mapIndexed{ y, row ->
-        row.filterIndexed { x, _ ->
-            grid[y].positionIsVisible(x) || getColumn(x).positionIsVisible(y)
+    return this.filterIndexed { x, y, _ ->
+            this[y].positionIsVisible(x) || getColumn(x).positionIsVisible(y)
         }
-    }.flatten()
 }
 
 private fun Grid<Tree>.scenicScore(location: Coord): Int {

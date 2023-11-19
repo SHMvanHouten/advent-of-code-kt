@@ -9,7 +9,7 @@ fun intGridWithCoord(input: String) = Grid(input) { y, row -> row.mapIndexed { x
 }}
 fun charGrid(input: String) = Grid(input, String::toList)
 
-class Grid<T> (val grid: List<List<T>>){
+class Grid<T> (private val grid: List<List<T>>){
 
     constructor(input: String, mappingOperation: (String) -> List<T>) : this(input.lines()
         .map(mappingOperation)
@@ -29,10 +29,20 @@ class Grid<T> (val grid: List<List<T>>){
         return Grid(grid.map { it.map(transform) })
     }
 
-    fun filter(function: (T) -> Boolean): List<T> {
-        grid.map {  }
-        return grid.flatten().filter(function)
-    }
+    fun <RESULT> mapIndexed(function: (x: Int, y: Int, element: T) -> RESULT): Grid<RESULT> =
+        grid.mapIndexed { y, row ->
+            row.mapIndexed { x, t -> function(x, y, t) }
+        }.let { Grid(it) }
+
+    fun filterIndexed(function: (x: Int, y: Int, element: T) -> Boolean): List<T> =
+        grid.mapIndexed { y, row ->
+            row.filterIndexed { x, t -> function.invoke(x, y, t) }
+        }.flatten()
+
+    fun forEachIndexed(function: (x: Int, y: Int, element: T) -> Unit) = grid
+        .forEachIndexed { y, row ->
+            row.forEachIndexed { x, t -> function(x, y, t) }
+        }
 
     fun getOrNull(coord: Coord): T? = grid.getOrNull(coord.y)?.getOrNull(coord.x)
 

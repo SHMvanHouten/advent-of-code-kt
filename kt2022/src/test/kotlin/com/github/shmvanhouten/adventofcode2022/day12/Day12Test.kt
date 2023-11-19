@@ -59,34 +59,41 @@ class Day12Test {
     }
 
     private fun printOut(shortestPath: Path, map: Grid<Char>) {
+        val fullPath = retracePath(shortestPath)
+        map.mapIndexed { x, y, c -> printColored(c, fullPath, x, y)}
+            .also(::println)
+    }
+
+    private fun retracePath(shortestPath: Path): MutableSet<Coord> {
         var pathBefore: Path? = shortestPath
         val fullPath = mutableSetOf<Coord>()
         while (pathBefore != null) {
             fullPath += pathBefore.current.coord
             pathBefore = pathBefore.stepsBefore
         }
-        map.grid.forEachIndexed { y, line ->
-            line.forEachIndexed { x, c ->
-                selectColor(c)
-
-                if (fullPath.contains(Coord(x, y))) print('X')
-                else print('█')
-
-                print("\u001b[30m")
-            }
-            println()
-        }
+        return fullPath
     }
 
-    private fun selectColor(c: Char?) {
-        when (c) {
-            'a' -> print("\u001b[37m") // white-gray
-            'b' -> print("\u001b[36m") // cyan
-            in 'c'..'f' -> print("\u001b[34m") // blue
-            in 'g'..'l' -> print("\u001b[33m") // yellow
-            in 'm'..'q' -> print("\u001b[32m") // Green
-            in 'r'..'u' -> print("\u001b[31m") // red
-            in 'v'..'z' -> print("\u001b[30m") // black
+    private fun printColored(c: Char, fullPath: MutableSet<Coord>, x: Int, y: Int): String {
+        val color = selectColor(c)
+
+        val char = if (fullPath.contains(Coord(x, y))) 'X'
+        else '█'
+
+        val resetToBlack = "\u001b[30m"
+        return "$color$char$resetToBlack"
+    }
+
+    private fun selectColor(c: Char?): String {
+        return when (c) {
+            'a' -> "\u001b[37m" // white-gray
+            'b' -> "\u001b[36m" // cyan
+            in 'c'..'f' -> "\u001b[34m" // blue
+            in 'g'..'l' -> "\u001b[33m" // yellow
+            in 'm'..'q' -> "\u001b[32m" // Green
+            in 'r'..'u' -> "\u001b[31m" // red
+            in 'v'..'z' -> "\u001b[30m" // black
+            else -> ""
         }
     }
 
