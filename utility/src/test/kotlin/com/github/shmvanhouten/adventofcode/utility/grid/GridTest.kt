@@ -1,7 +1,9 @@
 package com.github.shmvanhouten.adventofcode.utility.grid
 
+import com.github.shmvanhouten.adventofcode.utility.lambda.identity
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import strikt.api.expect
 import strikt.api.expectThat
 import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
@@ -22,6 +24,38 @@ class GridTest {
             .isEqualTo(20)
         expectThat(grid.height)
             .isEqualTo(20)
+    }
+
+    @Test
+    internal fun `bool grid from coordinates`() {
+        val input = """
+                2,2
+                1,2
+            """.trimIndent()
+        val grid = boolGridFromCoordinates(input)
+        expectThat(grid.count{ it } ).isEqualTo(2)
+        expectThat(grid.first{ it }?.location).isEqualTo(Coord(1, 2))
+        expectThat( grid.firstCoordinateMatching { it } ).isEqualTo(Coord(1,2))
+    }
+
+    @Test
+    fun `bool grid from picture`() {
+        val input = """
+            .#.
+            #.#
+            .#.
+        """.trimIndent()
+        val grid = boolGridFromPicture(input, '#')
+
+        expect {
+            that(grid.count{ it } ).isEqualTo(4)
+            that(grid.coordinatesMatching(::identity)).isEqualTo(listOf(
+                Coord(1, 0),
+                Coord(0, 1),
+                Coord(2, 1),
+                Coord(1, 2)
+            ))
+        }
     }
 
     @Test

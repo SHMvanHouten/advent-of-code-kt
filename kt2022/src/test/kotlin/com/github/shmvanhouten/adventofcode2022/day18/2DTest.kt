@@ -1,7 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day18
 
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
+import com.github.shmvanhouten.adventofcode.utility.grid.Coord
+import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -14,8 +14,8 @@ class `2DTest` {
                 1,2
             """.trimIndent()
         val squares = parse2d(input)
-        assertThat(squares.size).isEqualTo(2)
-        assertThat(squares.first()).isEqualTo(Coordinate(2, 2))
+        assertThat(squares.count{ it == DROPLET } ).isEqualTo(2)
+        assertThat(squares.first{ it == DROPLET }?.location).isEqualTo(Coord(1, 2))
     }
 
     @Test
@@ -52,7 +52,7 @@ class `2DTest` {
             #.#
             .#.
         """.trimIndent()
-        val squares = input.toCoordinateMap('#')
+        val squares = gridFromPicture(input)
         assertThat(countExposedSides(squares)).isEqualTo(16 - 4)
     }
 
@@ -63,7 +63,7 @@ class `2DTest` {
             #..#
             .##.
         """.trimIndent()
-        val squares = input.toCoordinateMap('#')
+        val squares = gridFromPicture(input)
         assertThat(countExposedSides(squares)).isEqualTo(14) //24 - 4 - 6
     }
 
@@ -75,7 +75,7 @@ class `2DTest` {
             #.#.
             .#..
         """.trimIndent()
-        val squares = input.toCoordinateMap('#')
+        val squares = gridFromPicture(input)
         assertThat(countExposedSides(squares)).isEqualTo(16)
     }
 
@@ -87,7 +87,7 @@ class `2DTest` {
             #.#.
             ..#.
         """.trimIndent()
-        val squares = input.toCoordinateMap('#')
+        val squares = gridFromPicture(input)
         assertThat(countExposedSides(squares)).isEqualTo(22)
     }
 
@@ -98,9 +98,15 @@ class `2DTest` {
             #..#
             #.#.
             ..#.
-            .#
+            .#..
         """.trimIndent()
-        val squares = input.toCoordinateMap('#')
+        val squares = gridFromPicture(input)
         assertThat(countExposedSides(squares)).isEqualTo(26)
+    }
+
+    private fun gridFromPicture(input: String): Grid<Char> {
+        return Grid(input) { s ->
+            s.map { c -> if(c == '#') DROPLET else UNVISITED }
+        }
     }
 }

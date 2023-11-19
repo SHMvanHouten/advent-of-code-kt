@@ -1,57 +1,87 @@
 package com.github.shmvanhouten.adventofcode2022.day18
 
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinate
+import com.github.shmvanhouten.adventofcode.utility.grid.*
 
-fun countExposedSides(cubes: Set<Coordinate>): Int {
-    return cubes.sumOf { c1 -> countConnectedAndAirPockets(c1, cubes) }
+const val DROPLET = '#'
+const val UNVISITED = '.'
+const val UNKNOWN = '?'
+const val OPEN_AIR = ' '
+
+fun countExposedSides(grid: IGrid<Char>): Long {
+    val map = fillInAirPockets(grid as Grid<Char>)
+
+    return map.sumOfIndexed{ coord, pixel ->
+        if(pixel == OPEN_AIR) 0
+        else countExposedSides(coord, map)
+    }
 }
 
-fun countConnectedAndAirPockets(droplet: Coordinate, occupiedSpace: Set<Coordinate>): Int {
-    val unAttached = droplet.getSurroundingManhattan()
-        .filter { !occupiedSpace.contains(it) }
-    val occupied = occupiedSpace.toMutableList()
-    unAttached.toSet().forEach { isSurroundedWithSideEffects(it, occupied) }
-    return unAttached.size - unAttached
-        .count { occupied.contains(it) }
-}
-
-fun isSurroundedWithSideEffects(bubble: Coordinate, occupiedSpace: MutableList<Coordinate>): Boolean {
-    occupiedSpace += bubble
-    val isSurrounded = isSurroundedInVerticalSpace(bubble, occupiedSpace) &&
-            isSurroundedInHorizontalSpace(bubble, occupiedSpace)
-    if(!isSurrounded) {
-        for (i in occupiedSpace.lastIndex.downTo(occupiedSpace.indexOf(bubble))) {
-            occupiedSpace.removeAt(i)
+private fun fillInAirPockets(grid: Grid<Char>): Grid<Char> {
+    val mutableGrid = grid.toMutableGrid()
+    mutableGrid.forEachIndexed { x, y, element ->
+        if(element == UNVISITED) {
+            val surrounding = Coord(x, y).getSurroundingManhattan()
+            if(surrounding.any { !grid.contains(it) } || surrounding.any { mutableGrid[it] == OPEN_AIR }) {
+                mutableGrid.replaceAllUnknownAroundWithOpenAir(x, y)
+                mutableGrid[Coord(x, y)] = OPEN_AIR
+            } else if(surrounding.all { mutableGrid[it] == DROPLET }){
+                mutableGrid[Coord(x, y)] = DROPLET
+            } else {
+                mutableGrid[Coord(x, y)] = UNKNOWN
+            }
         }
     }
-    return isSurrounded
+
+    return mutableGrid
 }
 
-private fun isSurroundedInVerticalSpace(
-    bubble: Coordinate,
-    occupiedSpace: MutableList<Coordinate>
-): Boolean {
-    val (x, y) = bubble
-    val vertical = occupiedSpace.filter { it.x == x }.map { it.y }
-    val top = vertical.filter { it < y }.maxOrNull()
-    val bottom = vertical.filter { it > y }.minOrNull()
-    return top != null && (y - top == 1 || isSurroundedWithSideEffects(Coordinate(x, y - 1), occupiedSpace))
-            && bottom != null && (bottom - y == 1 || isSurroundedWithSideEffects(Coordinate(x, y + 1), occupiedSpace))
+private fun  MutableGrid<Char>.replaceAllUnknownAroundWithOpenAir(x: Int, y: Int) {
+    this.replaceAllUnknownToRight(x, y, OPEN_AIR)
+    this.replaceAllUnknownToLeft(x, y, OPEN_AIR)
+    this.replaceAllUnknownAbove(x, y - 1)
+    this.replaceAllUnknownBelow(x, y + 1)
 }
 
-private fun isSurroundedInHorizontalSpace(
-    bubble: Coordinate,
-    occupiedSpace: MutableList<Coordinate>
-): Boolean {
-    val (x, y) = bubble
-    val horizontal = occupiedSpace.filter { it.y == y }.map { it.x }
-    val toTheLeft = horizontal.filter { it < x }.maxOrNull()
-    val toTheRight = horizontal.filter { it > x }.minOrNull()
-    return toTheLeft != null && (x - toTheLeft == 1 || isSurroundedWithSideEffects(Coordinate(x - 1, y), occupiedSpace))
-            && toTheRight != null && (toTheRight - x == 1 || isSurroundedWithSideEffects(Coordinate(x + 1, y), occupiedSpace))
+private tailrec fun  MutableGrid<Char>.replaceAllUnknownBelow(x: Int, y: Int, c: Char = OPEN_AIR) {
+    if(y >= height || this[x, y] != UNKNOWN) return
+    this[x, y] = c
+    replaceAllUnknownToLeft(x, y, c)
+    replaceAllUnknownToRight(x, y, c)
+    replaceAllUnknownBelow(x, y + 1)
 }
 
-fun parse2d(input: String): Set<Coordinate> {
-    return input.lines().map { toCoordinate(it) }.toSet()
+private tailrec fun  MutableGrid<Char>.replaceAllUnknownAbove(x: Int, y: Int, c: Char = OPEN_AIR) {
+    if(y < 0 || this[x, y] != UNKNOWN) return
+    this[x, y] = c
+    replaceAllUnknownToLeft(x, y, c)
+    replaceAllUnknownToRight(x, y, c)
+    replaceAllUnknownAbove(x, y - 1)
+}
+
+private fun MutableGrid<Char>.replaceAllUnknownToLeft(
+    x: Int,
+    y: Int,
+    c: Char
+) {
+    (x - 1).downTo(0).takeWhile { x1 -> this[x1, y] == UNKNOWN }
+        .forEach { x1 -> this[x1, y] = c }
+}
+
+private fun MutableGrid<Char>.replaceAllUnknownToRight(
+    x: Int,
+    y: Int,
+    c: Char
+) {
+    (x + 1).until(width).takeWhile { x1 -> this[x1, y] == UNKNOWN }
+        .forEach { x1 -> this[x1, y] = c }
+}
+
+private fun countExposedSides(coord: Coord, grid: Grid<Char>): Long {
+    return coord.getSurroundingManhattan()
+        .count { !grid.contains(it) || grid[it] == OPEN_AIR }
+        .toLong()
+}
+
+fun parse2d(input: String): IGrid<Char> {
+    return boolGridFromCoordinates(input).map { if(it) DROPLET else UNVISITED }
 }
