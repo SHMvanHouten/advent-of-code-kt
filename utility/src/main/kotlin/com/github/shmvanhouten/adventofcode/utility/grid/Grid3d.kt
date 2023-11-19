@@ -42,7 +42,11 @@ open class Grid3d<T>(
     }
 
     override fun filterIndexed(function: (coord: Coordinate3d, element: T) -> Boolean): List<T> {
-        throw NotImplementedError("Please implement me")
+        return grid.flatMapIndexed { z, grid2D ->
+            grid2D.filterIndexed { coord, element ->
+                function(coord.atDepth(z), element)
+            }
+        }
     }
 
     override fun forEachIndexed(function: (coord: Coordinate3d, element: T) -> Unit) {
@@ -74,7 +78,11 @@ open class Grid3d<T>(
     }
 
     override fun firstCoordinateMatching(matchingFunction: (T) -> Boolean): Coordinate3d? {
-        throw NotImplementedError("Please implement me")
+        grid.forEachIndexed{z, g2 ->
+            val matching = g2.firstCoordinateMatching(matchingFunction)
+            if(matching != null) return matching.atDepth(z)
+        }
+        return null
     }
 
     override fun replaceElements(orig: T, replacement: T): Grid<T> {

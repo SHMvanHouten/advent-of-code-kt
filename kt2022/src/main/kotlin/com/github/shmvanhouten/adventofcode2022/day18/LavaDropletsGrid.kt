@@ -14,9 +14,12 @@ fun countExposedSidesNoBubble(grid: Grid3d<Char>): Int {
 
 // PART 2
 fun countExposedSides(grid: Grid3d<Char>): Long {
-    val map = fillInAirPockets(grid)
-        .let { fillInAirPockets(it) } // todo: should not have to pass through 2 more to make the tests pass
-        .let { fillInAirPockets(it) }
+    val map = explore(grid)
+        .also { g ->
+            g.withIndex().firstCoordinateMatching{ (l, c) ->
+            c == UNKNOWN && l.getSurroundingManhattan().any { !g.contains(it) || g[it] == OPEN_AIR }
+        }.also { println(it) } }
+        .let { explore(it) } // todo: should not have to pass through again to make the tests pass
 
     return map.sumOfIndexed{ coord, pixel ->
         if(pixel == OPEN_AIR) 0
@@ -24,14 +27,13 @@ fun countExposedSides(grid: Grid3d<Char>): Long {
     }
 }
 
-private fun fillInAirPockets(grid: Grid3d<Char>): Grid3d<Char> {
+private fun explore(grid: Grid3d<Char>): Grid3d<Char> {
     val mutableGrid = grid.toMutable3dGrid()
     mutableGrid.forEachIndexed { (x, y, z), element ->
         if(element != DROPLET) {
             val surrounding = Coordinate3d(x, y, z).getSurroundingManhattan()
             if(surrounding.any { !grid.contains(it) } || surrounding.any { mutableGrid[it] == OPEN_AIR }) {
-                mutableGrid[Coordinate3d(x, y, z)] = OPEN_AIR
-                mutableGrid.replaceAllUnknownAroundWithOpenAir(x, y, z)
+                mutableGrid.replaceAllUnknown3dWithOpenAir(x, y, z)
             } else if(surrounding.all { mutableGrid[it] == DROPLET }){
                 mutableGrid[Coordinate3d(x, y, z)] = DROPLET
             } else {
@@ -43,15 +45,18 @@ private fun fillInAirPockets(grid: Grid3d<Char>): Grid3d<Char> {
     return mutableGrid
 }
 
-private fun Mutable3dGrid<Char>.replaceAllUnknownAroundWithOpenAir(x: Int, y: Int, z: Int) {
+private fun Mutable3dGrid<Char>.replaceAllUnknown3dWithOpenAir(x: Int, y: Int, z: Int) {
+    this[Coordinate3d(x, y, z)] = OPEN_AIR
     replaceAllUnknownAtLayerWithOpenAir(x, y, z /*this one + below*/) {i -> i -1}
     replaceAllUnknownAtLayerWithOpenAir(x, y, z  + 1) { i -> i +1}
 }
 
 private tailrec fun Mutable3dGrid<Char>.replaceAllUnknownAtLayerWithOpenAir(x: Int, y: Int, z: Int, nextStep: (Int) -> Int) {
-    if(!0.until(depth).contains(z) || this[x, y, z] != UNKNOWN) return
+    if(!0.until(depth).contains(z)) return
+    if(this[x, y, z] != UNKNOWN && this[x, y, z] != UNVISITED) return
+
     val gridAtDepth = this[z]
-    gridAtDepth.replaceAllUnknownAroundWithOpenAir(x, y)
+    gridAtDepth.replaceAllUnknown2dWithOpenAir(x, y) { x1, y1 -> this.replaceAllUnknown3dWithOpenAir(x1, y1, z) }
     replaceAllUnknownAtLayerWithOpenAir(x, y, nextStep(z), nextStep)
 }
 
