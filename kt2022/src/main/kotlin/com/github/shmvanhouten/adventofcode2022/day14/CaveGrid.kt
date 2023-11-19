@@ -1,10 +1,10 @@
 package com.github.shmvanhouten.adventofcode2022.day14
 
-import com.github.shmvanhouten.adventofcode.utility.grid.Coord
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition.*
 import com.github.shmvanhouten.adventofcode.utility.grid.MutableGrid
-import com.github.shmvanhouten.adventofcode.utility.grid.RelativePosition.*
 
-private val SAND_SOURCE = Coord(500, 0)
+private val SAND_SOURCE = Coordinate(500, 0)
 const val ROCK = '█'
 const val AIR = ' '
 private const val SAND = 'o'
@@ -45,10 +45,10 @@ data class CaveGrid(
         }
     }
 
-    private fun locationIsNotOccupied(location: Coord) =
+    private fun locationIsNotOccupied(location: Coordinate) =
         location.y < floorY && (!this.cave.hasElementAt(location) || this.cave[location] == AIR)
 
-    private fun eitherSideFrom(location: Coord): Pair<Coord, Coord> {
+    private fun eitherSideFrom(location: Coordinate): Pair<Coordinate, Coordinate> {
         return Pair(location.move(WEST), location.move(EAST))
     }
 

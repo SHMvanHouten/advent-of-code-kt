@@ -1,6 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.day19
 
-import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3d
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate3d
 import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.mapping.mappingInAllDirections
 import com.github.shmvanhouten.adventofcode.utility.lambda.identity
 import java.util.*

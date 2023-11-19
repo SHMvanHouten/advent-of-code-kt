@@ -1,8 +1,8 @@
 package com.github.shmvanhouten.adventofcode2022.day08
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
-import com.github.shmvanhouten.adventofcode.utility.grid.Coord
 import com.github.shmvanhouten.adventofcode2022.day08.grid.bestTreeScenicScore
 import com.github.shmvanhouten.adventofcode2022.day08.grid.visibleTrees
 import org.assertj.core.api.Assertions.assertThat
@@ -37,17 +37,17 @@ class Day08Test {
                 expect {
                     that(visibleTrees).hasSize(21)
                     that(visibleTrees.map { it.location }).doesNotContain(
-                        Coord(3, 1),
-                        Coord(2, 2),
-                        Coord(1, 3),
-                        Coord(3, 3)
+                        Coordinate(3, 1),
+                        Coordinate(2, 2),
+                        Coordinate(1, 3),
+                        Coordinate(3, 3)
                     )
                     that(visibleTrees.map { it.location }).contains(
-                        Coord(1, 1),
-                        Coord(2, 1),
-                        Coord(1, 2),
-                        Coord(3, 2),
-                        Coord(2, 3)
+                        Coordinate(1, 1),
+                        Coordinate(2, 1),
+                        Coordinate(1, 2),
+                        Coordinate(3, 2),
+                        Coordinate(2, 3)
                     )
                 }
             }

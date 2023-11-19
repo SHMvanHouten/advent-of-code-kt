@@ -1,15 +1,19 @@
 package com.github.shmvanhouten.adventofcode2022.day18
 
-import com.github.shmvanhouten.adventofcode.utility.grid.*
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.grid.Grid
+import com.github.shmvanhouten.adventofcode.utility.grid.MutableGrid
+import com.github.shmvanhouten.adventofcode.utility.grid.boolGridFromCoordinates
 
 const val DROPLET = '#'
 const val UNVISITED = '.'
 const val UNKNOWN = '?'
 const val OPEN_AIR = ' '
 
-fun countExposedSides(grid: IGrid<Char>): Long {
-    val map = fillInAirPockets(grid as Grid<Char>)
+fun countExposedSides(grid: Grid<Char>): Long {
+    val map = fillInAirPockets(grid)
 
+    println(map)
     return map.sumOfIndexed{ coord, pixel ->
         if(pixel == OPEN_AIR) 0
         else countExposedSides(coord, map)
@@ -18,16 +22,17 @@ fun countExposedSides(grid: IGrid<Char>): Long {
 
 private fun fillInAirPockets(grid: Grid<Char>): Grid<Char> {
     val mutableGrid = grid.toMutableGrid()
-    mutableGrid.forEachIndexed { x, y, element ->
+    mutableGrid.forEachIndexed { (x, y), element ->
         if(element == UNVISITED) {
-            val surrounding = Coord(x, y).getSurroundingManhattan()
+            val surrounding = Coordinate(x, y).getSurroundingManhattan()
             if(surrounding.any { !grid.contains(it) } || surrounding.any { mutableGrid[it] == OPEN_AIR }) {
                 mutableGrid.replaceAllUnknownAroundWithOpenAir(x, y)
-                mutableGrid[Coord(x, y)] = OPEN_AIR
+
             } else if(surrounding.all { mutableGrid[it] == DROPLET }){
-                mutableGrid[Coord(x, y)] = DROPLET
+                mutableGrid[Coordinate(x, y)] = DROPLET
+
             } else {
-                mutableGrid[Coord(x, y)] = UNKNOWN
+                mutableGrid[Coordinate(x, y)] = UNKNOWN
             }
         }
     }
@@ -35,53 +40,41 @@ private fun fillInAirPockets(grid: Grid<Char>): Grid<Char> {
     return mutableGrid
 }
 
-private fun  MutableGrid<Char>.replaceAllUnknownAroundWithOpenAir(x: Int, y: Int) {
-    this.replaceAllUnknownToRight(x, y, OPEN_AIR)
-    this.replaceAllUnknownToLeft(x, y, OPEN_AIR)
-    this.replaceAllUnknownAbove(x, y - 1)
-    this.replaceAllUnknownBelow(x, y + 1)
+internal fun  MutableGrid<Char>.replaceAllUnknownAroundWithOpenAir(x: Int, y: Int) {
+    this.replaceAllUnknownOnY(x, y) { i -> i - 1 }
+    this.replaceAllUnknownOnY(x, y + 1) { i -> i + 1 }
 }
 
-private tailrec fun  MutableGrid<Char>.replaceAllUnknownBelow(x: Int, y: Int, c: Char = OPEN_AIR) {
-    if(y >= height || this[x, y] != UNKNOWN) return
-    this[x, y] = c
-    replaceAllUnknownToLeft(x, y, c)
-    replaceAllUnknownToRight(x, y, c)
-    replaceAllUnknownBelow(x, y + 1)
+internal tailrec fun  MutableGrid<Char>.replaceAllUnknownOnY(x: Int, y: Int, function: (Int) -> Int) {
+    if(!0.until(height).contains(y) || this[x, y] == OPEN_AIR || this[x,y] == DROPLET) return
+    this[x, y] = OPEN_AIR
+    replaceAllUnknownToLeft(x, y)
+    replaceAllUnknownToRight(x, y)
+    replaceAllUnknownOnY(x, function(y), function)
 }
 
-private tailrec fun  MutableGrid<Char>.replaceAllUnknownAbove(x: Int, y: Int, c: Char = OPEN_AIR) {
-    if(y < 0 || this[x, y] != UNKNOWN) return
-    this[x, y] = c
-    replaceAllUnknownToLeft(x, y, c)
-    replaceAllUnknownToRight(x, y, c)
-    replaceAllUnknownAbove(x, y - 1)
-}
-
-private fun MutableGrid<Char>.replaceAllUnknownToLeft(
+internal fun MutableGrid<Char>.replaceAllUnknownToLeft(
     x: Int,
-    y: Int,
-    c: Char
+    y: Int
 ) {
     (x - 1).downTo(0).takeWhile { x1 -> this[x1, y] == UNKNOWN }
-        .forEach { x1 -> this[x1, y] = c }
+        .forEach { x1 -> this.replaceAllUnknownAroundWithOpenAir(x1, y) }
 }
 
-private fun MutableGrid<Char>.replaceAllUnknownToRight(
+internal fun MutableGrid<Char>.replaceAllUnknownToRight(
     x: Int,
-    y: Int,
-    c: Char
+    y: Int
 ) {
     (x + 1).until(width).takeWhile { x1 -> this[x1, y] == UNKNOWN }
-        .forEach { x1 -> this[x1, y] = c }
+        .forEach { x1 -> this.replaceAllUnknownAroundWithOpenAir(x1, y)}
 }
 
-private fun countExposedSides(coord: Coord, grid: Grid<Char>): Long {
+private fun countExposedSides(coord: Coordinate, grid: Grid<Char>): Long {
     return coord.getSurroundingManhattan()
         .count { !grid.contains(it) || grid[it] == OPEN_AIR }
         .toLong()
 }
 
-fun parse2d(input: String): IGrid<Char> {
+fun parse2d(input: String): Grid<Char> {
     return boolGridFromCoordinates(input).map { if(it) DROPLET else UNVISITED }
 }

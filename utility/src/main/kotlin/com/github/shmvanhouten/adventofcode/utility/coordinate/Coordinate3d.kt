@@ -1,8 +1,10 @@
-package com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d
+package com.github.shmvanhouten.adventofcode.utility.coordinate
 
 import kotlin.math.abs
 
-data class Coordinate3d(val x: Int, val y: Int, val z: Int) {
+data class Coordinate3d(val x: Int, val y: Int, val z: Int): Coord {
+    val on2dPlane: Coordinate by lazy { Coordinate(x, y) }
+
     operator fun plus(other: Coordinate3d): Coordinate3d {
         return Coordinate3d(this.x + other.x, this.y + other.y, this.z + other.z)
     }
@@ -35,6 +37,13 @@ data class Coordinate3d(val x: Int, val y: Int, val z: Int) {
             Axis.X -> this.y == other.y && this.z == other.z
             Axis.Y -> this.x == other.x && this.z == other.z
             Axis.Z -> this.x == other.x && this.y == other.y
+        }
+    }
+
+    companion object {
+        fun parse(s: String): Coordinate3d {
+            val (x, y, z) = s.split(',')
+            return Coordinate3d(x.toInt(), y.toInt(), z.toInt())
         }
     }
 

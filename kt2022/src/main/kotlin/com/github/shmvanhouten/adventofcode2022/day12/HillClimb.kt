@@ -1,7 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day12
 
 import com.github.shmvanhouten.adventofcode.utility.collections.arrayDequeOf
-import com.github.shmvanhouten.adventofcode.utility.grid.Coord
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 
@@ -56,9 +56,9 @@ private fun replaceStartAndEndWithHeights(coords: Grid<Char>): Grid<Char> =
         .replaceElements('E', replacement = 'Z')
         .replaceElements('S', replacement = 'a')
 
-data class Point(val coord: Coord, val height: Height)
+data class Point(val coord: Coordinate, val height: Height)
 
-fun nullablePoint(coord: Coord, height: Height?): Point? {
+fun nullablePoint(coord: Coordinate, height: Height?): Point? {
     return if (height == null) null
     else Point(coord, height)
 }

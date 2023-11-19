@@ -1,6 +1,6 @@
 package com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.mapping
 
-import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3d
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate3d
 import com.github.shmvanhouten.adventofcode.utility.coordinate.negate
 
 val mappingInAllDirections: List<(Coordinate3d) -> Coordinate3d> =

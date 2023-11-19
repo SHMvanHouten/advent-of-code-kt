@@ -2,13 +2,12 @@ package com.github.shmvanhouten.adventofcode2022.day18
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate3d
-import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.to3DCoordinateMap
+import com.github.shmvanhouten.adventofcode.utility.grid.Grid3d
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class Day18Test {
+class Day18GridTest {
 
     @Nested
     inner class Part1 {
@@ -19,15 +18,15 @@ class Day18Test {
                 2,2,2
                 1,2,2
             """.trimIndent()
-            val cubes = parse(input)
-            assertThat(cubes.size).isEqualTo(2)
-            assertThat(cubes.first()).isEqualTo(Coordinate3d(2, 2, 2))
+            val cubes = Grid3d.fromCoordinates(input, matching = '#', missing = '.')
+            assertThat(cubes.count { it == '#' }).isEqualTo(2)
+            assertThat(cubes.first { it == '#'}?.location).isEqualTo(Coordinate3d(1, 2, 2))
         }
 
         @Test
         internal fun `an single cube has 6 sides unexposed`() {
             val input = "2,2,2"
-            val cubes = parse(input)
+            val cubes = Grid3d.fromCoordinates(input, matching = '#', missing = '.')
             assertThat(countExposedSidesNoBubble(cubes)).isEqualTo(6)
         }
 
@@ -37,7 +36,7 @@ class Day18Test {
                 2,2,2
                 1,2,2
             """.trimIndent()
-            val cubes = parse(input)
+            val cubes = Grid3d.fromCoordinates(input, matching = '#', missing = '.')
             assertThat(countExposedSidesNoBubble(cubes)).isEqualTo(10)
         }
 
@@ -47,7 +46,7 @@ class Day18Test {
                 2,2,2
                 1,1,2
             """.trimIndent()
-            val cubes = parse(input)
+            val cubes = Grid3d.fromCoordinates(input, matching = '#', missing = '.')
             assertThat(countExposedSidesNoBubble(cubes)).isEqualTo(12)
         }
 
@@ -68,14 +67,13 @@ class Day18Test {
                 2,1,5
                 2,3,5
             """.trimIndent()
-            val cubes = parse(input)
+            val cubes = Grid3d.fromCoordinates(input, matching = '#', missing = '.')
             assertThat(countExposedSidesNoBubble(cubes)).isEqualTo(64)
         }
 
         @Test
-        @Disabled("Use Day18GridTest instead")
         internal fun `part 1`() {
-            val cubes = parse(input)
+            val cubes = Grid3d.fromCoordinates(input, matching = '#', missing = '.')
             assertThat(countExposedSidesNoBubble(cubes)).isEqualTo(4628)
         }
     }
@@ -100,7 +98,7 @@ class Day18Test {
                 .#.
                 ...
             """.trimIndent()
-            val squares = to3DCoordinateMap(z0, z1, z2).toSet()
+            val squares = Grid3d.from3dPicture(listOf(z0, z1, z2))
             assertThat(countExposedSides(squares)).isEqualTo(6 * 5)
         }
 
@@ -121,7 +119,7 @@ class Day18Test {
                 .##.
                 ....
             """.trimIndent()
-            val squares = to3DCoordinateMap(z0, z1, z2).toSet()
+            val squares = Grid3d.from3dPicture(listOf(z0, z1, z2))
             assertThat(countExposedSides(squares)).isEqualTo(8 * 4 + 2 * 5)
         }
 
@@ -142,14 +140,13 @@ class Day18Test {
                 2,1,5
                 2,3,5
             """.trimIndent()
-            val cubes = parse(input)
+            val cubes = Grid3d.fromCoordinates(input, matching = '#', missing = '.')
             assertThat(countExposedSides(cubes)).isEqualTo(58)
         }
 
         @Test
-        @Disabled("Day18GridTest instead, 1.4 s vs 29 ms")
         internal fun `part 2`() {
-            val cubes = parse(input)
+            val cubes = Grid3d.fromCoordinates(input, matching = '#', missing = '.')
             assertThat(countExposedSides(cubes)).isEqualTo(2582)
         }
     }

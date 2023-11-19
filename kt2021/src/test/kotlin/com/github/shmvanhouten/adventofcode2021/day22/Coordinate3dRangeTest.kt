@@ -1,7 +1,7 @@
 package com.github.shmvanhouten.adventofcode2021.day22
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3d
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate3d
 import com.github.shmvanhouten.adventofcode.utility.coordinate.draw
 import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
 import com.natpryce.hamkrest.assertion.assertThat

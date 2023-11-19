@@ -1,6 +1,7 @@
 package com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate3d
 import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinateMap
 
 fun Collection<Coordinate>.make3D(z: Int = 0): List<Coordinate3d> {

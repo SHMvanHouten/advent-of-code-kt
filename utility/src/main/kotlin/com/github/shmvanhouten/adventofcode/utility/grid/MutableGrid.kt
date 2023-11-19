@@ -1,5 +1,7 @@
 package com.github.shmvanhouten.adventofcode.utility.grid
 
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+
 class MutableGrid<T>(
     grid: List<List<T>>,
     private val mutableGrid: MutableList<MutableList<T>> = grid.map { it.toMutableList() }.toMutableList()
@@ -9,7 +11,7 @@ class MutableGrid<T>(
         return mutableGrid[y]
     }
 
-    operator fun set(coord: Coord, value: T) {
+    operator fun set(coord: Coordinate, value: T) {
         mutableGrid[coord.y][coord.x] = value
     }
 

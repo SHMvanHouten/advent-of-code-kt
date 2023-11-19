@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode.utility.grid
 
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -7,18 +8,17 @@ import strikt.assertions.isEqualTo
 class MutableGridTest {
     private val grid: Grid<Int>
         get() {
-            val grid = intGridFromSpaceDelimitedString(input)
-            return grid
+            return intGridFromSpaceDelimitedString(input)
         }
 
     @Test
     fun `mutable grid can be changed`() {
         val mutableGrid = grid.toMutableGrid()
 
-        mutableGrid[Coord(1,2)] = 88
+        mutableGrid[Coordinate(1,2)] = 88
         mutableGrid[2,3] = 99
 
-        expectThat(mutableGrid[Coord(1,2)])
+        expectThat(mutableGrid[Coordinate(1,2)])
             .isEqualTo(88)
         expectThat(mutableGrid[2,3])
             .isEqualTo(99)

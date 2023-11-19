@@ -1,6 +1,6 @@
 package com.github.shmvanhouten.adventofcode2021.day22
 
-import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3d
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate3d
 
 fun runRebootWithCuboids(rebootSteps: List<RebootStep>): Set<Cuboid> {
     return rebootSteps.fold(emptySet<Cuboid>()) { cuboids, nextStep ->

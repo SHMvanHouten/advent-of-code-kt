@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode.utility.grid
 
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.lambda.identity
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -11,8 +12,7 @@ import strikt.assertions.isEqualTo
 class GridTest {
     private val grid: Grid<Int>
         get() {
-            val grid = intGridFromSpaceDelimitedString(input)
-            return grid
+            return intGridFromSpaceDelimitedString(input)
         }
 
     @Test
@@ -34,8 +34,8 @@ class GridTest {
             """.trimIndent()
         val grid = boolGridFromCoordinates(input)
         expectThat(grid.count{ it } ).isEqualTo(2)
-        expectThat(grid.first{ it }?.location).isEqualTo(Coord(1, 2))
-        expectThat( grid.firstCoordinateMatching { it } ).isEqualTo(Coord(1,2))
+        expectThat(grid.first{ it }?.location).isEqualTo(Coordinate(1, 2))
+        expectThat( grid.firstCoordinateMatching { it } ).isEqualTo(Coordinate(1,2))
     }
 
     @Test
@@ -50,10 +50,10 @@ class GridTest {
         expect {
             that(grid.count{ it } ).isEqualTo(4)
             that(grid.coordinatesMatching(::identity)).isEqualTo(listOf(
-                Coord(1, 0),
-                Coord(0, 1),
-                Coord(2, 1),
-                Coord(1, 2)
+                Coordinate(1, 0),
+                Coordinate(0, 1),
+                Coordinate(2, 1),
+                Coordinate(1, 2)
             ))
         }
     }
@@ -62,7 +62,7 @@ class GridTest {
     fun `foreach indexed`() {
         val mutableList = mutableListOf<String>()
 
-        grid.forEachIndexed { x, y, element -> mutableList.add("$x,$y,$element") }
+        grid.forEachIndexed { coord, element -> mutableList.add("${coord.x},${coord.y},$element") }
 
         expectThat(mutableList)
             .hasSize(400)
@@ -86,25 +86,25 @@ class GridTest {
 
     @Test
     fun `get horizontal line`() {
-        expectThat(grid.horizontalLineFrom(Coord(2, 2), length = 4))
+        expectThat(grid.horizontalLineFrom(Coordinate(2, 2), length = 4))
             .isEqualTo(listOf(31, 73, 55, 79))
     }
 
     @Test
     fun `get vertical line`() {
-        expectThat(grid.verticalLineFrom(Coord(2,2), length = 4))
+        expectThat(grid.verticalLineFrom(Coordinate(2,2), length = 4))
             .isEqualTo(listOf(31, 95, 16, 32))
     }
 
     @Test
     fun getDiagonalLine() {
-        expectThat(grid.diagonalLineFrom(Coord(3,3), length = 4))
+        expectThat(grid.diagonalLineFrom(Coordinate(3,3), length = 4))
             .isEqualTo(listOf(23, 51, 3, 67))
     }
 
     @Test
     fun `get diagonal line reverse`() {
-        expectThat(grid.revDiagonalLineFrom(Coord(4,0), length = 3))
+        expectThat(grid.revDiagonalLineFrom(Coordinate(4,0), length = 3))
             .isEqualTo(listOf(38, 40, 31))
     }
 

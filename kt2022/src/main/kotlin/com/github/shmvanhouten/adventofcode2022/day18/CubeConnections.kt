@@ -1,8 +1,8 @@
 package com.github.shmvanhouten.adventofcode2022.day18
 
 import com.github.shmvanhouten.adventofcode.utility.collections.removeAfterIndex
-import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Axis
-import com.github.shmvanhouten.adventofcode.utility.coordinate.coordinate3d.Coordinate3d
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Axis
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate3d
 
 fun countExposedSides(cubes: Set<Coordinate3d>): Int {
     return Droplet(cubes).countExposedSides()
@@ -67,10 +67,5 @@ fun countExposedSidesNoBubble(cubes: Set<Coordinate3d>): Int {
 }
 
 fun parse(input: String): Set<Coordinate3d> {
-    return input.lines().map { toCoordinate3d(it) }.toSet()
-}
-
-private fun toCoordinate3d(input: String): Coordinate3d {
-    val split = input.split(',')
-    return Coordinate3d(split[0].toInt(), split[1].toInt(), split[2].toInt())
+    return input.lines().map(Coordinate3d::parse).toSet()
 }

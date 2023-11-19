@@ -2,23 +2,23 @@ package com.github.shmvanhouten.adventofcode2022.day08.grid
 
 import com.github.shmvanhouten.adventofcode.utility.collections.allAfter
 import com.github.shmvanhouten.adventofcode.utility.collections.allBefore
-import com.github.shmvanhouten.adventofcode.utility.grid.Coord
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
-import com.github.shmvanhouten.adventofcode.utility.grid.intGridWithCoord
+import com.github.shmvanhouten.adventofcode.utility.grid.intGridWithCoordinate
 
 fun visibleTrees(input: String): List<Tree> {
-    val grid = intGridWithCoord(input)
+    val grid = intGridWithCoordinate(input)
     return visibleTrees(grid)
 }
 
-fun visibleTrees(grid: Grid<Pair<Coord, Int>>): List<Tree> {
+fun visibleTrees(grid: Grid<Pair<Coordinate, Int>>): List<Tree> {
     return grid
         .map { (location, height) -> Tree(location, height) }
         .filterTreesVisibleFromAnySide()
 }
 
 fun bestTreeScenicScore(input: String): Int {
-    val grid = intGridWithCoord(input)
+    val grid = intGridWithCoordinate(input)
     return bestTreeScenicScore(grid.map { Tree(it.first, it.second) })
 }
 
@@ -28,12 +28,12 @@ fun bestTreeScenicScore(grid: Grid<Tree>): Int {
 
 private fun Grid<Tree>.filterTreesVisibleFromAnySide(): List<Tree> {
 
-    return this.filterIndexed { x, y, _ ->
+    return this.filterIndexed { (x, y), _ ->
             this[y].positionIsVisible(x) || getColumn(x).positionIsVisible(y)
         }
 }
 
-private fun Grid<Tree>.scenicScore(location: Coord): Int {
+private fun Grid<Tree>.scenicScore(location: Coordinate): Int {
     val (left, right) = this[location.y].visibleTreesAround(location.x)
     val (above, below) = this.getColumn(location.x).visibleTreesAround(location.y)
     return left * right * below * above
@@ -76,7 +76,7 @@ private fun List<Tree>.positionIsVisible(i: Int): Boolean {
 
 private fun <E> List<E>.isAtEdge(i: Int): Boolean = i == 0 || i == lastIndex
 
-data class Tree(val location: Coord, val height: Int) {
+data class Tree(val location: Coordinate, val height: Int) {
     operator fun compareTo(other: Tree): Int {
         return this.height.compareTo(other.height)
     }

@@ -7,7 +7,9 @@ import com.github.shmvanhouten.adventofcode.utility.coordinate.Degree.*
 import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition.*
 import kotlin.math.abs
 
-data class Coordinate(val x: Int, val y: Int) {
+sealed interface Coord
+
+data class Coordinate(val x: Int, val y: Int): Coord {
     fun getSurrounding(): Set<Coordinate> {
         return setOf(
             this + NORTH.coordinate,
@@ -151,8 +153,20 @@ data class Coordinate(val x: Int, val y: Int) {
         return CoordinateProgression(this, otherCoordinate)
     }
 
+    companion object {
+        fun parseFrom(raw: String): Coordinate {
+            val (x, y) = raw.split(",")
+                .map { it.toInt() }
+            return Coordinate(x, y)
+        }
+    }
+
     override fun toString(): String {
         return "($x,$y)"
+    }
+
+    fun atDepth(z: Int): Coordinate3d {
+        return Coordinate3d(x, y, z)
     }
 }
 

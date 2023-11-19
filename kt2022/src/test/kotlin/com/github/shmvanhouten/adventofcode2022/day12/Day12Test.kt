@@ -1,7 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day12
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import com.github.shmvanhouten.adventofcode.utility.grid.Coord
+import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 import org.assertj.core.api.Assertions.assertThat
@@ -60,13 +60,13 @@ class Day12Test {
 
     private fun printOut(shortestPath: Path, map: Grid<Char>) {
         val fullPath = retracePath(shortestPath)
-        map.mapIndexed { x, y, c -> printColored(c, fullPath, x, y)}
+        map.mapIndexed { (x, y), c -> printColored(c, fullPath, x, y)}
             .also(::println)
     }
 
-    private fun retracePath(shortestPath: Path): MutableSet<Coord> {
+    private fun retracePath(shortestPath: Path): MutableSet<Coordinate> {
         var pathBefore: Path? = shortestPath
-        val fullPath = mutableSetOf<Coord>()
+        val fullPath = mutableSetOf<Coordinate>()
         while (pathBefore != null) {
             fullPath += pathBefore.current.coord
             pathBefore = pathBefore.stepsBefore
@@ -74,10 +74,10 @@ class Day12Test {
         return fullPath
     }
 
-    private fun printColored(c: Char, fullPath: MutableSet<Coord>, x: Int, y: Int): String {
+    private fun printColored(c: Char, fullPath: MutableSet<Coordinate>, x: Int, y: Int): String {
         val color = selectColor(c)
 
-        val char = if (fullPath.contains(Coord(x, y))) 'X'
+        val char = if (fullPath.contains(Coordinate(x, y))) 'X'
         else '█'
 
         val resetToBlack = "\u001b[30m"
