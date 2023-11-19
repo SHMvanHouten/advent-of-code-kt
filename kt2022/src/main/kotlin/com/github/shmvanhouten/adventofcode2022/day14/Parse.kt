@@ -1,6 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day14
 
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import com.github.shmvanhouten.adventofcode.utility.strings.splitIntoTwo
 
 fun parse(input: String): Set<Coordinate> {
@@ -18,9 +19,9 @@ fun parseToGrid(input: String): CaveGrid {
         (minX..maxX).map { x ->
             if (rockLocations.contains(Coordinate(x, y))) ROCK
             else AIR
-        }.toMutableList()
-    }.toMutableList()
-    return CaveGrid(grid, floor)
+        }
+    }
+    return CaveGrid(Grid(grid).toMutableGrid(), floor)
 }
 
 private fun listRockCoordinates(input: String): List<Coordinate> {

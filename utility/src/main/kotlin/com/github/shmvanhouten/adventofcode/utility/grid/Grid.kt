@@ -9,7 +9,7 @@ fun intGridWithCoord(input: String) = Grid(input) { y, row -> row.mapIndexed { x
 }}
 fun charGrid(input: String) = Grid(input, String::toList)
 
-class Grid<T> (private val grid: List<List<T>>){
+open class Grid<T> (internal val grid: List<List<T>>){
 
     constructor(input: String, mappingOperation: (String) -> List<T>) : this(input.lines()
         .map(mappingOperation)
@@ -46,16 +46,24 @@ class Grid<T> (private val grid: List<List<T>>){
 
     fun getOrNull(coord: Coord): T? = grid.getOrNull(coord.y)?.getOrNull(coord.x)
 
+    operator fun get(coord: Coord): T {
+        return grid[coord.y][coord.x]
+    }
+
     operator fun get(x: Int, y: Int): T {
         return grid[y][x]
     }
 
-    operator fun get(y: Int): List<T> {
+    open operator fun get(y: Int): List<T> {
         return grid[y]
     }
 
     fun getColumn(x: Int): List<T> {
         return (0 until height).map { y -> this[x, y] }
+    }
+
+    fun hasElementAt(coord: Coord): Boolean {
+        return this.grid.getOrNull(coord.y)?.getOrNull(coord.x) != null
     }
 
     fun horizontalLineFrom(coord: Coord, length: Int): List<T> {
@@ -147,26 +155,16 @@ class Grid<T> (private val grid: List<List<T>>){
         }.let { Grid(it) }
     }
 
-    fun toMutableGrid(): MutableGrid<T> = grid.map { it.toMutableList() }.toMutableList()
+    fun count(condition: (T) -> Boolean): Int {
+        return grid.sumOf { it.count(condition) }
+    }
+
+    fun toMutableGrid(): MutableGrid<T> = MutableGrid(grid)
 
     val width: Int by lazy { grid.first().size }
 
     val height: Int by lazy { grid.size }
 
-}
-
-typealias MutableGrid<T> = MutableList<MutableList<T>>
-
-operator fun <T> MutableGrid<T>.set(coord: Coord, item: T) {
-    this[coord.y][coord.x] = item
-}
-
-operator fun <T> MutableGrid<T>.get(coord: Coord): T {
-    return this[coord.y][coord.x]
-}
-
-fun <T> MutableGrid<T>.hasElementAt(coord: Coord): Boolean {
-    return this.getOrNull(coord.y)?.getOrNull(coord.x) != null
 }
 
 data class Coord(val x: Int, val y: Int) {

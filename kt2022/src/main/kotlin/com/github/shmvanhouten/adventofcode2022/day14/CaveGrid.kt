@@ -1,6 +1,7 @@
 package com.github.shmvanhouten.adventofcode2022.day14
 
-import com.github.shmvanhouten.adventofcode.utility.grid.*
+import com.github.shmvanhouten.adventofcode.utility.grid.Coord
+import com.github.shmvanhouten.adventofcode.utility.grid.MutableGrid
 import com.github.shmvanhouten.adventofcode.utility.grid.RelativePosition.*
 
 private val SAND_SOURCE = Coord(500, 0)
@@ -20,11 +21,11 @@ data class CaveGrid(
     }
 
     fun amountOfSand(): Int {
-        return this.cave.sumOf { it.count { c -> c == SAND } }
+        return this.cave.count{ c -> c == SAND }
     }
 
     fun print(): String {
-        return this.cave.joinToString ("\n") { it.joinToString("").trimEnd() }.trimIndent()
+        return this.cave.toString().trimIndent()
     }
 
     private fun dropOneGrain() {
