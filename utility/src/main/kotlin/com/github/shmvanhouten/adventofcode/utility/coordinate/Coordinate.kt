@@ -7,7 +7,9 @@ import com.github.shmvanhouten.adventofcode.utility.coordinate.Degree.*
 import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition.*
 import kotlin.math.abs
 
-sealed interface Coord
+sealed interface Coord {
+    fun getSurroundingManhattan(): Set<Coord>
+}
 
 data class Coordinate(val x: Int, val y: Int): Coord {
     fun getSurrounding(): Set<Coordinate> {
@@ -23,7 +25,7 @@ data class Coordinate(val x: Int, val y: Int): Coord {
         )
     }
 
-    fun getSurroundingManhattan(): Set<Coordinate> {
+    override fun getSurroundingManhattan(): Set<Coordinate> {
         return setOf(
             this + NORTH.coordinate,
             this + EAST.coordinate,

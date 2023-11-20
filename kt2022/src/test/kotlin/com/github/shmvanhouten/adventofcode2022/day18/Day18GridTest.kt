@@ -1,7 +1,6 @@
 package com.github.shmvanhouten.adventofcode2022.day18
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate3d
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid3d
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -20,7 +19,6 @@ class Day18GridTest {
             """.trimIndent()
             val cubes = Grid3d.fromCoordinates(input, matching = '#', missing = '.')
             assertThat(cubes.count { it == '#' }).isEqualTo(2)
-            assertThat(cubes.first { it == '#'}?.location).isEqualTo(Coordinate3d(1, 2, 2))
         }
 
         @Test

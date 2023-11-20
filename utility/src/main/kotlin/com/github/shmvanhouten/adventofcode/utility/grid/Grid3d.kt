@@ -49,6 +49,9 @@ open class Grid3d<T>(
         }
     }
 
+    override fun any(condition: (T) -> Boolean): Boolean =
+        grid.any { it.any(condition) }
+
     override fun forEachIndexed(function: (coord: Coordinate3d, element: T) -> Unit) {
         grid.forEachIndexed { z, grid2D ->
             grid2D.forEachIndexed { (x, y), element ->
@@ -93,8 +96,8 @@ open class Grid3d<T>(
         return grid.sumOf { it.count(condition) }
     }
 
-    override fun first(condition: (T) -> Boolean): CoordinateIndexedValue<T, Coordinate3d>? {
-        return grid.withIndex().firstNotNullOf { (z, g2d) -> g2d.first(condition)?.atDepth(z) }
+    override fun first(condition: (T) -> Boolean): T? {
+        return grid.firstNotNullOfOrNull { g2d -> g2d.first(condition) }
     }
 
     override fun filter(condition: (T) -> Boolean): List<T> {
@@ -129,6 +132,18 @@ open class Grid3d<T>(
                 CoordinateIndexedValue(Coordinate3d(x, y, z), element)
             }
         }.let { Grid3d(it) }
+    }
+
+    fun firstCoordinateMatchingIndexed(condition: (Coordinate3d, T) -> Boolean): Coordinate3d? {
+        grid.forEachIndexed { z, grid ->
+            grid.grid.forEachIndexed { y, row ->
+                row.forEachIndexed { x, element ->
+                    val loc = Coordinate3d(x, y, z)
+                    if(condition(loc, element)) return loc
+                }
+            }
+        }
+        return null
     }
 
     val width: Int by lazy { grid.first().width }

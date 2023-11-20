@@ -1,6 +1,5 @@
 package com.github.shmvanhouten.adventofcode2022.day18
 
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,7 +14,6 @@ class `2DTest` {
             """.trimIndent()
         val squares = parse2d(input)
         assertThat(squares.count{ it == DROPLET } ).isEqualTo(2)
-        assertThat(squares.first{ it == DROPLET }?.location).isEqualTo(Coordinate(1, 2))
     }
 
     @Test

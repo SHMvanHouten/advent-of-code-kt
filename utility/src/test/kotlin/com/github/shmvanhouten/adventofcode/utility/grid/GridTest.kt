@@ -34,7 +34,6 @@ class GridTest {
             """.trimIndent()
         val grid = boolGridFromCoordinates(input)
         expectThat(grid.count{ it } ).isEqualTo(2)
-        expectThat(grid.first{ it }?.location).isEqualTo(Coordinate(1, 2))
         expectThat( grid.firstCoordinateMatching { it } ).isEqualTo(Coordinate(1,2))
     }
 

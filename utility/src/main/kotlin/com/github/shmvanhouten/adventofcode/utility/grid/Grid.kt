@@ -3,7 +3,6 @@ package com.github.shmvanhouten.adventofcode.utility.grid
 import com.github.shmvanhouten.adventofcode.utility.collections.joinToEvenlySpaced
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coord
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate3d
 
 fun intGridFromSpaceDelimitedString(input: String) = Grid(input) { row -> row.split(' ').map { it.toInt() } }
 fun intGridWithCoordinate(input: String) = Grid(input) { y, row ->
@@ -46,8 +45,9 @@ sealed interface IGrid<T, C: Coord> {
     fun firstCoordinateMatching(matchingFunction: (T) -> Boolean): C?
     fun replaceElements(orig: T, replacement: T): Grid<T>
     fun count(condition: (T) -> Boolean): Int
-    fun first(condition: (T) -> Boolean): CoordinateIndexedValue<T, C>? // todo: replace for withIndex chain
+    fun first(condition: (T) -> Boolean): T?
     fun filter(condition: (T) -> Boolean): List<T>
+    fun any(condition: (T) -> Boolean): Boolean
     fun coordinatesMatching(condition: (T) -> Boolean): List<C>
     fun contains(coord: C): Boolean
     fun sumOfIndexed(function: (C, T) -> Long): Long
@@ -89,6 +89,9 @@ open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
         grid.mapIndexed { y, row ->
             row.filterIndexed { x, t -> function.invoke(Coordinate(x, y), t) }
         }.flatten()
+
+    override fun any(condition: (T) -> Boolean): Boolean =
+        grid.any { row -> row.any(condition) }
 
     override fun forEachIndexed(function: (coord: Coordinate, element: T) -> Unit) = grid
         .forEachIndexed { y, row ->
@@ -135,10 +138,10 @@ open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
         }.sum()
     }
 
-    override fun first(condition: (T) -> Boolean): CoordinateIndexedValue<T, Coordinate>? {
+    override fun first(condition: (T) -> Boolean): T? {
         this.grid.forEachIndexed { y, row ->
             row.forEachIndexed { x, t ->
-                if(condition(t)) return CoordinateIndexedValue(Coordinate(x, y), t)
+                if(condition(t)) return t
             }
         }
         return null
@@ -151,7 +154,12 @@ open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
     }
 
     override fun firstCoordinateMatching(matchingFunction: (T) -> Boolean): Coordinate? {
-        return first(matchingFunction)?.location
+        grid.forEachIndexed { y, row ->
+                row.forEachIndexed { x, t ->
+                    if(matchingFunction(t)) return Coordinate(x, y)
+                }
+            }
+        return null
     }
 
     fun horizontalLineFrom(coord: Coordinate, length: Int): List<T> {
@@ -256,7 +264,3 @@ open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
 }
 
 data class CoordinateIndexedValue<T, C: Coord>(val location: C, val item: T)
-
-fun <T> CoordinateIndexedValue<T, Coordinate>.atDepth(z : Int): CoordinateIndexedValue<T, Coordinate3d> {
-    return CoordinateIndexedValue(location = this.location.atDepth(z), item = item)
-}

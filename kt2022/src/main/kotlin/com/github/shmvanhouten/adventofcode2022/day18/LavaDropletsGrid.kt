@@ -13,52 +13,31 @@ fun countExposedSidesNoBubble(grid: Grid3d<Char>): Int {
 }
 
 // PART 2
-fun countExposedSides(grid: Grid3d<Char>): Long {
-    val map = explore(grid)
-        .also { g ->
-            g.withIndex().firstCoordinateMatching{ (l, c) ->
-            c == UNKNOWN && l.getSurroundingManhattan().any { !g.contains(it) || g[it] == OPEN_AIR }
-        }.also { println(it) } }
-        .let { explore(it) } // todo: should not have to pass through again to make the tests pass
+fun countExposedSides(_g: Grid3d<Char>): Long {
+    val grid = _g.toMutable3dGrid()
+    var nextOpenAirCandidate = grid.firstCoordinateMatchingIndexed { loc, item -> grid.hasAnyOpenAirNeighbours(item, loc) }
+    while (nextOpenAirCandidate != null) { // not necessary for our input, but it could happen...
+        grid.aerateSurrounding(nextOpenAirCandidate)
+        nextOpenAirCandidate = grid.firstCoordinateMatchingIndexed { loc, item -> grid.hasAnyOpenAirNeighbours(item, loc) }
+    }
 
-    return map.sumOfIndexed{ coord, pixel ->
+    return grid.sumOfIndexed{ coord, pixel ->
         if(pixel == OPEN_AIR) 0
-        else countExposedSides(coord, map)
+        else countExposedSides(coord, grid)
     }
 }
 
-private fun explore(grid: Grid3d<Char>): Grid3d<Char> {
-    val mutableGrid = grid.toMutable3dGrid()
-    mutableGrid.forEachIndexed { (x, y, z), element ->
-        if(element != DROPLET) {
-            val surrounding = Coordinate3d(x, y, z).getSurroundingManhattan()
-            if(surrounding.any { !grid.contains(it) } || surrounding.any { mutableGrid[it] == OPEN_AIR }) {
-                mutableGrid.replaceAllUnknown3dWithOpenAir(x, y, z)
-            } else if(surrounding.all { mutableGrid[it] == DROPLET }){
-                mutableGrid[Coordinate3d(x, y, z)] = DROPLET
-            } else {
-                mutableGrid[Coordinate3d(x, y, z)] = UNKNOWN
-            }
-        }
-    }
-
-    return mutableGrid
+private fun Mutable3dGrid<Char>.aerateSurrounding(nextOpenAirCandidate: Coordinate3d) {
+    this[nextOpenAirCandidate] = OPEN_AIR
+    nextOpenAirCandidate.getSurroundingManhattan()
+        .filter { this.contains(it) && this[it] == UNVISITED }
+        .forEach { aerateSurrounding(it) }
 }
 
-private fun Mutable3dGrid<Char>.replaceAllUnknown3dWithOpenAir(x: Int, y: Int, z: Int) {
-    this[Coordinate3d(x, y, z)] = OPEN_AIR
-    replaceAllUnknownAtLayerWithOpenAir(x, y, z /*this one + below*/) {i -> i -1}
-    replaceAllUnknownAtLayerWithOpenAir(x, y, z  + 1) { i -> i +1}
-}
-
-private tailrec fun Mutable3dGrid<Char>.replaceAllUnknownAtLayerWithOpenAir(x: Int, y: Int, z: Int, nextStep: (Int) -> Int) {
-    if(!0.until(depth).contains(z)) return
-    if(this[x, y, z] != UNKNOWN && this[x, y, z] != UNVISITED) return
-
-    val gridAtDepth = this[z]
-    gridAtDepth.replaceAllUnknown2dWithOpenAir(x, y) { x1, y1 -> this.replaceAllUnknown3dWithOpenAir(x1, y1, z) }
-    replaceAllUnknownAtLayerWithOpenAir(x, y, nextStep(z), nextStep)
-}
+private fun Grid3d<Char>.hasAnyOpenAirNeighbours(item: Char, loc: Coordinate3d) =
+    item == UNVISITED
+            && loc.getSurroundingManhattan()
+        .any { !this.contains(it) || this[it] == OPEN_AIR }
 
 private fun countExposedSides(coord: Coordinate3d, grid: Grid3d<Char>): Long {
     return coord.getSurroundingManhattan()
