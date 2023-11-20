@@ -109,7 +109,7 @@ class Day09Test {
         @Test
         internal fun `part 2`() {
             val bridge = LongRopeBridge(10).follow(input)
-            println(draw(bridge.placesVisitedByTail, '#').replace(' ', '.'))
+//            println(draw(bridge.placesVisitedByTail, '#').replace(' ', '.'))
 
             assertThat(bridge.countPlacesTailVisited())
                 .isEqualTo(2627)

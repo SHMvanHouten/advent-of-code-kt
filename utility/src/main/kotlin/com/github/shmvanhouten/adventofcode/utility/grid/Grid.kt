@@ -3,6 +3,7 @@ package com.github.shmvanhouten.adventofcode.utility.grid
 import com.github.shmvanhouten.adventofcode.utility.collections.joinToEvenlySpaced
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coord
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
+import com.github.shmvanhouten.adventofcode.utility.grid.MutableGrid.Companion.mutableGridOf
 
 fun intGridFromSpaceDelimitedString(input: String) = Grid(input) { row -> row.split(' ').map { it.toInt() } }
 fun intGridWithCoordinate(input: String) = Grid(input) { y, row ->
@@ -33,8 +34,8 @@ fun charGridFromPicture(input: String): Grid<Char> {
 
 sealed interface IGrid<T, C: Coord> {
     fun <R: Comparable<R>> maxOf(predicate: Grid<T>.(C) -> R): R
-    fun <RESULT> map(transform: (T) -> RESULT): Grid<RESULT>
-    fun <RESULT> mapIndexed(function: (coord: C, element: T) -> RESULT): Grid<RESULT>
+    fun <RESULT> map(transform: (T) -> RESULT): IGrid<RESULT, C>
+    fun <RESULT> mapIndexed(function: (coord: C, element: T) -> RESULT): IGrid<RESULT, C>
     fun filterIndexed(function: (coord: C, element: T) -> Boolean): List<T>
     fun forEachIndexed(function: (coord: C, element: T) -> Unit)
     fun getOrNull(coord: C): T?
@@ -52,6 +53,7 @@ sealed interface IGrid<T, C: Coord> {
     fun contains(coord: C): Boolean
     fun sumOfIndexed(function: (C, T) -> Long): Long
     fun withIndex(): IGrid<CoordinateIndexedValue<T, C>, C>
+    fun surroundWith(element: T): IGrid<T, C>
 }
 
 open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
@@ -227,6 +229,15 @@ open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
         }.let { Grid(it) }
     }
 
+    override fun surroundWith(element: T): Grid<T> {
+        val line = listOf(List(width + 2) {element})
+        return Grid(
+            line +
+            grid.map { row ->  listOf(element).plus(row) + element } +
+            line
+        )
+    }
+
     override fun toString(): String {
         return toString("")
     }
@@ -255,11 +266,19 @@ open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
         return grid.sumOf { it.count(condition) }
     }
 
-    fun toMutableGrid(): MutableGrid<T> = MutableGrid(grid)
+    fun toMutableGrid(): MutableGrid<T> = mutableGridOf(grid)
 
     val width: Int by lazy { grid.first().size }
 
     val height: Int by lazy { grid.size }
+
+    companion object {
+
+        fun <T> ofSize(width: Int, height: Int, element: T): Grid<T> {
+            return Grid(List(height){ List(width) {element} })
+        }
+
+    }
 
 }
 

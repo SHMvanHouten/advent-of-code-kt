@@ -14,12 +14,8 @@ fun countExposedSidesNoBubble(grid: Grid3d<Char>): Int {
 
 // PART 2
 fun countExposedSides(_g: Grid3d<Char>): Long {
-    val grid = _g.toMutable3dGrid()
-    var nextOpenAirCandidate = grid.firstCoordinateMatchingIndexed { loc, item -> grid.hasAnyOpenAirNeighbours(item, loc) }
-    while (nextOpenAirCandidate != null) { // not necessary for our input, but it could happen...
-        grid.aerateSurrounding(nextOpenAirCandidate)
-        nextOpenAirCandidate = grid.firstCoordinateMatchingIndexed { loc, item -> grid.hasAnyOpenAirNeighbours(item, loc) }
-    }
+    val grid = _g.toMutable3dGrid().surroundWith(UNVISITED) // make sure we don't get air pockets on the side
+    grid.aerateAllFrom(Coordinate3d(0, 0, 0))
 
     return grid.sumOfIndexed{ coord, pixel ->
         if(pixel == OPEN_AIR) 0
@@ -27,17 +23,19 @@ fun countExposedSides(_g: Grid3d<Char>): Long {
     }
 }
 
-private fun Mutable3dGrid<Char>.aerateSurrounding(nextOpenAirCandidate: Coordinate3d) {
-    this[nextOpenAirCandidate] = OPEN_AIR
-    nextOpenAirCandidate.getSurroundingManhattan()
-        .filter { this.contains(it) && this[it] == UNVISITED }
-        .forEach { aerateSurrounding(it) }
+private fun Mutable3dGrid<Char>.aerateAllFrom(aerablePoint: Coordinate3d) {
+    val aerablePoints = mutableListOf(aerablePoint)
+    while (aerablePoints.isNotEmpty()) {
+        val point = aerablePoints.removeLast()
+        this[point] = OPEN_AIR
+        aerablePoints.addAll(this.surroundingUnVisited(point))
+    }
 }
 
-private fun Grid3d<Char>.hasAnyOpenAirNeighbours(item: Char, loc: Coordinate3d) =
-    item == UNVISITED
-            && loc.getSurroundingManhattan()
-        .any { !this.contains(it) || this[it] == OPEN_AIR }
+private fun Mutable3dGrid<Char>.surroundingUnVisited(nextOpenAirCandidate: Coordinate3d): List<Coordinate3d> {
+    return nextOpenAirCandidate.getSurroundingManhattan()
+        .filter { contains(it) && this[it] == UNVISITED }
+}
 
 private fun countExposedSides(coord: Coordinate3d, grid: Grid3d<Char>): Long {
     return coord.getSurroundingManhattan()

@@ -122,6 +122,22 @@ class Day18GridTest {
         }
 
         @Test
+        fun `air pockets are ignored`() {
+            val z0 = """
+                .##.
+                #..#
+                .##.
+            """.trimIndent()
+            val z1 = """
+                ....
+                .##.
+                ....
+            """.trimIndent()
+            val squares = Grid3d.from3dPicture(listOf(z0, z1))
+            assertThat(countExposedSides(squares)).isEqualTo(4 * 5 + 2 * 6 + 2 * 5)
+        }
+
+        @Test
         internal fun example() {
             val input = """
                 2,2,2

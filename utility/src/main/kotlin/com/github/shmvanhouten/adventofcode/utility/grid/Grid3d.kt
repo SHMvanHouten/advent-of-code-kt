@@ -33,12 +33,17 @@ open class Grid3d<T>(
         throw NotImplementedError("Please implement me")
     }
 
-    override fun <RESULT> map(transform: (T) -> RESULT): Grid<RESULT> {
+    override fun <RESULT> map(transform: (T) -> RESULT): Grid3d<RESULT> {
         throw NotImplementedError("Please implement me")
     }
 
-    override fun <RESULT> mapIndexed(function: (coord: Coordinate3d, element: T) -> RESULT): Grid<RESULT> {
-        throw NotImplementedError("Please implement me")
+    override fun <RESULT> mapIndexed(function: (coord: Coordinate3d, element: T) -> RESULT): Grid3d<RESULT> {
+        return Grid3d(
+            this.grid.mapIndexed { z, grid2d ->
+                grid2d.mapIndexed { coord, element ->
+                    function(coord.atDepth(z), element)
+                }
+            })
     }
 
     override fun filterIndexed(function: (coord: Coordinate3d, element: T) -> Boolean): List<T> {
@@ -123,15 +128,22 @@ open class Grid3d<T>(
     }
 
     fun toMutable3dGrid(): Mutable3dGrid<T> {
-        return Mutable3dGrid(grid)
+        return Mutable3dGrid.mutable3dGridOf(grid)
     }
 
-    override fun withIndex(): IGrid<CoordinateIndexedValue<T, Coordinate3d>, Coordinate3d> {
-        return grid.mapIndexed { z, grid2D ->
-            grid2D.mapIndexed { (x, y), element ->
-                CoordinateIndexedValue(Coordinate3d(x, y, z), element)
-            }
-        }.let { Grid3d(it) }
+    override fun withIndex(): Grid3d<CoordinateIndexedValue<T, Coordinate3d>> {
+        return this.mapIndexed { coord, element ->
+            CoordinateIndexedValue(coord, element)
+        }
+    }
+
+    override fun surroundWith(element: T): Grid3d<T> {
+        val grid2d = listOf(Grid.ofSize(width + 2, height + 2, element))
+        return Grid3d(
+            grid2d
+            + grid.map { it.surroundWith(element) }
+            + grid2d
+        )
     }
 
     fun firstCoordinateMatchingIndexed(condition: (Coordinate3d, T) -> Boolean): Coordinate3d? {
