@@ -32,6 +32,14 @@ fun charGridFromPicture(input: String): Grid<Char> {
     return Grid(input.lines().map { it.toCharArray().toList() })
 }
 
+fun coordGrid(start: Coordinate, endExclusive: Coordinate): Grid<Coordinate> {
+    return Grid(
+        start.y.until(endExclusive.y)
+            .map { y ->
+                start.x.until(endExclusive.x).map { x -> Coordinate(x, y) }
+            })
+}
+
 sealed interface IGrid<T, C: Coord> {
     fun <R: Comparable<R>> maxOf(predicate: Grid<T>.(C) -> R): R
     fun <RESULT> map(transform: (T) -> RESULT): IGrid<RESULT, C>
@@ -65,6 +73,13 @@ open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
     constructor(input: String, mappingOperation: (index: Int, String) -> List<T>): this(input.lines()
         .mapIndexed (mappingOperation)
         .map { it })
+
+    constructor(start: Coordinate, endExclusive: Coordinate, fn: (Coordinate) -> T): this(
+        start.y.until(endExclusive.y)
+            .map { y ->
+                start.x.until(endExclusive.x).map { x -> fn(Coordinate(x, y)) }
+            }
+    )
 
     override fun <R: Comparable<R>> maxOf(predicate: Grid<T>.(Coordinate) -> R): R {
         return (0 until height)
@@ -267,6 +282,9 @@ open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
     }
 
     fun toMutableGrid(): MutableGrid<T> = mutableGridOf(grid)
+    fun flatten(): List<T> {
+        return grid.flatten()
+    }
 
     val width: Int by lazy { grid.first().size }
 

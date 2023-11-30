@@ -7,3 +7,7 @@ fun String.words(): List<String> {
 fun String.blocks(): List<String> {
     return this.split("\n\n")
 }
+
+fun String.substringBetween(start: String, end: String): String {
+    return substringAfter(start).substringBefore(end)
+}

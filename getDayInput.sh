@@ -19,13 +19,15 @@ mkdir ${source_location}/main/kotlin/com/github/shmvanhouten/adventofcode${year}
 mkdir ${source_location}/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
 
 curl --user-agent "https://github.com/SHMvanHouten/advent-of-code-kt/blob/master/getDayInput.sh" --cookie "session=$cookie;" https://adventofcode.com/${year}/day/${DAY}/input -o ${source_location}/main/resources/input-day${DD}.txt -s
+touch ./${source_location}/main/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}/Placeholder.kt
 
 echo "package com.github.shmvanhouten.adventofcode${year}.day${DD}
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import strikt.api.expectThat
+import strikt.assertions.isEqualTo
 
 class Day${DD}Test {
 
@@ -34,12 +36,12 @@ class Day${DD}Test {
 
         @Test
         internal fun \`fixme\`() {
-            assertThat(1).isEqualTo(1)
+            expectThat(1).isEqualTo(1)
         }
 
         @Test
         internal fun \`part 1\`() {
-            assertThat(1).isEqualTo(1)
+            expectThat(1).isEqualTo(1)
         }
     }
 
@@ -48,12 +50,12 @@ class Day${DD}Test {
 
         @Test
         internal fun \`fixme\`() {
-            assertThat(1).isEqualTo(1)
+            expectThat(1).isEqualTo(1)
         }
 
         @Test
         internal fun \`part 2\`() {
-            assertThat(1).isEqualTo(1)
+            expectThat(1).isEqualTo(1)
         }
     }
 
