@@ -8,18 +8,21 @@ if [[ -z "$1" ]]
 then
 DD=$(date +%d)
 else
-DD=$1
+DD=$(printf '%02d' $1)
 fi
 echo "fetching input for day $DD"
-DAY=$((10#$DD))
+
+url=https://adventofcode.com/${year}/day/$((10#$DD))
 
 source_location=kt${year}/src
+source_folder=${source_location}/main/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
+test_folder=${source_location}/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
 
-mkdir ${source_location}/main/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
-mkdir ${source_location}/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}
+mkdir "${source_folder}"
+mkdir "${test_folder}"
 
-curl --user-agent "https://github.com/SHMvanHouten/advent-of-code-kt/blob/master/getDayInput.sh" --cookie "session=$cookie;" https://adventofcode.com/${year}/day/${DAY}/input -o ${source_location}/main/resources/input-day${DD}.txt -s
-touch ./${source_location}/main/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}/Placeholder.kt
+curl --user-agent "https://github.com/SHMvanHouten/advent-of-code-kt/blob/master/getDayInput.sh" --cookie "session=$cookie;" "${url}"/input -o "${source_location}"/main/resources/input-day"${DD}".txt -s
+touch ./"${source_folder}"/Placeholder.kt
 
 echo "package com.github.shmvanhouten.adventofcode${year}.day${DD}
 
@@ -61,9 +64,9 @@ class Day${DD}Test {
 
     private val input by lazy { readFile(\"/input-day${DD}.txt\")}
 
-}" > ./${source_location}/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}/Day${DD}Test.kt
+}" > ./"${test_folder}"/Day${DD}Test.kt
 
-idea ./${source_location}/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}/Day${DD}Test.kt
-idea ./${source_location}/main/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}/Placeholder.kt
+idea ./"${test_folder}"/Day${DD}Test.kt
+idea ./"${source_folder}"/Placeholder.kt
 
-open https://adventofcode.com/${year}/day/${DAY}
+open "${url}"
