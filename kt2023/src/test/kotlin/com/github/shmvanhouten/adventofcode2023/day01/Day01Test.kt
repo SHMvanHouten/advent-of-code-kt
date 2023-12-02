@@ -48,13 +48,6 @@ class Day01Test {
         }
 
         @Test
-        fun print() {
-            input.lines()
-                .map { it to (firstNumber(it) + lastNumber(it)) }
-                .forEach { (line, result) -> println("line $line: result: $result") }
-        }
-
-        @Test
         internal fun `part 2`() {
             expectThat(
                 sumCalibrationValues2(input)
