@@ -63,4 +63,7 @@ class Day${DD}Test {
 
 }" > ./${source_location}/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}/Day${DD}Test.kt
 
+idea ./${source_location}/test/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}/Day${DD}Test.kt
+idea ./${source_location}/main/kotlin/com/github/shmvanhouten/adventofcode${year}/day${DD}/Placeholder.kt
+
 open https://adventofcode.com/${year}/day/${DAY}
