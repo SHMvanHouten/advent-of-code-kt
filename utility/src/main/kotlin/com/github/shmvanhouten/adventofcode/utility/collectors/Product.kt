@@ -1,11 +1,10 @@
 package com.github.shmvanhouten.adventofcode.utility.collectors
 
-fun <E> List<E>.productOf(transform: (E) -> Number): Long =
-    map(transform)
-        .product()
+fun <E> Iterable<E>.productOf(transform: (E) -> Number): Long =
+    fold(1L) { acc, number -> acc * transform(number).toLong() }
 
-fun List<Number>.product(): Long =
+fun Iterable<Number>.product(): Long =
     fold(1L) {acc, number -> acc * number.toLong()}
 
 @Deprecated(message = "use product instead", replaceWith = ReplaceWith("List<Number>.product"))
-fun List<Number>.multiply(): Long = product()
+fun Iterable<Number>.multiply(): Long = product()

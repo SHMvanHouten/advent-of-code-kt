@@ -22,7 +22,7 @@ class Day02Test {
     @Nested
     inner class Part1 {
 
-        private val requirements = listOf(Cube(RED, 12), Cube(GREEN, 13), Cube(BLUE, 14))
+        private val requirements = listOf(Cube(RED, 12), Cube(GREEN, 13), Cube(BLUE, 14)).map { it.color to it }.toMap()
 
         @Test
         internal fun example() {
@@ -62,7 +62,7 @@ class Day02Test {
         @Test
         internal fun `game 1 could be played with 4 red, 2 green, 6 blue`() {
             val game1 = exampleInput.lines().first().let { parse(it) }
-            expectThat(game1.minimumPossible())
+            expectThat(game1.minimumsPerColor())
                 .isEqualTo(listOf(Cube(RED, 4), Cube(GREEN, 2), Cube(BLUE, 6)))
         }
 
