@@ -1,20 +1,13 @@
 package com.github.shmvanhouten.adventofcode2023.day02
 
-import BLUE
-import Cube
-import GREEN
-import RED
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import parse
 import strikt.api.expect
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
-import sumIdsOfPossibleGames
-import sumOfPowers
 
 class Day02Test {
 

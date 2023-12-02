@@ -8,7 +8,7 @@ if [[ -z "$1" ]]
 then
 DD=$(date +%d)
 else
-DD=$(printf '%02d' $1)
+DD=$(printf '%02d' "$1")
 fi
 echo "fetching input for day $DD"
 
@@ -22,7 +22,7 @@ mkdir "${source_folder}"
 mkdir "${test_folder}"
 
 curl --user-agent "https://github.com/SHMvanHouten/advent-of-code-kt/blob/master/getDayInput.sh" --cookie "session=$cookie;" "${url}"/input -o "${source_location}"/main/resources/input-day"${DD}".txt -s
-touch ./"${source_folder}"/Placeholder.kt
+echo "package com.github.shmvanhouten.adventofcode${year}.day${DD}" > ./"${source_folder}"/Placeholder.kt
 
 echo "package com.github.shmvanhouten.adventofcode${year}.day${DD}
 
@@ -64,9 +64,9 @@ class Day${DD}Test {
 
     private val input by lazy { readFile(\"/input-day${DD}.txt\")}
 
-}" > ./"${test_folder}"/Day${DD}Test.kt
+}" > ./"${test_folder}"/Day"${DD}"Test.kt
 
-idea ./"${test_folder}"/Day${DD}Test.kt
+idea ./"${test_folder}"/Day"${DD}"Test.kt
 idea ./"${source_folder}"/Placeholder.kt
 
 open "${url}"

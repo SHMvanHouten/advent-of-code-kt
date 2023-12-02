@@ -1,14 +1,10 @@
 package com.github.shmvanhouten.adventofcode2023.day01
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import firstNumber
-import lastNumber
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import sumCalibrationValues1
-import sumCalibrationValues2
 
 class Day01Test {
 

@@ -1,3 +1,5 @@
+package com.github.shmvanhouten.adventofcode2023.day02
+
 import com.github.shmvanhouten.adventofcode.utility.collectors.productOf
 import com.github.shmvanhouten.adventofcode.utility.strings.substringBetween
 
@@ -26,7 +28,7 @@ fun List<Game>.sumIdsOfPossibleGames(requirements: CubeSet): Int =
 
 fun List<Game>.sumOfPowers(): Long = sumOf {
     it.minimumPossible()
-        .productOf { it.count }
+        .productOf(Cube::count)
 }
 
 data class Game(val id: Int, val cubeSets: List<CubeSet>) {
