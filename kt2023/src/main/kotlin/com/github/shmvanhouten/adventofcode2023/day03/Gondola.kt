@@ -2,7 +2,6 @@ package com.github.shmvanhouten.adventofcode2023.day03
 
 import com.github.shmvanhouten.adventofcode.utility.collectors.product
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction.EAST
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction.WEST
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
@@ -34,13 +33,12 @@ private fun isAdjacentToSymbol(numberWithLocations: NumberWithLocations, grid: G
         .any { loc -> loc.getSurrounding().any { grid.getOrNull(it)?.isSymbol()?:false } }
 
 private fun joinWithDigitsToTheRight(loc: Coordinate, grid: Grid<Char>): NumberWithLocations {
-    val digits = generateSequence(loc) { it.move(EAST) }
-        .map { it to (grid.getOrNull(it)?:'x') }
-        .takeWhile { (_, c) -> c.isDigit() }
+    val digits = grid.rowFrom(loc)
+        .takeWhile { it.isDigit() }
 
     return NumberWithLocations(
-        digits.map { it.second }.joinToString("").toInt(),
-        digits.map { it.first }.toList()
+        digits.joinToString("").toInt(),
+        (loc..loc.copy(x = loc.x + digits.lastIndex)).toList()
     )
 }
 

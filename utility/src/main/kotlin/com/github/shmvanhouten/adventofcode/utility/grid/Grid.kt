@@ -129,6 +129,11 @@ open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
         return grid[y]
     }
 
+    fun rowFrom(location: Coordinate): List<T> {
+        val row = grid[location.y]
+        return row.subList(location.x, row.size)
+    }
+
     fun getColumn(x: Int): List<T> {
         return (0 until height).map { y -> this[x, y] }
     }

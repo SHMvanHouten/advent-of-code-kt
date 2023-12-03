@@ -172,11 +172,6 @@ data class Coordinate(val x: Int, val y: Int): Coord {
     }
 }
 
-fun String.toCoordinate(): Coordinate {
-    val (x, y) = split(",")
-    return Coordinate(x.toInt(), y.toInt())
-}
-
 fun Int.negate(): Int {
     return this * -1
 }
