@@ -47,12 +47,14 @@ class Day03Test {
 
         @Test
         internal fun `example pt2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(getGearRatios(exampleInput)
+                .sum()).isEqualTo(467835)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(getGearRatios(input).sum())
+                .isEqualTo(467835)
         }
     }
 
