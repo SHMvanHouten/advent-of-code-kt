@@ -17,7 +17,7 @@ class Day03Test {
         .....+.58.
         ..592.....
         ......755.
-        ...${'$'}.*....
+        ...$.*....
         .664.598..
     """.trimIndent()
 
@@ -47,14 +47,14 @@ class Day03Test {
 
         @Test
         internal fun `example pt2`() {
-            expectThat(getGearRatios(exampleInput)
+            expectThat(findGearRatios(exampleInput)
                 .sum()).isEqualTo(467835)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(getGearRatios(input).sum())
-                .isEqualTo(467835)
+            expectThat(findGearRatios(input).sum())
+                .isEqualTo(78915902)
         }
     }
 

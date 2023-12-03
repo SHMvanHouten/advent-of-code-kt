@@ -66,6 +66,8 @@ class Day${DD}Test {
 
 }" > ./"${test_folder}"/Day"${DD}"Test.kt
 
+git add .
+
 idea ./"${test_folder}"/Day"${DD}"Test.kt
 idea ./"${source_folder}"/Placeholder.kt
 
