@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import java.math.BigInteger
 
 class Day04Test {
 
@@ -23,15 +22,15 @@ class Day04Test {
         @Test
         internal fun `example 1`() {
             expectThat(example.lines().map { getCardScore(it) }.first())
-                .isEqualTo(BigInteger.valueOf(8))
-            expectThat(example.lines().sumOf { getCardScore(it) })
-                .isEqualTo(BigInteger.valueOf(13))
+                .isEqualTo(8)
+            expectThat(sumCardScores(example))
+                .isEqualTo(13)
         }
 
         @Test
         internal fun `part 1`() {
             expectThat(input.lines().sumOf { getCardScore(it) })
-                .isEqualTo(BigInteger.valueOf(33950))
+                .isEqualTo(33950)
         }
     }
 
@@ -40,13 +39,13 @@ class Day04Test {
 
         @Test
         internal fun `example 2`() {
-            expectThat(getScratchCardTotal(example))
+            expectThat(getScratchCardTotal(example.lines()))
                 .isEqualTo(30)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(getScratchCardTotal(input))
+            expectThat(getScratchCardTotal(input.lines()))
                 .isEqualTo(14814534)
         }
     }
