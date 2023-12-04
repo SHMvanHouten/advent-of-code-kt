@@ -39,13 +39,15 @@ class Day04Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 2`() {
+            expectThat(getScratchCardTotal(example))
+                .isEqualTo(30)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(getScratchCardTotal(input))
+                .isEqualTo(14814534)
         }
     }
 
