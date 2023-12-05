@@ -22,7 +22,17 @@ mkdir "${source_folder}"
 mkdir "${test_folder}"
 
 curl --user-agent "https://github.com/SHMvanHouten/advent-of-code-kt/blob/master/getDayInput.sh" --cookie "session=$cookie;" "${url}"/input -o "${source_location}"/main/resources/input-day"${DD}".txt -s
-echo "package com.github.shmvanhouten.adventofcode${year}.day${DD}" > ./"${source_folder}"/Placeholder.kt
+
+echo "package com.github.shmvanhouten.adventofcode${year}.day${DD}
+
+import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
+
+fun main() {
+    readFile(\"/input-day${DD}.txt\")
+        .lines()
+        .onEach(::println)
+}
+" > ./"${source_folder}"/Placeholder.kt
 
 echo "package com.github.shmvanhouten.adventofcode${year}.day${DD}
 
