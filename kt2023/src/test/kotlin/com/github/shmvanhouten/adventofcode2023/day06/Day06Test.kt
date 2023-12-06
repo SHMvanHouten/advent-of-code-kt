@@ -53,7 +53,7 @@ class Day06Test {
         @Test
         internal fun `part 2`() {
             expectThat(Highscore(41777096,249136211271011).waysToBeat())
-                .isEqualTo(1)
+                .isEqualTo(27363861)
         }
     }
 

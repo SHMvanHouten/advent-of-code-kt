@@ -24,9 +24,9 @@ data class Highscore (
             .count() - 1
     }
 
-    private fun race(timePressed: Int, time: Int) = (time - timePressed) * timePressed
+    private fun race(timePressed: Int, time: Int): Long = (time - timePressed) * timePressed.toLong()
 
-    private fun reachesFartherThan(other: Int, distance: Long): Boolean {
+    private fun reachesFartherThan(other: Long, distance: Long): Boolean {
          return other > distance
     }
 
