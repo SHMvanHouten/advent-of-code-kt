@@ -26,7 +26,7 @@ class Day07Test {
                 44442 1
                 22222 1
             """.trimIndent().lines().map { toHand(it) }
-            expectThat(input.sortedWith(::compareHands))
+            expectThat(input.sorted())
                 .isEqualTo(listOf(toHand("22222 1"), toHand("44442 1")))
         }
 
@@ -36,7 +36,7 @@ class Day07Test {
                 33314 1
                 22233 1
             """.trimIndent().lines().map { toHand(it) }
-            expectThat(input.sortedWith(::compareHands))
+            expectThat(input.sorted())
                 .isEqualTo(listOf(toHand("22233 1"), toHand("33314 1")))
         }
 
@@ -46,7 +46,7 @@ class Day07Test {
                 AKJQT 1
                 22345 1
             """.trimIndent().lines().map { toHand(it) }
-            expectThat(input.sortedWith(::compareHands))
+            expectThat(input.sorted())
                 .isEqualTo(listOf(toHand("22345 1"), toHand("AKJQT 1")))
         }
 
@@ -56,7 +56,7 @@ class Day07Test {
                 KK123 1
                 22133 1
             """.trimIndent().lines().map { toHand(it) }
-            expectThat(input.sortedWith(::compareHands))
+            expectThat(input.sorted())
                 .isEqualTo(listOf(toHand("22133 1"), toHand("KK123 1")))
         }
 
@@ -66,7 +66,7 @@ class Day07Test {
                 A1234 1
                 A1342 1
             """.trimIndent().lines().map { toHand(it) }
-            expectThat(input.sortedWith(::compareHands))
+            expectThat(input.sorted())
                 .isEqualTo(listOf(toHand("A1342 1"), toHand("A1234 1")))
         }
 
@@ -81,7 +81,7 @@ class Day07Test {
                 2222Q 1
                 2222A 1
             """.trimIndent().lines().map { toHand(it) }
-            expectThat(input.sortedWith(::compareHands))
+            expectThat(input.sorted())
                 .isEqualTo(listOf(
                     toHand("2222A 1"),
                     toHand("2222K 1"),
