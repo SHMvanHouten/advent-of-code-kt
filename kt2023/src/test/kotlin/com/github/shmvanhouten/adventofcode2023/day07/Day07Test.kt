@@ -25,9 +25,9 @@ class Day07Test {
             val input = """
                 44442 1
                 22222 1
-            """.trimIndent().lines().map { toHand(it) }
+            """.trimIndent().lines().map { toJackHand(it) }
             expectThat(input.sorted())
-                .isEqualTo(listOf(toHand("22222 1"), toHand("44442 1")))
+                .isEqualTo(listOf(toJackHand("22222 1"), toJackHand("44442 1")))
         }
 
         @Test
@@ -35,9 +35,9 @@ class Day07Test {
             val input = """
                 33314 1
                 22233 1
-            """.trimIndent().lines().map { toHand(it) }
+            """.trimIndent().lines().map { toJackHand(it) }
             expectThat(input.sorted())
-                .isEqualTo(listOf(toHand("22233 1"), toHand("33314 1")))
+                .isEqualTo(listOf(toJackHand("22233 1"), toJackHand("33314 1")))
         }
 
         @Test
@@ -45,9 +45,9 @@ class Day07Test {
             val input = """
                 AKJQT 1
                 22345 1
-            """.trimIndent().lines().map { toHand(it) }
+            """.trimIndent().lines().map { toJackHand(it) }
             expectThat(input.sorted())
-                .isEqualTo(listOf(toHand("22345 1"), toHand("AKJQT 1")))
+                .isEqualTo(listOf(toJackHand("22345 1"), toJackHand("AKJQT 1")))
         }
 
         @Test
@@ -55,9 +55,9 @@ class Day07Test {
             val input = """
                 KK123 1
                 22133 1
-            """.trimIndent().lines().map { toHand(it) }
+            """.trimIndent().lines().map { toJackHand(it) }
             expectThat(input.sorted())
-                .isEqualTo(listOf(toHand("22133 1"), toHand("KK123 1")))
+                .isEqualTo(listOf(toJackHand("22133 1"), toJackHand("KK123 1")))
         }
 
         @Test
@@ -65,9 +65,9 @@ class Day07Test {
             val input = """
                 A1234 1
                 A1342 1
-            """.trimIndent().lines().map { toHand(it) }
+            """.trimIndent().lines().map { toJackHand(it) }
             expectThat(input.sorted())
-                .isEqualTo(listOf(toHand("A1342 1"), toHand("A1234 1")))
+                .isEqualTo(listOf(toJackHand("A1342 1"), toJackHand("A1234 1")))
         }
 
         @Test
@@ -80,27 +80,27 @@ class Day07Test {
                 2222K 1
                 2222Q 1
                 2222A 1
-            """.trimIndent().lines().map { toHand(it) }
+            """.trimIndent().lines().map { toJackHand(it) }
             expectThat(input.sorted())
                 .isEqualTo(listOf(
-                    toHand("2222A 1"),
-                    toHand("2222K 1"),
-                    toHand("2222Q 1"),
-                    toHand("2222J 1"),
-                    toHand("2222T 1"),
-                    toHand("22229 1"),
-                    toHand("22225 1")
+                    toJackHand("2222A 1"),
+                    toJackHand("2222K 1"),
+                    toJackHand("2222Q 1"),
+                    toJackHand("2222J 1"),
+                    toJackHand("2222T 1"),
+                    toJackHand("22229 1"),
+                    toJackHand("22225 1")
                 ))
         }
 
         @Test
         internal fun `example 1`() {
-            expectThat(totalWinnings(exampleInput)).isEqualTo(6440)
+            expectThat(totalWinningsWithJacks(exampleInput)).isEqualTo(6440)
         }
 
         @Test
         internal fun `part 1`() {
-            expectThat(totalWinnings(input)).isEqualTo(252656917)
+            expectThat(totalWinningsWithJacks(input)).isEqualTo(252656917)
         }
     }
 
@@ -109,13 +109,13 @@ class Day07Test {
 
         @Test
         internal fun `example 2`() {
-            expectThat(totalWinnings(exampleInput)).isEqualTo(5905)
+            expectThat(totalWinningsWithJokers(exampleInput)).isEqualTo(5905)
         }
 
         @Test
         internal fun `part 2`() {
             expect{
-                that(totalWinnings(input)).isEqualTo(253499763)
+                that(totalWinningsWithJokers(input)).isEqualTo(253499763)
             }
         }
     }
