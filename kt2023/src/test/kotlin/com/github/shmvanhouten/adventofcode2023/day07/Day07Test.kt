@@ -25,9 +25,9 @@ class Day07Test {
             val input = """
                 44442 1
                 22222 1
-            """.trimIndent().lines().map { toJackHand(it) }
+            """.trimIndent().lines().map { JackHand(it) }
             expectThat(input.sorted())
-                .isEqualTo(listOf(toJackHand("22222 1"), toJackHand("44442 1")))
+                .isEqualTo(listOf(JackHand("22222 1"), JackHand("44442 1")))
         }
 
         @Test
@@ -35,9 +35,9 @@ class Day07Test {
             val input = """
                 33314 1
                 22233 1
-            """.trimIndent().lines().map { toJackHand(it) }
+            """.trimIndent().lines().map { JackHand(it) }
             expectThat(input.sorted())
-                .isEqualTo(listOf(toJackHand("22233 1"), toJackHand("33314 1")))
+                .isEqualTo(listOf(JackHand("22233 1"), JackHand("33314 1")))
         }
 
         @Test
@@ -45,9 +45,9 @@ class Day07Test {
             val input = """
                 AKJQT 1
                 22345 1
-            """.trimIndent().lines().map { toJackHand(it) }
+            """.trimIndent().lines().map { JackHand(it) }
             expectThat(input.sorted())
-                .isEqualTo(listOf(toJackHand("22345 1"), toJackHand("AKJQT 1")))
+                .isEqualTo(listOf(JackHand("22345 1"), JackHand("AKJQT 1")))
         }
 
         @Test
@@ -55,9 +55,9 @@ class Day07Test {
             val input = """
                 KK123 1
                 22133 1
-            """.trimIndent().lines().map { toJackHand(it) }
+            """.trimIndent().lines().map { JackHand(it) }
             expectThat(input.sorted())
-                .isEqualTo(listOf(toJackHand("22133 1"), toJackHand("KK123 1")))
+                .isEqualTo(listOf(JackHand("22133 1"), JackHand("KK123 1")))
         }
 
         @Test
@@ -65,9 +65,9 @@ class Day07Test {
             val input = """
                 A1234 1
                 A1342 1
-            """.trimIndent().lines().map { toJackHand(it) }
+            """.trimIndent().lines().map { JackHand(it) }
             expectThat(input.sorted())
-                .isEqualTo(listOf(toJackHand("A1342 1"), toJackHand("A1234 1")))
+                .isEqualTo(listOf(JackHand("A1342 1"), JackHand("A1234 1")))
         }
 
         @Test
@@ -80,17 +80,18 @@ class Day07Test {
                 2222K 1
                 2222Q 1
                 2222A 1
-            """.trimIndent().lines().map { toJackHand(it) }
+            """.trimIndent().lines().map { JackHand(it) }
             expectThat(input.sorted())
-                .isEqualTo(listOf(
-                    toJackHand("2222A 1"),
-                    toJackHand("2222K 1"),
-                    toJackHand("2222Q 1"),
-                    toJackHand("2222J 1"),
-                    toJackHand("2222T 1"),
-                    toJackHand("22229 1"),
-                    toJackHand("22225 1")
-                ))
+                .isEqualTo(
+                    listOf(
+                        JackHand("2222A 1"),
+                        JackHand("2222K 1"),
+                        JackHand("2222Q 1"),
+                        JackHand("2222J 1"),
+                        JackHand("2222T 1"),
+                        JackHand("22229 1"),
+                        JackHand("22225 1")
+                    ))
         }
 
         @Test
