@@ -3,6 +3,7 @@ package com.github.shmvanhouten.adventofcode2023.day07
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import strikt.api.expect
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
@@ -107,13 +108,15 @@ class Day07Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 2`() {
+            expectThat(totalWinnings(exampleInput)).isEqualTo(5905)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expect{
+                that(totalWinnings(input)).isEqualTo(253499763)
+            }
         }
     }
 
