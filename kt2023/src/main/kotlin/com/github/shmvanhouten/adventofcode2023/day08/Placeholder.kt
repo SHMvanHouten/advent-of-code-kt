@@ -24,26 +24,19 @@ fun toElement(line: String): Pair<String, Elements> {
 }
 
 data class NetworkInstructions(val instructions: List<(Elements) -> String>, val network: Map<String, Elements>) {
-    fun countStepsUntil(start: String = "AAA", target: String): Int {
-        return countStepsUntil(start) {it == target}
-    }
+    fun countStepsUntil(start: String = "AAA", target: String): Int = countStepsUntil(start) {it == target}
 
-    fun findFirstPointWhereAllPathsHitTarget(startChar: Char = 'A', target: Char = 'Z'): BigInteger {
-        // As it turns out, to travel to the next Z from each Z again, it takes exactly the same amount of steps
-        // So no need to get the Z to Z travel times
-
-        return network.keys.filter { it.last() == startChar }
+    // As it turns out, to travel to the next Z from each Z again, it takes exactly the same amount of steps
+    // So no need to get the Z to Z travel times
+    fun findFirstPointWhereAllPathsHitTarget(startChar: Char = 'A', target: Char = 'Z'): BigInteger =
+        network.keys.filter { it.last() == startChar }
             .map { point -> countStepsUntil(point) { it.last() == target } }
             .leastCommonMultiple()
 
-    }
-
     private fun countStepsUntil(start: String, matches: (String) -> Boolean): Int {
-        var current = start
-        return generateSequence { instructions }.flatten().map { take ->
-            current = take(network[current]!!)
-            current
-        }.takeWhile { !matches(current) }.count() + 1
+        return generateSequence { instructions }.flatten()
+            .runningFold(start) { current, take -> take(network[current]!!) }
+            .takeWhile { !matches(it) }.count()
     }
 }
 
