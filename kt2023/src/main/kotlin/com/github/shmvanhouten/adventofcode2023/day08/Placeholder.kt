@@ -1,10 +1,12 @@
 package com.github.shmvanhouten.adventofcode2023.day08
 
+import com.github.shmvanhouten.adventofcode.utility.compositenumber.leastCommonMultiple
 import com.github.shmvanhouten.adventofcode.utility.strings.words
+import java.math.BigInteger
 
 
-fun toNetworkInstructions(instructions: String, network: String): NetworkInstructions1 {
-    return NetworkInstructions1(
+fun toNetworkInstructions(instructions: String, network: String): NetworkInstructions {
+    return NetworkInstructions(
         instructions.map { c ->
             when(c) {
                 'L' -> {it -> it.left}
@@ -12,7 +14,7 @@ fun toNetworkInstructions(instructions: String, network: String): NetworkInstruc
                 else -> throw NotImplementedError("")
             }
         },
-        network.lines().map { com.github.shmvanhouten.adventofcode2023.day08.part2.toElement(it) }.toMap()
+        network.lines().associate { toElement(it) }
     )
 }
 
@@ -21,19 +23,30 @@ fun toElement(line: String): Pair<String, Elements> {
     return key to Elements(v1, v2)
 }
 
-data class NetworkInstructions1(val instructions: List<(Elements) -> String>, val network: Map<String, Elements>) {
-    fun traverseUntil(target: String, start: String = "AAA"): List<String> {
+data class NetworkInstructions(val instructions: List<(Elements) -> String>, val network: Map<String, Elements>) {
+    fun countStepsUntil(start: String = "AAA", target: String): Int {
+        return countStepsUntil(start) {it == target}
+    }
+
+    fun findFirstPointWhereAllPathsHitTarget(startChar: Char = 'A', target: Char = 'Z'): BigInteger {
+        // As it turns out, to travel to the next Z from each Z again, it takes exactly the same amount of steps
+        // So no need to get the Z to Z travel times
+
+        return network.keys.filter { it.last() == startChar }
+            .map { point -> countStepsUntil(point) { it.last() == target } }
+            .leastCommonMultiple()
+
+    }
+
+    private fun countStepsUntil(start: String, matches: (String) -> Boolean): Int {
         var current = start
-        val traversed = mutableListOf<String>()
-        while (true) {
-            instructions.forEach { take ->
-                current = take(network[current]!!)
-                traversed += current
-                if (current == target) return traversed
-            }
-        }
+        return generateSequence { instructions }.flatten().map { take ->
+            current = take(network[current]!!)
+            current
+        }.takeWhile { !matches(current) }.count() + 1
     }
 }
 
 data class Elements(val left: String, val right: String)
 
+fun List<Int>.leastCommonMultiple() = this.map { it.toBigInteger() }.leastCommonMultiple()

@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import strikt.assertions.isGreaterThan
-import strikt.assertions.isLessThan
 import java.math.BigInteger
 
 class Day08Test {
@@ -32,7 +30,7 @@ class Day08Test {
                 .blocks()
             val networkInstructions =
                 toNetworkInstructions(instructions, network)
-            expectThat(networkInstructions.traverseUntil("ZZZ").size)
+            expectThat(networkInstructions.countStepsUntil(target = "ZZZ"))
                 .isEqualTo(2)
         }
 
@@ -42,7 +40,7 @@ class Day08Test {
                 .blocks()
             val networkInstructions =
                 toNetworkInstructions(instructions, network)
-            expectThat(networkInstructions.traverseUntil("ZZZ").size)
+            expectThat(networkInstructions.countStepsUntil(target = "ZZZ"))
                 .isEqualTo(13939)
         }
     }
@@ -71,7 +69,7 @@ class Day08Test {
         internal fun `example 2`() {
             val (instructions, network) = exampleInput.blocks()
             val networkInstructions =
-                com.github.shmvanhouten.adventofcode2023.day08.part2.toNetworkInstructions(instructions, network)
+                toNetworkInstructions(instructions, network)
 
             expectThat(networkInstructions.findFirstPointWhereAllPathsHitTarget())
                 .isEqualTo(BigInteger("6"))
@@ -97,8 +95,7 @@ class Day08Test {
                 XXX = (XXX, XXX)
             """.trimIndent().blocks()
 
-            val networkInstructions =
-                com.github.shmvanhouten.adventofcode2023.day08.part2.toNetworkInstructions(instructions, network)
+            val networkInstructions = toNetworkInstructions(instructions, network)
 
             expectThat(networkInstructions.findFirstPointWhereAllPathsHitTarget())
                 .isEqualTo(BigInteger("12"))
@@ -107,14 +104,10 @@ class Day08Test {
         @Test
         internal fun `part 2`() {
             val (instructions, network) = input.blocks()
-            val networkInstructions =
-                com.github.shmvanhouten.adventofcode2023.day08.part2.toNetworkInstructions(instructions, network)
+            val networkInstructions = toNetworkInstructions(instructions, network)
 
-            println(BigInteger("11206957317755125787748971").divide(BigInteger("263")))
             expectThat(networkInstructions.findFirstPointWhereAllPathsHitTarget())
-                .isGreaterThan(BigInteger("33865167419"))
-                .isLessThan(BigInteger("42612005010475763451517"))
-                .isEqualTo(BigInteger.ZERO)
+                .isEqualTo(BigInteger("8906539031197"))
         }
     }
 
