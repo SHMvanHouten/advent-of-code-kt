@@ -6,9 +6,7 @@ fun extrapolate(line: List<Long>): Long =
     extrapolateUntil0(line).sumOf { it.last() }
 
 fun extrapolateBack(line: List<Long>): Long =
-    extrapolateUntil0(line).toList().reversed()
-        .map { it.first() }
-        .reduce { acc, x -> x - acc }
+    extrapolateUntil0(line.reversed()).sumOf { it.last() }
 
 private fun extrapolateUntil0(line: List<Long>) =
     generateSequence(line) { nextLine -> nextLine.zipWithNext().map { it.second - it.first } }
