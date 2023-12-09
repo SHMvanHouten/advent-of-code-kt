@@ -109,7 +109,7 @@ class Day05Test {
         internal fun `part 2`() {
             val almanac = toAlmanacWithSeedRanges(blocks(input))
             expectThat(almanac.minLocation())
-                .isEqualTo(484023871)
+                .isEqualTo(46294175)
         }
     }
 

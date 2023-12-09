@@ -1,6 +1,7 @@
 package com.github.shmvanhouten.adventofcode2023.day05
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
+import com.github.shmvanhouten.adventofcode.utility.ranges.splitOverlapsOnAll
 import com.github.shmvanhouten.adventofcode.utility.strings.blocks
 
 fun main() {
@@ -24,7 +25,7 @@ fun toAlmanac(blocks: List<List<String>>): Almanac {
 fun toAlmanacWithSeedRanges(blocks: List<List<String>>): RangeAlmanac {
     val seeds = blocks.first().first().substringAfter("seeds: ").split(" ")
         .chunked(2)
-        .map { (nr, rangeSize) -> nr.toLong().until(nr.toLong() + rangeSize.toLong()) }
+        .map { (nr, rangeSize) -> nr.toLong()..(nr.toLong() + rangeSize.toLong()) }
     val instructions = blocks.subList(1, blocks.size)
         .map { toInstructionMap(it) }
     return RangeAlmanac(seeds, instructions)
@@ -39,13 +40,17 @@ fun toInstructionMap(list: List<String>): List<Instructions> {
 
 data class RangeAlmanac(val seeds: List<LongRange>, val maps: List<List<Instructions>>) {
 
-    fun minLocation(): Long {
-        return seeds.asSequence().flatten().minOf {
-            maps.fold(it) { nr, instructions ->
-                instructions.applyTo(nr)
-            }
-        }
-    }
+    fun minLocation(): Long = maps.fold(seeds) { acc, instructions ->
+        applyInstructions(acc, instructions)
+    }.minOf { it.first }
+
+    private fun applyInstructions(
+        ranges: List<LongRange>,
+        instructions: List<Instructions>
+    ) = ranges.map { it.splitOverlapsOnAll(instructions.sourceRanges()) }
+        .map { (overlapping, notOverlapping) ->
+            overlapping.map { instructions.applyToRange(it) } + notOverlapping
+        }.flatten()
 }
 
 data class Almanac(val seeds: List<Long>, val maps: List<List<Instructions>>) {
@@ -81,3 +86,8 @@ fun List<Instructions>.applyTo(input: Long): Long {
     val instruction = this.find { input in it.sourceRange }
     return instruction?.applyTo(input) ?: input
 }
+
+private fun List<Instructions>.sourceRanges(): List<LongRange> = map { it.sourceRange }
+
+private fun List<Instructions>.applyToRange(matchedRange: LongRange): LongRange =
+    applyTo(matchedRange.first)..applyTo(matchedRange.last)

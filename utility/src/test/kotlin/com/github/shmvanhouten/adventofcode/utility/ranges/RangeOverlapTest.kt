@@ -90,7 +90,7 @@ class RangeOverlapTest {
     @Test
     fun `1--9 overlaps with 4-4 and 5-7 fully`() {
         val (overlapping, notOverlapping) = (1L..9)
-            .splitOverlapsOn(listOf(4L..4, 5L..7))
+            .splitOverlapsOnAll(listOf(4L..4, 5L..7))
 
         expect {
             that(overlapping)
@@ -111,7 +111,7 @@ class RangeOverlapTest {
     @Test
     fun `overlaps on 5-7 and not on 8-9`() {
         val (overlapping, notOverlapping) = (5L..9)
-            .splitOverlapsOn(listOf(4L..4, 5L..7))
+            .splitOverlapsOnAll(listOf(4L..4, 5L..7))
         expect {
             that(overlapping).hasSize(1)
                 .first().isEqualTo(5L..7)
@@ -123,7 +123,7 @@ class RangeOverlapTest {
     @Test
     fun `3--7 overlaps with 1-4 partially and 5-5 fully and 7-8 partially`() {
         val (overlapping, notOverlapping) = (3L..7)
-            .splitOverlapsOn(listOf(1L..4, 5L..5, 7L..8))
+            .splitOverlapsOnAll(listOf(1L..4, 5L..5, 7L..8))
 
         expect {
             that(overlapping).hasSize(3)
@@ -137,4 +137,16 @@ class RangeOverlapTest {
                 .and { first().isEqualTo(6L..6) }
         }
     }
+
+    @Test
+    fun `reverse list example`() {
+        val (overlapping, notOverlapping) = (79L..92)
+            .splitOverlapsOnAll(listOf(98L..99, 50L..97))
+
+        expect {
+            that(overlapping).hasSize(1).and { first().isEqualTo(79L..92) }
+            that(notOverlapping).isEmpty()
+        }
+    }
+
 }

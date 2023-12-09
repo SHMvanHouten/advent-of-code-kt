@@ -30,13 +30,15 @@ fun LongRange.splitOverlapsOn(other: LongRange): OverlapSplit {
             }
         } else {
             overlapping += this.first..min(other.last, this.last)
-            notOverlapping += (other.last + 1)..this.last
+            if(this.last > other.last) {
+                notOverlapping += (other.last + 1)..this.last
+            }
         }
         OverlapSplit(overlapping.toList(), notOverlapping.toList())
     }
 }
 
-fun LongRange.splitOverlapsOn(others: List<LongRange>): OverlapSplit {
+fun LongRange.splitOverlapsOnAll(others: List<LongRange>): OverlapSplit {
     return others.fold(OverlapSplit(emptyList(), listOf(this))) { acc, other ->
         val (overlapping, notOverlapping) = acc.notOverlapping.map { it.splitOverlapsOn(other) }.flatten()
         OverlapSplit(
