@@ -51,11 +51,6 @@ class Day09Test {
         }
 
         @Test
-        fun `example 2`() {
-
-        }
-
-        @Test
         internal fun `part 2`() {
             expectThat(
                 input.lines()
