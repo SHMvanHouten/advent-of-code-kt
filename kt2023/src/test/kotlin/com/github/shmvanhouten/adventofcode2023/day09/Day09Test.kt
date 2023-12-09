@@ -37,7 +37,7 @@ class Day09Test {
                 input.lines()
                     .map { toDataSet(it) }
                     .sumOf { extrapolate(it) }
-            ).isEqualTo(114)
+            ).isEqualTo(1696140818)
         }
     }
 
@@ -45,13 +45,23 @@ class Day09Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `new example`() {
+            val line = toDataSet("10 13 16 21 30 45")
+            expectThat(extrapolateBack(line)).isEqualTo(5)
+        }
+
+        @Test
+        fun `example 2`() {
+
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(
+                input.lines()
+                    .map { toDataSet(it) }
+                    .sumOf { extrapolateBack(it) }
+            ).isEqualTo(1152)
         }
     }
 
