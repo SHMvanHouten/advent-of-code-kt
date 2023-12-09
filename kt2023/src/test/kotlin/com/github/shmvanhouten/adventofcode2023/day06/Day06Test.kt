@@ -18,7 +18,7 @@ class Day06Test {
     inner class Part1 {
 
         @Test
-        internal fun `fixme`() {
+        internal fun `example 1`() {
             val highscores = toRaceHighscores(example)
             expect {
                 that(highscores.first().waysToBeat())

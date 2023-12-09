@@ -1,15 +1,8 @@
 package com.github.shmvanhouten.adventofcode2023.day05
 
-import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import com.github.shmvanhouten.adventofcode.utility.ranges.splitOverlapsOnAll
+import com.github.shmvanhouten.adventofcode.utility.ranges.leftPartitionOverlapping
+import com.github.shmvanhouten.adventofcode.utility.ranges.merge
 import com.github.shmvanhouten.adventofcode.utility.strings.blocks
-
-fun main() {
-    val toAlmanac = toAlmanac(blocks(readFile("/input-day05.txt")))
-    toAlmanac.seeds.also(::println)
-    toAlmanac.maps
-        .onEach(::println)
-}
 
 fun blocks(input: String) = input
     .blocks()
@@ -31,12 +24,10 @@ fun toAlmanacWithSeedRanges(blocks: List<List<String>>): RangeAlmanac {
     return RangeAlmanac(seeds, instructions)
 }
 
-fun toInstructionMap(list: List<String>): List<Instructions> {
-    return list.subList(1, list.size)
+fun toInstructionMap(list: List<String>): List<Instructions> =
+    list.subList(1, list.size)
         .map { line -> line.split(' ').map { it.toLong() } }
-        .map { (s, d, l) ->Instructions(s, d, l) }
-
-}
+        .map { (s, d, l) -> Instructions(s, d, l) }
 
 data class RangeAlmanac(val seeds: List<LongRange>, val maps: List<List<Instructions>>) {
 
@@ -47,10 +38,10 @@ data class RangeAlmanac(val seeds: List<LongRange>, val maps: List<List<Instruct
     private fun applyInstructions(
         ranges: List<LongRange>,
         instructions: List<Instructions>
-    ) = ranges.map { it.splitOverlapsOnAll(instructions.sourceRanges()) }
-        .map { (overlapping, notOverlapping) ->
+    ) = ranges.map { it.leftPartitionOverlapping(instructions.sourceRanges()) }
+        .flatMap { (overlapping, notOverlapping) ->
             overlapping.map { instructions.applyToRange(it) } + notOverlapping
-        }.flatten()
+        }.merge()
 }
 
 data class Almanac(val seeds: List<Long>, val maps: List<List<Instructions>>) {

@@ -1,60 +1,75 @@
 package com.github.shmvanhouten.adventofcode.utility.ranges
 
-import kotlin.math.min
+import kotlin.math.max
 
-fun IntRange.contains(other: IntRange): Boolean {
-    return this.first <= other.first
-            && this.last >= other.last
-}
+fun IntRange.contains(other: IntRange): Boolean =
+    this.first <= other.first
+        && this.last >= other.last
 
-fun LongRange.overlaps(other: LongRange): Boolean =
-    this.first in other || this.last in other || other.first in this || other.last in this
+operator fun LongRange.contains(other: LongRange): Boolean =
+    this.first <= other.first
+        && this.last >= other.last
 
 /**
  * Returns
- * - a ( empty or size 1) list of overlapping where this range and the other overlap
- * - a (size 0 - 2) list of ranges where this range does _not_ overlap the other
+ * - ( empty or size 1) list of overlapping where this range and the other overlap
+ * - (size 0 - 2) list of ranges where this range does _not_ overlap the other
  *
- * **ignores where the other range does not overlap this range!**
+ * **ignores where the right range does not overlap this range!**
  */
-fun LongRange.splitOverlapsOn(other: LongRange): OverlapSplit {
-    return if (!this.overlaps(other)) OverlapSplit(emptyList(), listOf(this))
-    else {
-        val notOverlapping = mutableListOf<LongRange>()
-        val overlapping = mutableListOf<LongRange>()
-        if (this.first < other.first) {
-            notOverlapping += this.first.until(min(this.last + 1, other.first))
-            overlapping += other.first..minOf(this.last, other.last)
-            if (other.last <= this.last) {//this completely contains other
-                notOverlapping += (other.last + 1)..this.last
-            }
-        } else {
-            overlapping += this.first..min(other.last, this.last)
-            if(this.last > other.last) {
-                notOverlapping += (other.last + 1)..this.last
-            }
-        }
-        OverlapSplit(overlapping.toList(), notOverlapping.toList())
-    }
+fun LongRange.leftPartitionOverlapping(rightRange: LongRange) = when {
+    this in rightRange -> OverlapPartition(overlapping = listOf(this))
+    this.first in rightRange -> OverlapPartition(
+        overlapping = this.first..rightRange.last,
+        notOverlapping = rightRange.last + 1..this.last
+    )
+    this.last in rightRange -> OverlapPartition(
+        overlapping = rightRange.first..this.last,
+        notOverlapping = this.first..<rightRange.first
+    )
+    rightRange in this -> OverlapPartition(
+        overlapping = listOf(rightRange),
+        notOverlapping = listOf(this.first..<rightRange.first, rightRange.last + 1..this.last)
+    )
+    else -> OverlapPartition(notOverlapping = listOf(this))
 }
 
-fun LongRange.splitOverlapsOnAll(others: List<LongRange>): OverlapSplit {
-    return others.fold(OverlapSplit(emptyList(), listOf(this))) { acc, other ->
-        val (overlapping, notOverlapping) = acc.notOverlapping.map { it.splitOverlapsOn(other) }.flatten()
-        OverlapSplit(
+fun LongRange.leftPartitionOverlapping(others: List<LongRange>): OverlapPartition {
+    return others.fold(OverlapPartition(notOverlapping = listOf(this))) { acc, other ->
+        val (overlapping, notOverlapping) = acc.notOverlapping.map { it.leftPartitionOverlapping(other) }.flatten()
+        OverlapPartition(
             overlapping = acc.overlapping + overlapping,
             notOverlapping = notOverlapping
         )
     }
 }
 
-data class OverlapSplit(val overlapping: List<LongRange>, val notOverlapping: List<LongRange>)
+data class OverlapPartition(val overlapping: List<LongRange> = emptyList(), val notOverlapping: List<LongRange> = emptyList()) {
 
-private fun List<OverlapSplit>.flatten(): OverlapSplit {
-    return OverlapSplit(
+    constructor(overlapping: LongRange, notOverlapping: LongRange):
+            this(listOf(overlapping), listOf(notOverlapping))
+}
+
+fun List<LongRange>.merge(): List<LongRange> =
+    this.sortedBy { it.first }.mergeSorted()
+
+private fun List<LongRange>.mergeSorted(): List<LongRange> {
+    val resultingRanges = mutableListOf(this.first())
+    this.drop(1).forEach { range ->
+        val highestRange = resultingRanges.last()
+        resultingRanges += if (range.first - 1 in highestRange) {
+            resultingRanges.removeLast()
+            highestRange.first..max(range.last, highestRange.last)
+        } else {
+            range
+        }
+    }
+    return resultingRanges.toList()
+}
+
+private fun List<OverlapPartition>.flatten(): OverlapPartition {
+    return OverlapPartition(
         this.flatMap { it.overlapping },
         this.flatMap { it.notOverlapping }
     )
 }
-
-fun emptyOverlapSplit() = OverlapSplit(emptyList(), emptyList())
