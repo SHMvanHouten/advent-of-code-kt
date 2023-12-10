@@ -63,11 +63,13 @@ private fun findWhichSideOfLoopIsInside(grid: Grid<Tile>): TileIdentification =
         .identification.opposite()
 
 private fun extrapolateAdjacentTiles(grid: MutableGrid<Tile>) {
-    val leftTiles = grid.coordinatesMatching { it.identification == LEFT_OF_PIPE }
-    fillOutFromTile(grid, leftTiles, LEFT_OF_PIPE)
+    extrapolateAdjacentTiles(grid, LEFT_OF_PIPE)
+    extrapolateAdjacentTiles(grid, RIGHT_OF_PIPE)
+}
 
-    val rightTiles = grid.coordinatesMatching { it.identification == RIGHT_OF_PIPE }
-    fillOutFromTile(grid, rightTiles, RIGHT_OF_PIPE)
+private fun extrapolateAdjacentTiles(grid: MutableGrid<Tile>, identification: TileIdentification) {
+    val leftTiles = grid.coordinatesMatching { it.identification == identification }
+    fillOutFromTile(grid, leftTiles, identification)
 }
 
 private fun fillOutFromTile(grid: MutableGrid<Tile>, locs: List<Coordinate>, status: TileIdentification) {
