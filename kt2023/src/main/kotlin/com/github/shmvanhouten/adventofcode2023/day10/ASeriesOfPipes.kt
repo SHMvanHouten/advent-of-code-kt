@@ -200,7 +200,7 @@ private fun printGrid(grid: MutableGrid<Tile>) {
     println(grid.map {
         when (it.status) {
             Status.UNVISITED -> it.tile.toString()
-            Status.PIPE -> "$blue${it.tile}$resetToBlack"
+            Status.PIPE -> "$blue${replace(it.tile)}$resetToBlack"
             Status.LEFT -> "$yellow█$resetToBlack"
             Status.RIGHT -> "$red█$resetToBlack"
         }
