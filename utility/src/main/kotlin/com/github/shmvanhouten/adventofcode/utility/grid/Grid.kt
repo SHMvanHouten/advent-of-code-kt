@@ -40,6 +40,20 @@ fun coordGrid(start: Coordinate, endExclusive: Coordinate): Grid<Coordinate> {
             })
 }
 
+fun charGridFromCoordinates(locations: Collection<Coordinate>, unused: Char = '.', used: Char = '#'): Grid<Char> {
+    val minX = 0
+    val maxX = locations.maxOf { it.x }
+    val minY = 0
+    val maxY = locations.maxOf { it.y }
+    val grid = (minY..maxY).map { y ->
+        (minX..maxX).map { x ->
+            if(locations.contains(Coordinate(x, y))) '#'
+            else '.'
+        }
+    }
+    return Grid(grid)
+}
+
 sealed interface IGrid<T, C: Coord> {
     fun <R: Comparable<R>> maxOf(predicate: Grid<T>.(C) -> R): R
     fun <RESULT> map(transform: (T) -> RESULT): IGrid<RESULT, C>

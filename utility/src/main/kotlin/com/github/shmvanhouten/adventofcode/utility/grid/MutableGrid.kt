@@ -30,6 +30,16 @@ class MutableGrid<T>(
         return MutableGrid(mutableGrid) // reset width and height
     }
 
+    fun matchingCoordinatesTo(coordinates: List<Coordinate>, goal: T) {
+        coordinates.forEach { c -> this.set(c, goal) }
+    }
+
+    fun allMatchingTo(target: T, matches: (T) -> Boolean) {
+        this.forEachIndexed { coord, element ->
+            if(matches(element)) this[coord] = target
+        }
+    }
+
     companion object {
         fun <T> mutableGridOf(grid: List<List<T>>): MutableGrid<T> {
             return MutableGrid(grid.map { it.toMutableList() }.toMutableList())
