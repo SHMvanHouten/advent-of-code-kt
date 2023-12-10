@@ -170,6 +170,7 @@ data class Coordinate(val x: Int, val y: Int): Coord {
     fun atDepth(z: Int): Coordinate3d {
         return Coordinate3d(x, y, z)
     }
+
 }
 
 fun Int.negate(): Int {

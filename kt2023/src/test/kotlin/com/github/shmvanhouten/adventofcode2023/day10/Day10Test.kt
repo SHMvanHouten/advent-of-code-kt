@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isGreaterThan
 import strikt.assertions.isLessThan
 import strikt.assertions.isNotEqualTo
 
@@ -105,9 +106,7 @@ class Day10Test {
         @Test
         internal fun `part 2`() {
             expectThat(countEnclosedTiles(charGrid(input)))
-                .isLessThan(616) // probably less than 612
-                .isNotEqualTo(59)
-                .isEqualTo(1)
+                .isEqualTo(363)
         }
     }
 
