@@ -74,16 +74,16 @@ sealed class Hand(input: String) : Comparable<Hand> {
         val cardCounts = calculateCardCounts(hand)
         when {
             cardCounts.size == 1 -> FIVE_OF_A_KIND
-            cardCounts.any { it == 4 } -> FOUR_OF_A_KIND
-            cardCounts.any { it == 3 } && cardCounts.any { it == 2 } -> FULL_HOUSE
-            cardCounts.any { it == 3 } -> THREE_OF_A_KIND
+            4 in cardCounts -> FOUR_OF_A_KIND
+            3 in cardCounts && 2 in cardCounts -> FULL_HOUSE
+            3 in cardCounts -> THREE_OF_A_KIND
             cardCounts.count { it == 2 } == 2 -> TWO_PAIR
-            cardCounts.any { it == 2 } -> ONE_PAIR
+            2 in cardCounts -> ONE_PAIR
             else -> HIGH_CARD
         }
     }
 
-    internal fun groupCardsByCardType(hand: String) = hand.groupBy { it }.mapValues { it.value.size }
+    internal fun groupCardsByCardType(hand: String) = hand.groupingBy { it }.eachCount()
     internal fun Char.compareCardTo(otherCard: Char): Int = this.rank().compareTo(otherCard.rank())
 
     private fun compareHandTo(thisHand: String, otherHand: String): Int {
