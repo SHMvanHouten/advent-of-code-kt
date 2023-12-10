@@ -11,15 +11,18 @@ internal fun printGrid(grid: Grid<Tile>) {
         when (it.identification) {
             TileIdentification.UNIDENTIFIED -> it.tile.toString()
             TileIdentification.PIPE -> "$blue${replace(it.tile)}$resetToBlack"
-            TileIdentification.LEFT_OF_PIPE -> "$yellow█$resetToBlack"
-            TileIdentification.RIGHT_OF_PIPE -> "$red█$resetToBlack"
+            TileIdentification.LEFT_OF_PIPE -> "$yellow${replace(it.tile)}$resetToBlack"
+            TileIdentification.RIGHT_OF_PIPE -> "$red${replace(it.tile)}$resetToBlack"
         }
     })
 }
 
 private fun replace(c: Char) = when(c) {
-    '7' -> '˥'
-    'J' -> '˩'
-    'F' -> 'Γ'
+    '7' -> '┓'
+    'J' -> '┛'
+    'F' -> '┏'
+    'L' -> '┗'
+    '|' -> '┃'
+    '-' -> '━'
     else -> c
 }
