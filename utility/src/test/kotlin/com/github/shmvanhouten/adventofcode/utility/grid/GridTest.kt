@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expect
 import strikt.api.expectThat
+import strikt.assertions.count
+import strikt.assertions.doesNotContain
 import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
 
@@ -175,6 +177,21 @@ class GridTest {
             .isEqualTo(listOf(2, 5))
         expectThat(windows.last())
             .isEqualTo(listOf(12, 15))
+    }
+
+    @Test
+    fun `perimeter returns all chars on the outside`() {
+        val grid = charGrid("""
+            #########
+            #.......#
+            #.......#
+            #.......#
+            #########
+        """.trimIndent())
+        val perimiter = grid.perimiter().toList()
+        expectThat(perimiter).hasSize(2 * (9 + 5 - 2))
+        expectThat(perimiter).doesNotContain('.')
+        expectThat(perimiter.count { it == '#' }).isEqualTo(24)
     }
 
     @Nested

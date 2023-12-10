@@ -1,15 +1,11 @@
 package com.github.shmvanhouten.adventofcode2023.day10
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction
 import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import strikt.assertions.isGreaterThan
-import strikt.assertions.isLessThan
-import strikt.assertions.isNotEqualTo
 
 class Day10Test {
 
@@ -27,7 +23,7 @@ class Day10Test {
                 .....
             """.trimIndent()
             val grid = charGrid(example)
-            expectThat(farthestAwayFromStart(grid, Direction.EAST)).isEqualTo(4)
+            expectThat(farthestAwayFromStart(grid)).isEqualTo(4)
         }
 
         @Test
@@ -40,7 +36,7 @@ class Day10Test {
                 LJ.LJ
             """.trimIndent()
             val grid = charGrid(example)
-            expectThat(farthestAwayFromStart(grid, Direction.EAST)).isEqualTo(8)
+            expectThat(farthestAwayFromStart(grid)).isEqualTo(8)
         }
 
         @Test
@@ -66,7 +62,7 @@ class Day10Test {
                 .L--J.L--J.
                 ...........
             """.trimIndent()
-            expectThat(countEnclosedTiles(charGrid(input), Direction.EAST)).isEqualTo(4)
+            expectThat(countEnclosedTiles(charGrid(input))).isEqualTo(4)
         }
 
         @Test
@@ -83,7 +79,7 @@ class Day10Test {
                 ....FJL-7.||.||||...
                 ....L---J.LJ.LJLJ...
             """.trimIndent()
-            expectThat(countEnclosedTiles(charGrid(input), Direction.EAST)).isEqualTo(8)
+            expectThat(countEnclosedTiles(charGrid(input))).isEqualTo(8)
         }
 
         @Test
@@ -100,7 +96,7 @@ class Day10Test {
                 L.L7LFJ|||||FJL7||LJ
                 L7JLJL-JLJLJL--JLJ.L
             """.trimIndent()
-            expectThat(countEnclosedTiles(charGrid(input), Direction.SOUTH)).isEqualTo(10)
+            expectThat(countEnclosedTiles(charGrid(input))).isEqualTo(10)
         }
 
         @Test

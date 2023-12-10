@@ -34,6 +34,14 @@ data class Coordinate(val x: Int, val y: Int): Coord {
         )
     }
 
+    fun getSurroundingManhattanWithDirection(): Set<Pair<Coordinate, Direction>> {
+        return setOf(
+            this.move(Direction.NORTH) to Direction.NORTH,
+            this.move(Direction.EAST) to Direction.EAST,
+            this.move(Direction.SOUTH) to Direction.SOUTH,
+            this.move(Direction.WEST) to Direction.WEST
+        )
+    }
 
     fun getNeighbour(directionPointed: Direction): Coordinate {
         return when (directionPointed) {

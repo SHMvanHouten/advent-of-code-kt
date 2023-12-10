@@ -73,6 +73,8 @@ open class Grid3d<T>(
         return this[coord.z][coord.on2dPlane]
     }
 
+    override fun perimiter(): Sequence<T> = TODO()
+
     operator fun get(x: Int, y: Int, z: Int): T {
         return get(Coordinate3d(x, y, z))
     }

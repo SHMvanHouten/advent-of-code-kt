@@ -76,6 +76,7 @@ sealed interface IGrid<T, C: Coord> {
     fun sumOfIndexed(function: (C, T) -> Long): Long
     fun withIndex(): IGrid<CoordinateIndexedValue<T, C>, C>
     fun surroundWith(element: T): IGrid<T, C>
+    fun perimiter(): Sequence<T>
 }
 
 open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
@@ -133,6 +134,17 @@ open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
 
     override operator fun get(coord: Coordinate): T {
         return grid[coord.y][coord.x]
+    }
+
+    override fun perimiter(): Sequence<T> {
+        return sequence<T> {
+            yieldAll(grid.first())
+            grid.drop(1).take(grid.size - 2).forEach {
+                yield(it.first())
+                yield(it.last())
+            }
+            yieldAll(grid.last())
+        }
     }
 
     operator fun get(x: Int, y: Int): T {
