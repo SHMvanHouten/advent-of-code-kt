@@ -79,7 +79,7 @@ sealed interface IGrid<T, C: Coord> {
     fun perimiter(): Sequence<T>
 }
 
-open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
+open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
 
     constructor(input: String, mappingOperation: (String) -> List<T>) : this(input.lines()
         .map(mappingOperation)
@@ -162,6 +162,55 @@ open class Grid<T> (internal val grid: List<List<T>>) : IGrid<T, Coordinate> {
 
     fun getColumn(x: Int): List<T> {
         return (0 until height).map { y -> this[x, y] }
+    }
+
+    fun rows(): List<List<T>> {
+        return grid;
+    }
+
+    fun columns(): List<List<T>> {
+        return (0 until width).map { x ->
+            (0 until height).map { y ->
+                this[x, y]
+            }
+        }
+    }
+
+    fun insertRowsAt(ys: List<Int>): Grid<T> {
+        val result = mutableListOf<List<T>>()
+        rows().forEachIndexed { y, row ->
+            if(ys.contains(y)) result += row
+            result += row
+        }
+        return Grid(result.toList())
+    }
+
+    fun insertColumsAt(xs: List<Int>): Grid<T> {
+        val result = mutableListOf<List<T>>()
+        columns().forEachIndexed{x, column ->
+            if(xs.contains(x)) result += column
+            result += column
+        }
+        return Grid(Grid(result).columns())
+    }
+
+
+    fun insertRowsIf(match: (List<T>) -> Boolean): Grid<T> {
+        val result = mutableListOf<List<T>>()
+        rows().forEachIndexed { y, row ->
+            if(match(row)) result += row
+            result += row
+        }
+        return Grid(result.toList())
+    }
+
+    fun insertColumsif(match: (List<T>) -> Boolean): Grid<T> {
+        val result = mutableListOf<List<T>>()
+        columns().forEachIndexed{x, column ->
+            if(match(column)) result += column
+            result += column
+        }
+        return Grid(Grid(result).columns())
     }
 
     override fun hasElementAt(coord: Coordinate): Boolean {
