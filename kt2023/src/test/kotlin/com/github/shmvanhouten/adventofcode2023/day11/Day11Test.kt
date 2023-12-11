@@ -45,18 +45,18 @@ class Day11Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
+        internal fun `example 2`() {
             val universe = boolGridFromPicture(example, '#')
 
-            expectThat(universe.countPathsBetweenAllGalaxies(9)).isEqualTo(1030)
-            expectThat(universe.countPathsBetweenAllGalaxies(99)).isEqualTo(8410)
+            expectThat(universe.countPathsBetweenAllGalaxies(10)).isEqualTo(1030)
+            expectThat(universe.countPathsBetweenAllGalaxies(100)).isEqualTo(8410)
         }
 
         @Test
         internal fun `part 2`() {
             val universe = boolGridFromPicture(input, '#')
 
-            expectThat(universe.countPathsBetweenAllGalaxies(1000000 - 1)).isEqualTo(685038186836)
+            expectThat(universe.countPathsBetweenAllGalaxies(1000000 )).isEqualTo(685038186836)
         }
     }
 

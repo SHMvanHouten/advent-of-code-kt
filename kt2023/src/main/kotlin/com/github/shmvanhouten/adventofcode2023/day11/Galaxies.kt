@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2023.day11
 
+import com.github.shmvanhouten.adventofcode.utility.collectors.splitIntoTwo
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 
@@ -7,27 +8,25 @@ fun Grid<Boolean>.expand(): Grid<Boolean> {
     return this.insertRowsIf { it.none { it } }.insertColumsif { it.none { it } }
 }
 
-fun Grid<Boolean>.countPathsBetweenAllGalaxies(expansion: Long = 1): Long {
-    val (emptyXs, emptyYs) = this.listEmptyColumnsAndRows()
+fun Grid<Boolean>.countPathsBetweenAllGalaxies(emptySpaceLength: Long = 2): Long {
+    val emptyLines = this.listEmptyColumnsAndRows()
     val galaxies = coordinatesMatching { it }
     return generateSequence(galaxies) { it }
         .mapIndexed { index, coordinates -> coordinates.subList(index, coordinates.size) }
         .takeWhile { it.size > 1 }
-        .sumOf { coordinates ->
-            val first = coordinates.first()
-            coordinates.subList(1, coordinates.size)
-            .sumOf {
-                val distance =
-                    first.distanceFrom(it).toLong() +
-                            (countEmptyColumnsAndRowsBetween(first, it, emptyXs, emptyYs) * expansion)
-                distance
+        .map { it.splitIntoTwo(1).mapFirst {it.first()} }
+        .sumOf { (location, others) ->
+            others.sumOf { otherLocation ->
+                location.distanceFrom(otherLocation) + emptyLines.countEmptyLinesBetween(location, otherLocation) * (emptySpaceLength - 1)
             }
         }
 }
 
-fun countEmptyColumnsAndRowsBetween(one: Coordinate, other: Coordinate, emptyXs: List<Int>, emptyYs: List<Int>): Int {
-    val expandedColumns = (minOf(one.x, other.x)).until(maxOf(one.x, other.x)).count { emptyXs.contains(it) }
-    val expandedRows = (minOf(one.y, other.y)).until(maxOf(one.y, other.y)).count { emptyYs.contains(it) }
+private fun <A, B, R> Pair<A, B>.mapFirst(transform: (A) -> R): Pair<R, B> = transform(first) to second
+
+fun Pair<List<Int>, List<Int>>.countEmptyLinesBetween(one: Coordinate, other: Coordinate): Int {
+    val expandedColumns = (minOf(one.x, other.x)).until(maxOf(one.x, other.x)).count { this.first.contains(it) }
+    val expandedRows = (minOf(one.y, other.y)).until(maxOf(one.y, other.y)).count { this.second.contains(it) }
     return expandedColumns + expandedRows
 }
 
