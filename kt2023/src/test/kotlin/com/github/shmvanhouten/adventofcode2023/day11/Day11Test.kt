@@ -9,10 +9,7 @@ import strikt.assertions.isEqualTo
 
 class Day11Test {
 
-    @Nested
-    inner class Part1 {
-
-        val example = """
+    val example = """
             ...#......
             .......#..
             #.........
@@ -24,20 +21,23 @@ class Day11Test {
             .......#..
             #...#.....
         """.trimIndent()
+
+
+    @Nested
+    inner class Part1 {
         @Test
-        internal fun `fixme`() {
+        internal fun `example 1`() {
             val universe = boolGridFromPicture(example, '#')
             val expandedUniverse = universe.expand()
-//            println(expandedUniverse.map { if (it) '#' else '.' })
-            expectThat(expandedUniverse.countPathsBetweenAllGalaxies()).isEqualTo(374)
+            println(expandedUniverse.map { if (it) '#' else '.' })
+
+            expectThat(universe.countPathsBetweenAllGalaxies()).isEqualTo(374)
         }
 
         @Test
         internal fun `part 1`() {
             val universe = boolGridFromPicture(input, '#')
-            val expandedUniverse = universe.expand()
-//            println(expandedUniverse.map { if (it) '#' else '.' })
-            expectThat(expandedUniverse.countPathsBetweenAllGalaxies()).isEqualTo(9556896)
+            expectThat(universe.countPathsBetweenAllGalaxies()).isEqualTo(9556896)
         }
     }
 
@@ -46,12 +46,17 @@ class Day11Test {
 
         @Test
         internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+            val universe = boolGridFromPicture(example, '#')
+
+            expectThat(universe.countPathsBetweenAllGalaxies(9)).isEqualTo(1030)
+            expectThat(universe.countPathsBetweenAllGalaxies(99)).isEqualTo(8410)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            val universe = boolGridFromPicture(input, '#')
+
+            expectThat(universe.countPathsBetweenAllGalaxies(1000000 - 1)).isEqualTo(685038186836)
         }
     }
 
