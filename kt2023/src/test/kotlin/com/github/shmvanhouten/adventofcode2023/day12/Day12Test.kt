@@ -59,7 +59,7 @@ class Day12Test {
         internal fun `part 1`() {
             expectThat(input.lines().sumOf { possibleArrangements(it) })
                 .isLessThan(7960)
-                .isEqualTo(1)
+                .isEqualTo(7460)
         }
     }
 
