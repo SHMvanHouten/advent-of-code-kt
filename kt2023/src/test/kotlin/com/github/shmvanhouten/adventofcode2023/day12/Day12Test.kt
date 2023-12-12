@@ -9,10 +9,7 @@ import strikt.assertions.isLessThan
 
 class Day12Test {
 
-    @Nested
-    inner class Part1 {
-
-        val example = """
+    val example = """
             ???.### 1,1,3
             .??..??...?##. 1,1,3
             ?#?#?#?#?#?#?#? 1,3,1,6
@@ -20,6 +17,10 @@ class Day12Test {
             ????.######..#####. 1,6,5
             ?###???????? 3,2,1
         """.trimIndent()
+
+
+    @Nested
+    inner class Part1 {
 
         @Test
         internal fun `# 1 can be arranged 1 way`() {
@@ -58,8 +59,25 @@ class Day12Test {
         @Test
         internal fun `part 1`() {
             expectThat(input.lines().sumOf { possibleArrangements(it) })
-                .isLessThan(7960)
                 .isEqualTo(7460)
+        }
+
+        @Test
+        fun `count 22`() {
+            expectThat(possibleArrangements("????.????. 1,1"))
+                .isEqualTo(22)
+        }
+
+        @Test
+        fun `count 2212`() {
+            expectThat(possibleArrangements("????.????.?????.????. 1,1,1,1"))
+                .isEqualTo(1205)
+        }
+
+        @Test
+        fun name() {
+            expectThat(possibleArrangements("????.????.?????.????.?????.????. 1,1,1,1,1,1"))
+                .isEqualTo(75715)
         }
     }
 
@@ -67,13 +85,17 @@ class Day12Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 1`() {
+            expectThat(example.lines()
+                .asSequence()
+                .sumOf { possibleArrangements(it, 5) })
+                .isEqualTo(525152)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(input.lines().sumOf { possibleArrangements(it, 5) })
+                .isEqualTo(1)
         }
     }
 

@@ -7,48 +7,64 @@ fun possibleArrangements(line: String): Int {
     val records = _records.split(',').map { it.toInt() }
 
     val permute = springs.permute(records)
-    return permute.size
+    println("$springs, $records:    count: ${permute.count()}")
+    return permute.count()
 }
 
-private fun String.permute(records: List<Int>, processedString: String = ""): List<String> {
+fun possibleArrangements(line: String, times: Int): Long {
+    val (_springs, _records) = line.splitIntoTwo(" ")
+    val records = sequence { while (true) yield(_records) }
+        .take(times)
+        .joinToString(",").split(',').map { it.toInt() }
+
+    val springs = sequence { while (true) yield(_springs) }
+        .take(times)
+        .joinToString("?")
+
+    println(springs)
+    println(records)
+    return springs.permute(records).count().toLong().also { println(it) }
+}
+
+
+private tailrec fun String.permute(records: List<Int>, processedString: String = "", processedRecords: String = ""): Sequence<String> {
     if(records.isEmpty()) {
-        if(this.contains('#')) return emptyList()
-        return listOf(processedString + this.replace('?', '.'))
+        if(this.contains('#')) return emptySequence()
+        return sequenceOf(processedString + this.replace('?', '.'))
     }
     if(this.isEmpty()) {
         if(records.size == 1 && records.first() == processedString.reversed().takeWhile { it == '#' }.count()) {
-            return listOf(processedString + this)
-        } else return emptyList()
+            return sequenceOf(processedString + this)
+        } else return emptySequence()
     }
     val springCountAtEnd = processedString.reversed().takeWhile { it == '#' }.count()
 
-    if(records.first() - springCountAtEnd > this.length) return emptyList()
+    if(records.first() - springCountAtEnd > this.length) return emptySequence()
 
     val firstChar = this.first()
     if(firstChar == '.') {
         if(processedString.isEmpty() || processedString.last() == '.') {
             return this.substring(1).permute(records, processedString + '.')
         } else if(springCountAtEnd == records.first()) {
-            return this.substring(1).permute(records.tail(), processedString + '.')
-        } else return emptyList()
+            return this.substring(1).permute(records.tail(), processedString + '.', processedRecords + records.first())
+        } else return emptySequence()
     }
 
     if(firstChar == '#') {
         if(springCountAtEnd == records.first()) {
-            return emptyList()
+            return emptySequence()
         }
         return this.substring(1).permute(records, processedString + '#')
     }
 
-    return if(processedString.isEmpty()) {
+    if(processedString.isEmpty()) {
         return this.substring(1).permute(records, "#") + this.substring(1).permute(records, ".")
     } else if(processedString.last() == '.') {
-        this.substring(1).permute(records, processedString + '#') + this.substring(1).permute(records, processedString + '.')
+        return this.substring(1).permute(records, processedString + '#') + this.substring(1).permute(records, processedString + '.')
     } else if(springCountAtEnd == records.first()){
-        this.substring(1).permute(records.tail(), processedString + '.')
-    } else {
-        this.substring(1).permute(records, processedString + '#')
+        return this.substring(1).permute(records.tail(), processedString + '.', processedRecords + records.first())
     }
+    return this.substring(1).permute(records, processedString + '#')
 
 }
 
