@@ -2,13 +2,13 @@ package com.github.shmvanhouten.adventofcode2023.day12
 
 import com.github.shmvanhouten.adventofcode.utility.strings.splitIntoTwo
 
-fun possibleArrangements(line: String): Int {
+fun possibleArrangements(line: String): Long {
     val (springs, _records) = line.splitIntoTwo(" ")
     val records = _records.split(',').map { it.toInt() }
 
-    val permute = springs.permute(records)
-    println("$springs, $records:    count: ${permute.count()}")
-    return permute.count()
+    val permute = permute(springs, records)
+    println("$springs, $records:    count: ${permute}")
+    return permute
 }
 
 fun possibleArrangements(line: String, times: Int): Long {
@@ -21,51 +21,67 @@ fun possibleArrangements(line: String, times: Int): Long {
         .take(times)
         .joinToString("?")
 
-    println(springs)
-    println(records)
-    return springs.permute(records).count().toLong().also { println(it) }
+    return permute(springs, records).also { println(it) }
 }
 
-
-private tailrec fun String.permute(records: List<Int>, processedString: String = "", processedRecords: String = ""): Sequence<String> {
-    if(records.isEmpty()) {
-        if(this.contains('#')) return emptySequence()
-        return sequenceOf(processedString + this.replace('?', '.'))
-    }
-    if(this.isEmpty()) {
-        if(records.size == 1 && records.first() == processedString.reversed().takeWhile { it == '#' }.count()) {
-            return sequenceOf(processedString + this)
-        } else return emptySequence()
-    }
-    val springCountAtEnd = processedString.reversed().takeWhile { it == '#' }.count()
-
-    if(records.first() - springCountAtEnd > this.length) return emptySequence()
-
-    val firstChar = this.first()
-    if(firstChar == '.') {
-        if(processedString.isEmpty() || processedString.last() == '.') {
-            return this.substring(1).permute(records, processedString + '.')
-        } else if(springCountAtEnd == records.first()) {
-            return this.substring(1).permute(records.tail(), processedString + '.', processedRecords + records.first())
-        } else return emptySequence()
-    }
-
-    if(firstChar == '#') {
-        if(springCountAtEnd == records.first()) {
-            return emptySequence()
+private fun permute(string: String, _records: List<Int>): Long {
+    val states = mutableListOf<State>(State(string, _records))
+    var count = 0L
+    while (states.isNotEmpty()) {
+        val (remaining, records, processedString, processedRecords) = states.removeLast()
+        if(records.isEmpty()) {
+            if(remaining.contains('#')) continue
+            count++
+            continue
         }
-        return this.substring(1).permute(records, processedString + '#')
+        if(remaining.isEmpty()) {
+            if(records.size == 1 && records.first() == processedString.reversed().takeWhile { it == '#' }.count()) {
+                count++
+            }
+            continue
+        }
+        val springCountAtEnd = processedString.reversed().takeWhile { it == '#' }.count()
+
+        if(records.first() - springCountAtEnd > remaining.length) continue
+
+        val firstChar = remaining.first()
+        if(firstChar == '.') {
+            if(processedString.isEmpty() || processedString.last() == '.') {
+                states += State(remaining.substring(1), records, processedString + '.')
+                continue
+            } else if(springCountAtEnd == records.first()) {
+                states += State(remaining.substring(1), records.tail(), processedString + '.', processedRecords + records.first())
+                continue
+            } else continue
+        }
+
+        if(firstChar == '#') {
+            if(springCountAtEnd == records.first()) {
+                continue
+            }
+            states += State(remaining.substring(1), records, processedString + '#')
+            continue
+        }
+
+        if(processedString.isEmpty()) {
+            states += State(remaining.substring(1), records, "#")
+            states += State(remaining.substring(1), records, ".")
+            continue
+        } else if(processedString.last() == '.') {
+            states += State(remaining.substring(1), records, processedString + '#')
+            states += State(remaining.substring(1), records, processedString + '.')
+            continue
+        } else if(springCountAtEnd == records.first()){
+            states += State(remaining.substring(1), records.tail(), processedString + '.', processedRecords + records.first())
+            continue
+        }
+        states += State(remaining.substring(1), records, processedString + '#')
+        continue
     }
 
-    if(processedString.isEmpty()) {
-        return this.substring(1).permute(records, "#") + this.substring(1).permute(records, ".")
-    } else if(processedString.last() == '.') {
-        return this.substring(1).permute(records, processedString + '#') + this.substring(1).permute(records, processedString + '.')
-    } else if(springCountAtEnd == records.first()){
-        return this.substring(1).permute(records.tail(), processedString + '.', processedRecords + records.first())
-    }
-    return this.substring(1).permute(records, processedString + '#')
-
+    return count
 }
+
+data class State(val remaining: String, val records: List<Int>, val processedString: String = "", val processedRecords: String = "")
 
 fun <T> List<T>.tail() = this.subList(1, this.size)
