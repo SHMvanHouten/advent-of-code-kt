@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isLessThan
 
 class Day13Test {
 
@@ -69,13 +70,59 @@ class Day13Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `fixing the smudge, the mirror is suddenly at row 3`() {
+            val input = """
+                #.##..##.
+                ..#.##.#.
+                ##......#
+                ##......#
+                ..#.##.#.
+                ..##..##.
+                #.#.##.#.
+            """.trimIndent()
+            expectThat(getCleanReflectionValue(input)).isEqualTo(300)
+        }
+
+        @Test
+        fun `fixing the smudge, the mirror is suddenly at row 1`() {
+            val example = """
+                #...##..#
+                #....#..#
+                ..##..###
+                #####.##.
+                #####.##.
+                ..##..###
+                #....#..#
+            """.trimIndent()
+            expectThat(getCleanReflectionValue(example)).isEqualTo(100)
+        }
+
+        @Test
+        fun `example 2`() {
+            expectThat(example.blocks().sumOf { getCleanReflectionValue(it) })
+                .isEqualTo(400)
+        }
+
+        @Test
+        fun `this grid should work`() {
+            val example = """
+                .##......
+                ###.####.
+                ##.##...#
+                ..###..##
+                ...##..##
+                #..#.##.#
+                ..#......
+                .##..##..
+                .##..##..
+            """.trimIndent()
+            expectThat(getCleanReflectionValue(example)).isEqualTo(6)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(input.blocks().sumOf { getCleanReflectionValue(it) })
+                .isEqualTo(31974)
         }
     }
 
