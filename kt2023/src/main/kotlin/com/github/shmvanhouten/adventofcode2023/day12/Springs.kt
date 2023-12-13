@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2023.day12
 
+import com.github.shmvanhouten.adventofcode.utility.collectors.product
 import com.github.shmvanhouten.adventofcode.utility.strings.splitIntoTwo
 
 fun possibleArrangements(line: String): Long {
@@ -8,41 +9,56 @@ fun possibleArrangements(line: String): Long {
 
     val permute = permute(springs, records)
     println("$springs, $records:    count: ${permute}")
-    return permute
+    return getSuccessfulArrangements(permute)
+}
+
+fun getSuccessfulArrangements(permute: Map<Pair<List<Int>, Char>, Long>): Long {
+    return permute.entries.filter { it.key.first.isEmpty() }.sumOf { it.value }
 }
 
 fun possibleArrangements(line: String, times: Int): Long {
-    val (_springs, _records) = line.splitIntoTwo(" ")
+    val (springs, _records) = line.splitIntoTwo(" ")
     val records = sequence { while (true) yield(_records) }
         .take(times)
         .joinToString(",").split(',').map { it.toInt() }
 
-    val springs = sequence { while (true) yield(_springs) }
-        .take(times)
-        .joinToString("?")
+    var remainingRecordsWithPermutations = permute(springs, records)
+    repeat(times - 1) {
+        val flatMap = remainingRecordsWithPermutations.entries.map {
+            permute(it.key.second + springs, it.key.first, it.value)
+        }.flatMap { it.asSequence() }
+        remainingRecordsWithPermutations = flatMap
+            .groupBy( { it.key }, {it.value} )
+            .mapValues { it.value.sum() }
+    }
 
-    return permute(springs, records).also { println(it) }
+    return getSuccessfulArrangements(remainingRecordsWithPermutations)
 }
 
-private fun permute(string: String, _records: List<Int>): Long {
+private fun permute(string: String, _records: List<Int>, multiplier: Long = 1): Map<Pair<List<Int>, Char>, Long> {
     val states = mutableListOf<State>(State(string, _records))
-    var count = 0L
+    var counts = mutableMapOf<Pair<List<Int>, Char>, Long>()
     while (states.isNotEmpty()) {
         val (remaining, records, processedString, processedRecords) = states.removeLast()
         if(records.isEmpty()) {
-            if(remaining.contains('#')) continue
-            count++
-            continue
-        }
-        if(remaining.isEmpty()) {
-            if(records.size == 1 && records.first() == processedString.reversed().takeWhile { it == '#' }.count()) {
-                count++
+            if(!remaining.contains('#')) {
+                counts.merge(emptyList<Int>() to '?', 1 * multiplier, Long::plus)
             }
             continue
         }
-        val springCountAtEnd = processedString.reversed().takeWhile { it == '#' }.count()
-
-        if(records.first() - springCountAtEnd > remaining.length) continue
+        if(remaining.isEmpty()) {
+            val springCountAtEnd = getSpringCountAtEnd(processedString)
+            if(records.first() == springCountAtEnd) {
+                counts.merge(records.tail() to '.', 1 * multiplier, Long::plus)
+            } else if(processedString.last() == '#' && records.first() > springCountAtEnd) {
+                counts.merge((listOf(records.first() - springCountAtEnd) + records.tail()) to '#', 1 * multiplier, Long::plus)
+            } else if(records.first() < springCountAtEnd) error("at the end spring count should not be greater than record")
+            else if(processedString.last() == '.') {
+                counts.merge(records to '?', 1 * multiplier, Long::plus)
+            }
+            continue
+        }
+        val springCountAtEnd = getSpringCountAtEnd(processedString)
 
         val firstChar = remaining.first()
         if(firstChar == '.') {
@@ -79,8 +95,10 @@ private fun permute(string: String, _records: List<Int>): Long {
         continue
     }
 
-    return count
+    return counts
 }
+
+private fun getSpringCountAtEnd(processedString: String) = processedString.reversed().takeWhile { it == '#' }.count()
 
 data class State(val remaining: String, val records: List<Int>, val processedString: String = "", val processedRecords: String = "")
 
