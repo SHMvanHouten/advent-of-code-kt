@@ -4,23 +4,21 @@ import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import com.github.shmvanhouten.adventofcode.utility.grid.MutableGrid
+import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 
 fun spinSmart(_grid: Grid<Char>, times: Int): Grid<Char> {
     val grid = _grid.toMutableGrid()
     val previousStates = mutableListOf<String>()
-    var i = 0
     var currentState = ""
     while (!previousStates.contains(currentState)) {
         previousStates += currentState
         spin(grid)
         currentState = grid.toString()
-        i++
     }
     val firstInstanceOfRepeating = previousStates.indexOf(currentState)
-    val repeatCycle = i - firstInstanceOfRepeating
+    val repeatCycle = previousStates.size - firstInstanceOfRepeating
     val spinsLeft = (times - firstInstanceOfRepeating) % repeatCycle
-    spin(grid, spinsLeft)
-    return grid
+    return charGrid(previousStates[firstInstanceOfRepeating + spinsLeft])
 }
 
 fun spin(grid: MutableGrid<Char>, times: Int = 1): Grid<Char> {

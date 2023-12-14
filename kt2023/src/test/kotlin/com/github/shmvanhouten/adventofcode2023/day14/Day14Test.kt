@@ -185,8 +185,7 @@ class Day14Test {
         internal fun `part 2`() {
             val grid = charGrid(input)
             expectThat(spinSmart(grid, 1000000000).calculateLoad())
-                .isLessThan(96064)
-                .isEqualTo(1)
+                .isEqualTo(95736)
         }
     }
 
