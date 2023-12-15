@@ -10,6 +10,8 @@ fun possibleArrangements(line: String): Long {
     return getSuccessfulArrangements(permute)
 }
 
+private val previousResults = mutableMapOf<State, Map<Arrangement, Long>>()
+
 fun possibleArrangements(line: String, times: Int): Long {
     val (springs, _records) = line.splitIntoTwo(" ")
     val records = List(times) { _records }
@@ -20,7 +22,9 @@ fun possibleArrangements(line: String, times: Int): Long {
     repeat(times - 1) {
         remainingRecordsWithPermutations = remainingRecordsWithPermutations.map { (arrangement, timesReturned) ->
             val state = State(arrangement.nextChar + springs, arrangement.remainingRecords)
-            permute(state, timesReturned)
+            val result = previousResults.getOrPut(state) { permute(state) }
+
+            result.mapValues { it.value * timesReturned }
         }
             .flatMap { it.asSequence() }
             .groupBy({ it.key }, { it.value })
@@ -34,7 +38,7 @@ private fun getSuccessfulArrangements(permute: Map<Arrangement, Long>): Long {
     return permute.entries.filter { it.key.remainingRecords.isEmpty() }.sumOf { it.value }
 }
 
-private fun permute(startingState: State, multiplier: Long = 1): Map<Arrangement, Long> {
+private fun permute(startingState: State): Map<Arrangement, Long> {
     val states = mutableListOf(startingState)
     val counts = mutableMapOf<Arrangement, Long>()
     while (states.isNotEmpty()) {
@@ -43,13 +47,13 @@ private fun permute(startingState: State, multiplier: Long = 1): Map<Arrangement
 
         if (records.isEmpty()) {
             if (!remaining.contains('#')) {
-                counts.merge(Arrangement('?'), multiplier, Long::plus)
+                counts.incForKey(Arrangement('?'))
             }
         }
 
         else if(state.tailSpringCount == records.first()) {
             if(remaining.isEmpty()) {
-                counts.merge(Arrangement('.', records.tail()), multiplier, Long::plus)
+                counts.incForKey(Arrangement('.', records.tail()))
             } else if(remaining.first() != '#') {
                 states += state.processRecord()
             }
@@ -57,14 +61,13 @@ private fun permute(startingState: State, multiplier: Long = 1): Map<Arrangement
 
         else if (remaining.isEmpty()) {
             if (processedString.last() == '#' && records.first() > state.tailSpringCount) {
-                counts.merge(
-                    Arrangement('#', listOf(records.first() - state.tailSpringCount) + records.tail()),
-                    multiplier,
-                    Long::plus
-                )
+                counts.incForKey(Arrangement(
+                    nextChar = '#',
+                    remainingRecords = listOf(records.first() - state.tailSpringCount) + records.tail()
+                ))
             }
             else if (processedString.last() == '.') {
-                counts.merge(Arrangement('?', records), multiplier, Long::plus)
+                counts.incForKey(Arrangement('?', records))
             }
         }
 
@@ -109,3 +112,5 @@ data class State(
 }
 
 fun <T> List<T>.tail() = this.subList(1, this.size)
+
+private fun MutableMap<Arrangement, Long>.incForKey(key: Arrangement) = merge(key, 1, Long::plus)
