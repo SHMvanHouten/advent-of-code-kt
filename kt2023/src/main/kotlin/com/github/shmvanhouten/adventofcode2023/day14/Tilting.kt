@@ -6,6 +6,14 @@ import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import com.github.shmvanhouten.adventofcode.utility.grid.MutableGrid
 import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 
+
+fun tiltNorth(grid: Grid<Char>): Grid<Char> = grid.toMutableGrid().tiltNorth()
+
+fun Grid<Char>.calculateLoad(): Int {
+    return this.withIndex().filter { it.item == 'O' }
+        .sumOf { this.height - it.location.y }
+}
+
 fun spinSmart(_grid: Grid<Char>, times: Int): Grid<Char> {
     val grid = _grid.toMutableGrid()
     val previousStates = mutableListOf<String>()
@@ -31,8 +39,6 @@ fun spin(grid: MutableGrid<Char>, times: Int = 1): Grid<Char> {
     }
     return grid
 }
-
-fun tiltNorth(grid: Grid<Char>): Grid<Char> = grid.toMutableGrid().tiltNorth()
 
 fun MutableGrid<Char>.tiltNorth(): Grid<Char> {
     columns().forEachIndexed { x, column ->
@@ -95,9 +101,4 @@ fun MutableGrid<Char>.tiltEast(): Grid<Char> {
         }
     }
     return this
-}
-
-fun Grid<Char>.calculateLoad(): Int {
-    return this.withIndex().filter { it.item == 'O' }
-        .sumOf { this.height - it.location.y }
 }
