@@ -1,6 +1,10 @@
 package com.github.shmvanhouten.adventofcode2023.day12
 
 import com.github.shmvanhouten.adventofcode.utility.strings.splitIntoTwo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.invoke
 
 fun possibleArrangements(line: String): Long {
     val (springs, _records) = line.splitIntoTwo(" ")
@@ -10,14 +14,20 @@ fun possibleArrangements(line: String): Long {
     return getSuccessfulArrangements(permute)
 }
 
-private val previousResults = mutableMapOf<State, Map<Arrangement, Long>>()
+suspend fun sumPossibleArrangements(input: String): Long = Dispatchers.Default {
+        input.lines().map {
+            async {
+                possibleArrangements(it, 5)
+            }
+        }.awaitAll().sum()
+    }
 
 fun possibleArrangements(line: String, times: Int): Long {
     val (springs, _records) = line.splitIntoTwo(" ")
     val records = List(times) { _records }
-        .flatMap { it.split(',') }
-        .map { it.toInt() }
+        .flatMap { it.split(',') }.map { it.toInt() }
 
+    val previousResults: MutableMap<State, Map<Arrangement, Long>> = mutableMapOf()
     var remainingRecordsWithPermutations = permute(State(springs, records))
     repeat(times - 1) {
         remainingRecordsWithPermutations = remainingRecordsWithPermutations.map { (arrangement, timesReturned) ->

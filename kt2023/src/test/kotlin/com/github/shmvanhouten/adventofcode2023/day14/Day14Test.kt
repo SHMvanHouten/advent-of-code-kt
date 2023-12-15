@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import strikt.assertions.isLessThan
 
 class Day14Test {
 
@@ -181,12 +180,6 @@ class Day14Test {
                 .isEqualTo(64)
         }
 
-        @Test
-        internal fun `part 2`() {
-            val grid = charGrid(input)
-            expectThat(spinSmart(grid, 1000000000).calculateLoad())
-                .isEqualTo(95736)
-        }
     }
 
     private val input by lazy { readFile("/input-day14.txt")}

@@ -1,12 +1,12 @@
 package com.github.shmvanhouten.adventofcode2023.day12
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import strikt.assertions.isLessThan
 
 class Day12Test {
 
@@ -130,10 +130,20 @@ class Day12Test {
         }
 
         @Test
+        @Disabled("5 times faster with Coroutines")
         internal fun `part 2`() {
-            expectThat(input.lines().sumOf { possibleArrangements(it, 5) })
+            val sum = input.lines().sumOf { possibleArrangements(it, 5) }
+            expectThat(sum)
                 .isEqualTo(6720660274964)
         }
+
+        @Test
+        internal fun `part 2 coroutines`(): Unit = runBlocking {
+            val sum = sumPossibleArrangements(input)
+            expectThat(sum)
+                .isEqualTo(6720660274964)
+        }
+
     }
 
     private val input by lazy { readFile("/input-day12.txt")}
