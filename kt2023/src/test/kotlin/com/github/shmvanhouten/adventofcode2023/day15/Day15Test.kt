@@ -12,27 +12,37 @@ class Day15Test {
     inner class Part1 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
-        }
-
-        @Test
         internal fun `part 1`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(input.split(',')
+                .sumOf { hash(it) }.also { println(it) }).isEqualTo(510013)
         }
     }
 
     @Nested
     inner class Part2 {
 
+        val example = "rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7"
+
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun example() {
+            val result = putInBoxes(example.split(','))
+                .mapIndexed { boxIndex, box ->
+                    box.mapIndexed { slot, step ->
+                        (boxIndex + 1) * (slot + 1) * step.focalLength
+                    }.sum()
+                }.sum()
+            expectThat(result).isEqualTo(145)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            val result = putInBoxes(input.split(','))
+                .mapIndexed { boxIndex, box ->
+                    box.mapIndexed { slot, step ->
+                        (boxIndex + 1) * (slot + 1) * step.focalLength
+                    }.sum()
+                }.sum()
+            expectThat(result).isEqualTo(268497)
         }
     }
 
