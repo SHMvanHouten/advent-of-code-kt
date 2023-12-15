@@ -26,22 +26,15 @@ class Day15Test {
         @Test
         internal fun example() {
             val result = putInBoxes(example.split(','))
-                .mapIndexed { boxIndex, box ->
-                    box.mapIndexed { slot, step ->
-                        (boxIndex + 1) * (slot + 1) * step.focalLength
-                    }.sum()
-                }.sum()
+                .let(::calculateFocalPower)
+
             expectThat(result).isEqualTo(145)
         }
 
         @Test
         internal fun `part 2`() {
             val result = putInBoxes(input.split(','))
-                .mapIndexed { boxIndex, box ->
-                    box.mapIndexed { slot, step ->
-                        (boxIndex + 1) * (slot + 1) * step.focalLength
-                    }.sum()
-                }.sum()
+                .let(::calculateFocalPower)
             expectThat(result).isEqualTo(268497)
         }
     }
