@@ -130,7 +130,7 @@ class Day12Test {
         }
 
         @Test
-        @Disabled("5 times faster with Coroutines")
+        @Disabled("faster with Coroutines")
         internal fun `part 2`() {
             val sum = input.lines().sumOf { possibleArrangements(it, 5) }
             expectThat(sum)

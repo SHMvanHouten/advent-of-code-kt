@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2023.day12
 
+import com.github.shmvanhouten.adventofcode.utility.pairs.mapSecond
 import com.github.shmvanhouten.adventofcode.utility.strings.splitIntoTwo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -7,8 +8,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.invoke
 
 fun possibleArrangements(line: String): Long {
-    val (springs, _records) = line.splitIntoTwo(" ")
-    val records = _records.split(',').map { it.toInt() }
+    val (springs, records) = line.splitIntoTwo(" ").mapSecond { it.split(',').map(String::toInt) }
 
     val permute = permute(State(springs, records))
     return getSuccessfulArrangements(permute)
@@ -23,25 +23,20 @@ suspend fun sumPossibleArrangements(input: String): Long = Dispatchers.Default {
     }
 
 fun possibleArrangements(line: String, times: Int): Long {
-    val (springs, _records) = line.splitIntoTwo(" ")
-    val records = List(times) { _records }
-        .flatMap { it.split(',') }.map { it.toInt() }
+    val (springs, records) = line.splitIntoTwo(" ")
+        .mapSecond { r -> List(times) {r}.flatMap { it.split(',') }.map(String::toInt) }
 
-    val previousResults: MutableMap<State, Map<Arrangement, Long>> = mutableMapOf()
-    var remainingRecordsWithPermutations = permute(State(springs, records))
-    repeat(times - 1) {
-        remainingRecordsWithPermutations = remainingRecordsWithPermutations.map { (arrangement, timesReturned) ->
+    val (arrangements, _) = generateSequence(
+        permute(State(springs, records)) to mutableMapOf<State, Map<Arrangement, Long>>()
+    ) { (arrangements, memory) ->
+        arrangements.map { (arrangement, timesReturned) ->
             val state = State(arrangement.nextChar + springs, arrangement.remainingRecords)
-            val result = previousResults.getOrPut(state) { permute(state) }
+            memory.getOrPut(state) { permute(state) }
+                .mapValues { it.value * timesReturned }
+        }.combine() to memory
+    }.take(times).last()
 
-            result.mapValues { it.value * timesReturned }
-        }
-            .flatMap { it.asSequence() }
-            .groupBy({ it.key }, { it.value })
-            .mapValues { it.value.sum() }
-    }
-
-    return getSuccessfulArrangements(remainingRecordsWithPermutations)
+    return getSuccessfulArrangements(arrangements)
 }
 
 private fun getSuccessfulArrangements(permute: Map<Arrangement, Long>): Long {
@@ -99,6 +94,11 @@ private fun permute(startingState: State): Map<Arrangement, Long> {
 
     return counts
 }
+
+private fun List<Map<Arrangement, Long>>.combine(): Map<Arrangement, Long> = this
+    .flatMap { it.asSequence() }
+    .groupBy({ it.key }, { it.value })
+    .mapValues { it.value.sum() }
 
 private fun String.canBeFollowedByAnyChar(): Boolean = this.isEmpty() || this.last() == '.'
 

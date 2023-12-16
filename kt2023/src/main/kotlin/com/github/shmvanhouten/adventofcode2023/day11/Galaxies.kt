@@ -3,6 +3,7 @@ package com.github.shmvanhouten.adventofcode2023.day11
 import com.github.shmvanhouten.adventofcode.utility.collectors.splitIntoTwo
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
+import com.github.shmvanhouten.adventofcode.utility.pairs.mapFirst
 
 fun Grid<Boolean>.expand(): Grid<Boolean> {
     return this.insertRowsIf { it.none { it } }.insertColumsif { it.none { it } }
@@ -21,8 +22,6 @@ fun Grid<Boolean>.countPathsBetweenAllGalaxies(emptySpaceLength: Long = 2): Long
             }
         }
 }
-
-private fun <A, B, R> Pair<A, B>.mapFirst(transform: (A) -> R): Pair<R, B> = transform(first) to second
 
 fun Pair<List<Int>, List<Int>>.countEmptyLinesBetween(one: Coordinate, other: Coordinate): Int {
     val expandedColumns = (minOf(one.x, other.x)).until(maxOf(one.x, other.x)).count { this.first.contains(it) }
