@@ -5,17 +5,17 @@ import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction.*
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import com.github.shmvanhouten.adventofcode.utility.grid.MutableGrid
-import com.github.shmvanhouten.adventofcode.utility.grid.charGridFromPicture
+import com.github.shmvanhouten.adventofcode.utility.grid.gridTo
 
 fun Grid<Tile>.countEnergizedTiles() = this.count { it.energizedDirections.isNotEmpty() }
 
 fun energizeFromTopLeftGoingRight(input: String): Grid<Tile> {
-    val grid = charGridFromPicture(input).map { Tile(it) }.toMutableGrid()
+    val grid = gridTo(input, ::Tile).toMutableGrid()
     return beam(Coordinate(0, 0), EAST, grid)
 }
 
 fun findMostEnergized(input: String): Int {
-    val grid = charGridFromPicture(input).map { Tile(it) }
+    val grid = gridTo(input, ::Tile)
     return collectStartingPositions(grid)
         .map { (loc, dir) -> beam(loc, dir, grid.toMutableGrid()) }
         .maxOf { it.countEnergizedTiles() }

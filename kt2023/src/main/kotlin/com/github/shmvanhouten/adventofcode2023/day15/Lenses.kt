@@ -1,5 +1,8 @@
 package com.github.shmvanhouten.adventofcode2023.day15
 
+import com.github.shmvanhouten.adventofcode2023.day15.Action.REMOVE
+import com.github.shmvanhouten.adventofcode2023.day15.Action.REPLACE
+
 fun hash(input: String): Int {
     return input.map { it.code }
         .fold(0){acc, n ->
@@ -9,12 +12,12 @@ fun hash(input: String): Int {
 
 fun putInBoxes(instructions: List<String>): List<List<Lens>> {
     val result = MutableList(256){ mutableListOf<Lens>() }
-    instructions.map { toStep(it) }
+    instructions.map(::Step)
         .forEach { step ->
             val (label, instruction, hash) = step
             when (instruction) {
-                Action.REMOVE -> result[hash].removeIf { it.label == label }
-                Action.REPLACE -> result[hash].replaceOrAppend(step.asLens())
+                REMOVE -> result[hash].removeIf { it.label == label }
+                REPLACE -> result[hash].replaceOrAppend(step.asLens())
             }
         }
     return result
@@ -32,21 +35,16 @@ private fun MutableList<Lens>.replaceOrAppend(lens: Lens) {
     else this[labelIndex] = lens
 }
 
-private fun toStep(it: String): Step {
-    val label = it.takeWhile { it.isLetter() }
-    return Step(
-        label,
-        toAction(it.first { !it.isLetter() }),
-        hash(label),
-        it
-    )
-}
-
 private fun toAction(action: Char): Action =
-    if(action == '-') Action.REMOVE
-    else Action.REPLACE
+    if(action == '-') REMOVE
+    else REPLACE
 
-data class Step(val label: String, val type: Action, val hash: Int, val asString: String) {
+data class Step(val label: String, val type: Action, val hash: Int = hash(label), private val asString: String) {
+    constructor(input: String): this(
+        input.takeWhile { it.isLetter() },
+        toAction(input.first{!it.isLetter()}),
+        asString = input
+    )
     fun asLens(): Lens = Lens(label, asString.last().digitToInt())
 
     override fun toString(): String {

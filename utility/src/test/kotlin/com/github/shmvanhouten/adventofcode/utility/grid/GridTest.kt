@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expect
 import strikt.api.expectThat
-import strikt.assertions.count
 import strikt.assertions.doesNotContain
 import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
@@ -188,7 +187,7 @@ class GridTest {
             #.......#
             #########
         """.trimIndent())
-        val perimiter = grid.perimiter().toList()
+        val perimiter = grid.perimeter().toList()
         expectThat(perimiter).hasSize(2 * (9 + 5 - 2))
         expectThat(perimiter).doesNotContain('.')
         expectThat(perimiter.count { it == '#' }).isEqualTo(24)

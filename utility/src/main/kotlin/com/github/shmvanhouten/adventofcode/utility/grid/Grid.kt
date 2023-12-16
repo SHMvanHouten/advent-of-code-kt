@@ -5,11 +5,15 @@ import com.github.shmvanhouten.adventofcode.utility.coordinate.Coord
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.grid.MutableGrid.Companion.mutableGridOf
 
-fun intGridFromSpaceDelimitedString(input: String) = Grid(input) { row -> row.split(' ').map { it.toInt() } }
+fun charGrid(input: String) = Grid(input, String::toList)
+fun <T> gridTo(input: String, transform: (Char) -> T): Grid<T> = Grid(input.lines()
+    .map { row -> row.map { transform(it) } })
+
+fun intGridFromSpaceDelimitedString(input: String) = Grid(input) { row: String -> row.split(' ').map { it.toInt() } }
 fun intGridWithCoordinate(input: String) = Grid(input) { y, row ->
     row.mapIndexed { x, item -> Coordinate(x, y) to item.digitToInt() }
 }
-fun charGrid(input: String) = Grid(input, String::toList)
+
 fun boolGridFromCoordinates(input: String): Grid<Boolean> {
     val locations = input.lines().map { Coordinate.parseFrom(it) }.toSet()
     if(locations.any { it.y < 0 || it.x< 0 } ) throw Error("grid with negative coordinates not implemented")
@@ -23,14 +27,7 @@ fun boolGridFromCoordinates(input: String): Grid<Boolean> {
     return Grid(grid)
 }
 
-fun boolGridFromPicture(input: String, targetChar: Char): Grid<Boolean> {
-    val grid = input.lines().map { it.map { c -> c == targetChar }}
-    return Grid(grid)
-}
-
-fun charGridFromPicture(input: String): Grid<Char> {
-    return Grid(input.lines().map { it.toCharArray().toList() })
-}
+fun boolGridFromPicture(input: String, targetChar: Char): Grid<Boolean> = gridTo(input) {it == targetChar}
 
 fun coordGrid(start: Coordinate, endExclusive: Coordinate): Grid<Coordinate> {
     return Grid(
@@ -76,14 +73,13 @@ sealed interface IGrid<T, C: Coord> {
     fun sumOfIndexed(function: (C, T) -> Long): Long
     fun withIndex(): IGrid<CoordinateIndexedValue<T, C>, C>
     fun surroundWith(element: T): IGrid<T, C>
-    fun perimiter(): Sequence<T>
+    fun perimeter(): Sequence<T>
 }
 
 open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
 
     constructor(input: String, mappingOperation: (String) -> List<T>) : this(input.lines()
-        .map(mappingOperation)
-        .map { it })
+        .map(mappingOperation))
 
     constructor(input: String, mappingOperation: (index: Int, String) -> List<T>): this(input.lines()
         .mapIndexed (mappingOperation)
@@ -136,7 +132,7 @@ open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
         return grid[coord.y][coord.x]
     }
 
-    override fun perimiter(): Sequence<T> {
+    override fun perimeter(): Sequence<T> {
         return sequence<T> {
             yieldAll(grid.first())
             grid.drop(1).take(grid.size - 2).forEach {

@@ -8,7 +8,7 @@ open class Grid3d<T>(
 
     companion object {
         fun from3dPicture(`2dGrids`: List<String>): Grid3d<Char> {
-            return Grid3d(`2dGrids`.map { charGridFromPicture(it) })
+            return Grid3d(`2dGrids`.map { charGrid(it) })
         }
 
         fun <T> fromCoordinates(input: String, matching: T, missing: T): Grid3d<T> {
@@ -73,7 +73,15 @@ open class Grid3d<T>(
         return this[coord.z][coord.on2dPlane]
     }
 
-    override fun perimiter(): Sequence<T> = TODO()
+    override fun perimeter(): Sequence<T> {
+        return sequence<T> {
+            yieldAll(grid.first().flatten())
+            grid.drop(1).take(grid.size - 2).forEach {
+                yieldAll(it.perimeter())
+            }
+            yieldAll(grid.last().flatten())
+        }
+    }
 
     operator fun get(x: Int, y: Int, z: Int): T {
         return get(Coordinate3d(x, y, z))

@@ -58,7 +58,7 @@ private fun pickFirstDirection(startingPoint: Coordinate, grid: Grid<Char>): Dir
     }.second
 
 private fun findWhichSideOfLoopIsInside(grid: Grid<Tile>): TileIdentification =
-    grid.perimiter()
+    grid.perimeter()
         .first { it.isOutsideOfPipe() }
         .identification.opposite()
 
