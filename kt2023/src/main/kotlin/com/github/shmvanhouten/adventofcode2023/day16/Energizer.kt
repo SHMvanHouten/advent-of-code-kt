@@ -16,83 +16,76 @@ fun energizeFromTopLeftGoingRight(input: String): Grid<Tile> {
 
 fun findMostEnergized(input: String): Int {
     val grid = charGridFromPicture(input).map { Tile(it) }
-    val energizedGrids = 0.until(grid.width).map { beam(Coordinate(it, 0), SOUTH, grid.toMutableGrid()) } +
-    0.until(grid.width).map { beam(Coordinate(it, grid.height - 1), NORTH, grid.toMutableGrid()) } +
-    0.until(grid.height).map { beam(Coordinate(0, it), EAST, grid.toMutableGrid()) } +
-    0.until(grid.height).map { beam(Coordinate(grid.width - 1, it), WEST, grid.toMutableGrid()) }
-    return energizedGrids.maxOf { it.countEnergizedTiles() }
+    return collectStartingPositions(grid)
+        .map { (loc, dir) -> beam(loc, dir, grid.toMutableGrid()) }
+        .maxOf { it.countEnergizedTiles() }
 }
 
-fun beam(starting: Coordinate, startingDirection: Direction, grid: MutableGrid<Tile>): Grid<Tile> {
+private fun beam(starting: Coordinate, startingDirection: Direction, grid: MutableGrid<Tile>): Grid<Tile> {
     val beamLocations = mutableListOf(starting to startingDirection)
 
     while (beamLocations.isNotEmpty()) {
         val (location, direction) = beamLocations.removeLast()
-        if(!grid.contains(location)) continue
-        val tile = grid[location]
-        if(tile.energizedDirections.contains(direction)) continue
-
-        grid[location] = tile.copy(energizedDirections = tile.energizedDirections + direction)
-
-        when(tile.tileType) {
-            '.' -> beamLocations += location.move(direction) to direction
-            '/', '\\' -> beamLocations += mirror(tile.tileType, location, direction)
-            '|', '-' -> beamLocations += goThroughSplitter(tile.tileType, location, direction)
-            else -> error("unknown tileType ${tile.tileType}")
+        val tile = grid.getOrNull(location)
+        if (tile != null && !tile.energizedDirections.contains(direction)) {
+            grid[location] = tile.copy(energizedDirections = tile.energizedDirections + direction)
+            beamLocations += getNewDirections(tile.tileType, direction)
+                .map { location.move(it) to it }
         }
     }
     return grid
 }
 
-fun goThroughSplitter(tileType: Char, location: Coordinate, direction: Direction): List<Pair<Coordinate, Direction>> {
-    val newDirections = when(tileType) {
+private fun getNewDirections(tileType: Char, direction: Direction): List<Direction> =
+    when (tileType) {
+        '.' -> listOf(direction)
+        '/' -> {
+            when (direction) {
+                NORTH, SOUTH -> listOf(direction.turnRight())
+                EAST, WEST -> listOf(direction.turnLeft())
+            }
+        }
+
+        '\\' -> {
+            when (direction) {
+                NORTH, SOUTH -> listOf(direction.turnLeft())
+                EAST, WEST -> listOf(direction.turnRight())
+            }
+        }
+
         '|' -> {
-            when(direction) {
+            when (direction) {
                 NORTH, SOUTH -> listOf(direction)
                 EAST, WEST -> listOf(direction.turnLeft(), direction.turnRight())
             }
         }
+
         '-' -> {
-            when(direction) {
+            when (direction) {
                 NORTH, SOUTH -> listOf(direction.turnLeft(), direction.turnRight())
                 EAST, WEST -> listOf(direction)
             }
         }
-        else -> error("unknown splitter $tileType")
-    }
-    return newDirections.map { location.move(it) to it }
-}
 
-fun mirror(tileType: Char, location: Coordinate, direction: Direction): Pair<Coordinate, Direction> {
-    val newDirection = when(tileType) {
-        '/' -> {
-            when(direction) {
-                NORTH, SOUTH -> direction.turnRight()
-                EAST, WEST -> direction.turnLeft()
-            }
-        }
-        '\\' -> {
-            when(direction) {
-                NORTH, SOUTH -> direction.turnLeft()
-                EAST, WEST -> direction.turnRight()
-            }
-        }
-        else -> error("unknown mirror $tileType")
+        else -> error("unknown tileType $tileType")
     }
-    return location.move(newDirection) to newDirection
-}
+
+private fun collectStartingPositions(grid: Grid<Tile>) =
+    0.until(grid.width).map { Coordinate(it, 0) to SOUTH } +
+            0.until(grid.width).map { Coordinate(it, grid.height - 1) to NORTH } +
+            0.until(grid.height).map { Coordinate(0, it) to EAST } +
+            0.until(grid.height).map { Coordinate(grid.width - 1, it) to WEST }
 
 data class Tile(val tileType: Char, val energizedDirections: List<Direction> = emptyList()) {
-    fun toChar(): Char {
-        return if(tileType != '.' || energizedDirections.isEmpty()) tileType
-        else if(energizedDirections.size > 1) energizedDirections.size.digitToChar()
+    fun toChar(): Char =
+        if (tileType != '.' || energizedDirections.isEmpty()) tileType
+        else if (energizedDirections.size > 1) energizedDirections.size.digitToChar()
         else {
-            when(energizedDirections.first()) {
+            when (energizedDirections.first()) {
                 NORTH -> '^'
                 EAST -> '>'
                 SOUTH -> 'v'
                 WEST -> '<'
             }
         }
-    }
 }
