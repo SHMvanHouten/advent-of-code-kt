@@ -115,6 +115,10 @@ open class Grid3d<T>(
         return grid.firstNotNullOfOrNull { g2d -> g2d.first(condition) }
     }
 
+    override fun first(): T = grid.first().first()
+
+    override fun last(): T = grid.last().last()
+
     override fun filter(condition: (T) -> Boolean): List<T> {
         return grid.flatMap { it.filter(condition) }
     }

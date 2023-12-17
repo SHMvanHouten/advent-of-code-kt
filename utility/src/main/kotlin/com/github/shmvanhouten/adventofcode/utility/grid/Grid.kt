@@ -66,6 +66,8 @@ sealed interface IGrid<T, C: Coord> {
     fun replaceElements(orig: T, replacement: T): Grid<T>
     fun count(condition: (T) -> Boolean): Int
     fun first(condition: (T) -> Boolean): T?
+    fun first(): T
+    fun last(): T
     fun filter(condition: (T) -> Boolean): List<T>
     fun any(condition: (T) -> Boolean): Boolean
     fun coordinatesMatching(condition: (T) -> Boolean): List<C>
@@ -231,6 +233,8 @@ open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
         }.sum()
     }
 
+
+
     override fun first(condition: (T) -> Boolean): T? {
         this.grid.forEachIndexed { y, row ->
             row.forEachIndexed { x, t ->
@@ -239,6 +243,9 @@ open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
         }
         return null
     }
+
+    override fun first(): T = grid.first().first()
+    override fun last(): T = grid.last().last()
 
     override fun coordinatesMatching(condition: (T) -> Boolean): List<Coordinate> {
         return this.grid.flatMapIndexed { y, row ->
@@ -362,6 +369,7 @@ open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
         return grid.flatten()
     }
 
+    val bottomRightLocation: Coordinate by lazy { Coordinate(width - 1, height - 1) }
     val width: Int by lazy { grid.first().size }
 
     val height: Int by lazy { grid.size }
