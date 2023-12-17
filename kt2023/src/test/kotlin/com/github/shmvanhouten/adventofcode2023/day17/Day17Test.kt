@@ -9,10 +9,7 @@ import strikt.assertions.isEqualTo
 
 class Day17Test {
 
-    @Nested
-    inner class Part1 {
-
-        private val example = """
+    private val example = """
             2413432311323
             3215453535623
             3255245654254
@@ -28,16 +25,20 @@ class Day17Test {
             4322674655533
         """.trimIndent()
 
+
+    @Nested
+    inner class Part1 {
+
         @Test
         internal fun `example 1`() {
             val grid = gridTo(example) { it.digitToInt() }
-            expectThat(grid.bestPath()).isEqualTo(102)
+            expectThat(grid.coolestPath()).isEqualTo(102)
         }
 
         @Test
         internal fun `part 1`() {
             val grid = gridTo(input) { it.digitToInt() }
-            expectThat(grid.bestPath()).isEqualTo(1099)
+            expectThat(grid.coolestPath()).isEqualTo(1099)
         }
     }
 
@@ -45,13 +46,15 @@ class Day17Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 2`() {
+            val grid = gridTo(example) { it.digitToInt() }
+            expectThat(grid.ultraPath()).isEqualTo(94)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            val grid = gridTo(input) { it.digitToInt() }
+            expectThat(grid.ultraPath()).isEqualTo(1266)
         }
     }
 
