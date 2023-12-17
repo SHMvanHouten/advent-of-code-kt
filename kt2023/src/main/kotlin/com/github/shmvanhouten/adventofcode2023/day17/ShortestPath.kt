@@ -5,13 +5,13 @@ import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction.EAST
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction.SOUTH
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
-import com.github.shmvanhouten.adventofcode.utility.pairs.nullablePair
-import com.github.shmvanhouten.adventofcode.utility.priorityQueues.priorityQueueOf
 import java.util.*
 
 fun Grid<Int>.coolestPath(): Int = bestPath { this.take(3) }
 
 fun Grid<Int>.ultraPath(): Int = bestPath { drop(3).take(7) }
+
+private val allowedTurns = Direction.entries.associateWith { listOf(it.turnLeft(), it.turnRight()) }
 
 private fun Grid<Int>.bestPath(takeRule: (Sequence<Pair<Coordinate, Int>>).() -> Sequence<Pair<Coordinate, Int>>): Int {
     val quickestPathTo = mutableMapOf(Coordinate(0, 0) to mutableMapOf<Direction, Int>())
@@ -24,13 +24,13 @@ private fun Grid<Int>.bestPath(takeRule: (Sequence<Pair<Coordinate, Int>>).() ->
             .forEach { dir ->
                 quickestPathTo[loc]!![dir] = incurredHeat
 
-                generateSequence(nullablePair(loc.move(dir), incurredHeat + this[loc])) { (l, heat) ->
-                    nullablePair(l.move(dir), this.getOrNull(l)?.plus(heat))
+                generateSequence(loc.move(dir) to incurredHeat + this[loc]) { (next, heat) ->
+                    next.move(dir) to this[next] + heat
                 }
                     .takeWhile { this.contains(it.first) }
                     .takeRule()
                     .forEach { (l, heat) ->
-                        unfinishedPaths.add(Path(l, heat, listOf(dir.turnLeft(), dir.turnRight())))
+                        unfinishedPaths.add(Path(l, heat, allowedTurns[dir]!!))
                     }
             }
     }
@@ -38,9 +38,8 @@ private fun Grid<Int>.bestPath(takeRule: (Sequence<Pair<Coordinate, Int>>).() ->
     return quickestPath + this.last() - this.first()
 }
 
-fun priorityQueueOf(path: Path): PriorityQueue<Path> =
-    priorityQueueOf(path) { path1, path2 ->
-        path1.heatIncurred.compareTo(path2.heatIncurred)
-    }
+fun priorityQueueOf(path: Path): PriorityQueue<Path> = PriorityQueue<Path>(listOf(path))
 
-data class Path(val location: Coordinate, val heatIncurred: Int, val allowedDirections: List<Direction>)
+data class Path(val location: Coordinate, val heatIncurred: Int, val allowedDirections: List<Direction>): Comparable<Path> {
+    override fun compareTo(other: Path): Int = this.heatIncurred.compareTo(other.heatIncurred)
+}
