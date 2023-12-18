@@ -58,6 +58,15 @@ class CoordinateProgression(private val start: Coordinate, private val end: Coor
     private fun intRangeIterator(start: Int, end: Int) =
         if (start <= end) start.rangeTo(end).iterator()
         else start.downTo(end).iterator()
+
+    fun abs(): CoordinateProgression {
+        return if(start.x < end.x || start.y < end.y) this
+        else return this.invert()
+    }
+
+    private fun invert(): CoordinateProgression {
+        return CoordinateProgression(this.end, this.start)
+    }
 }
 
 private fun isNotAt45Degrees(start: Coordinate, end: Coordinate): Boolean =
