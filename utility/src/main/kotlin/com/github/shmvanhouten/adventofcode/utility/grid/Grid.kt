@@ -16,7 +16,7 @@ fun intGridWithCoordinate(input: String) = Grid(input) { y, row ->
 
 fun boolGridFromCoordinates(input: String): Grid<Boolean> {
     val locations = input.lines().map { Coordinate.parseFrom(it) }.toSet()
-    if(locations.any { it.y < 0 || it.x< 0 } ) throw Error("grid with negative coordinates not implemented")
+    if(locations.any { it.y < 0 || it.x< 0 } ) error("grid with negative coordinates not implemented")
     val minX = 0
     val maxX = locations.maxOf { it.x }
     val minY = 0
@@ -38,9 +38,9 @@ fun coordGrid(start: Coordinate, endExclusive: Coordinate): Grid<Coordinate> {
 }
 
 fun charGridFromCoordinates(locations: Collection<Coordinate>, unused: Char = '.', used: Char = '#'): Grid<Char> {
-    val minX = 0
+    val minX = locations.minOf { it.x }
     val maxX = locations.maxOf { it.x }
-    val minY = 0
+    val minY = locations.minOf { it.y }
     val maxY = locations.maxOf { it.y }
     val grid = (minY..maxY).map { y ->
         (minX..maxX).map { x ->

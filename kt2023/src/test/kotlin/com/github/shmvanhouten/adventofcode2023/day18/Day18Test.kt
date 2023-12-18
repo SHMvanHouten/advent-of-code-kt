@@ -29,13 +29,187 @@ class Day18Test {
     inner class Part1 {
 
         @Test
+        fun `simple square`() {
+            val example = """
+                R 4
+                D 4
+                L 4
+                U 4
+            """.trimIndent()
+            expectThat(dig(example)).isEqualTo(16)
+        }
+
+        //  #####
+        //  #...#
+        //  #...#
+        //  ##..#
+        //  .####
+        @Test
+        fun `square with a piece missing`() {
+            val example = """
+                R 4
+                D 4
+                L 3
+                U 1
+                L 1
+                U 3
+            """.trimIndent()
+            expectThat(dig(example)).isEqualTo(16 - 1)
+        }
+
+        //  #####
+        //  #...#
+        //  ###.#
+        //  ..#.#
+        //  ..###
+        @Test
+        fun `square with a bigger piece missing`() {
+            val example = """
+                R 4
+                D 4
+                L 2
+                U 2
+                L 2
+                U 2
+            """.trimIndent()
+            expectThat(dig(example)).isEqualTo(16 - 4)
+        }
+
+        //  ###..
+        //  #.#..
+        //  #.###
+        //  #...#
+        //  #####
+        @Test
+        fun `square with a piece missing on the other side`() {
+            val example = """
+                R 2
+                D 2
+                R 2
+                D 2
+                L 4
+                U 4
+            """.trimIndent()
+            expectThat(dig(example)).isEqualTo(16 - 4)
+        }
+
+        //  #####
+        //  #...#
+        //  #.###
+        //  #.#..
+        //  ###..
+        @Test
+        fun `square with a piece missing on the bottom right`() {
+            val example = """
+                R 2
+                D 2
+                R 2
+                D 2
+                L 4
+                U 4
+            """.trimIndent()
+            expectThat(dig(example)).isEqualTo(16 - 4)
+        }
+
+        @Test
+        fun `square with a piece missing on the top left`() {
+            val example = """
+                L 3
+                D 3
+                L 3
+                D 3
+                R 6
+                U 6
+            """.trimIndent()
+            println(toGrid(example))
+            expectThat(dig(example)).isEqualTo(36 - 9)
+        }
+
+        @Test
+        fun `polygon with an attachment`() {
+            val example = """
+                R 4
+                D 4
+                L 5
+                U 1
+                R 1
+                U 3
+            """.trimIndent()
+            expectThat(dig(example)).isEqualTo(16 + 1)
+        }
+
+        @Test
+        fun `polygon with a negative attachment`() {
+            val example = """
+                R 4
+                U 4
+                L 5
+                D 1
+                R 1
+                D 3
+            """.trimIndent()
+            expectThat(dig(example)).isEqualTo(16 + 1)
+        }
+
+        //  ########
+        //  #......#..
+        //  #.####.#
+        //  #.#..#.#..
+        //  #.#..#.#..
+        //  #.#..###..
+        //  #.#.......
+        //  #.######..
+        //  #......#..
+        //  ########..
+        @Test
+        fun `polygon with a bigger attachment`() {
+            val example = """
+                R 7
+                D 5
+                L 2
+                U 3
+                L 3
+                D 5
+                R 5
+                D 2
+                L 7
+                U 8
+            """.trimIndent()
+
+            println(toGrid(example))
+            expectThat(dig(example)).isEqualTo((8 * 10) - 11)
+        }
+
+        //  ########
+        //  #......#..
+        //  #.####.#
+        //  #.#..#.#..
+        //  ###..###..
+        @Test
+        fun `another one`() {
+            val example = """
+                R 7
+                D 4
+                L 2
+                U 2
+                L 3
+                D 2
+                L 2
+                U 4
+            """.trimIndent()
+            println(toGrid(example))
+            expectThat(dig(example)).isEqualTo((8 * 5) - 4)
+        }
+
+        @Test
         internal fun `example 1`() {
-            expectThat(dig(example.lines())).isEqualTo(62)
+            expectThat(dig(example)).isEqualTo(62)
         }
 
         @Test
         internal fun `part 1`() {
-            expectThat(dig(input.lines())).isEqualTo(68115)
+            println(toGrid(input))
+            expectThat(dig(input)).isEqualTo(68115)
         }
     }
 
@@ -43,13 +217,15 @@ class Day18Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 2`() {
+            expectThat(digHex(example)).isEqualTo(952408144115)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            // ballpark 71262483231402
+
+            expectThat(digHex(input)).isEqualTo(1)
         }
     }
 
