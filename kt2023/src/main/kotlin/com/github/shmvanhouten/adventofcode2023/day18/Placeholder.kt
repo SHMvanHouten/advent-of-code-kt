@@ -57,17 +57,19 @@ fun dig(instructions: String): Long = dig(instructions.lines().map { toInstructi
 fun dig(instructions: List<Instruction>): Long {
     val trench = getTrench(instructions)
 
-    return shoeLace(trench.map{it.first})
-//    val trenches = trench.map { it.first }
-//    return calculateSurfaceArea(instructions)
+    val trenches = trench.map { it.first }
+    return shoeLace(trenches) + (trenches.circumference() / 2)
+}
+
+private fun List<Coordinate>.circumference(): Long {
+    return this.windowed(2) {(first, second) -> (first..second).count().toLong() - 1}.sum() + 2 // +2 for start and end
 }
 
 fun shoeLace(trenches: List<Coordinate>): Long {
     val (first, second) = trenches.windowed(2)
         .map { (first, second) -> first.x.toLong() * second.y.toLong() to first.y.toLong() * second.x.toLong() }.unzip()
     val abs = abs(first.sum() - second.sum())
-    check(abs % 2L == 0L)
-    return abs /2
+    return abs / 2
 }
 
 

@@ -205,7 +205,7 @@ class Day18Test {
                 R 1
                 D 3
             """.trimIndent()
-            expectThat(dig(example)).isEqualTo(25 + 1)
+            expectThat(dig(example)).isEqualTo(25 + 2)
         }
 
         //  ########
@@ -230,7 +230,7 @@ class Day18Test {
                 R 5
                 D 2
                 L 7
-                U 8
+                U 9
             """.trimIndent()
 
             println(toGrid(example))
@@ -262,8 +262,7 @@ class Day18Test {
         @Test
         internal fun `part 2`() {
             // ballpark 71262483231402
-
-            expectThat(digHex(input)).isEqualTo(1)
+            expectThat(digHex(input)).isEqualTo(71262565063800)
         }
     }
 
