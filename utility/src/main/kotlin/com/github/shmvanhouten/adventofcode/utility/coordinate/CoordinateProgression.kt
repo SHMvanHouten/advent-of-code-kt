@@ -2,7 +2,17 @@ package com.github.shmvanhouten.adventofcode.utility.coordinate
 
 import kotlin.math.abs
 
-class CoordinateProgression(private val start: Coordinate, private val end: Coordinate) : Iterable<Coordinate> {
+class CoordinateProgression(val start: Coordinate, val end: Coordinate) : Iterable<Coordinate> {
+
+    val direction: Boolean by lazy {
+        this.isVertical() && this.start.y < this.end.y || this.start.x < end.x
+    }
+    val size by lazy { this.count() }
+
+    val extend: Int.(Int) -> Int by lazy {
+        if(direction) Int::plus
+        else Int::minus
+    }
 
     override fun iterator(): Iterator<Coordinate> {
         return if (start.y == end.y) HorizontalIterator(start.x, end.x, start.y)
@@ -66,6 +76,29 @@ class CoordinateProgression(private val start: Coordinate, private val end: Coor
 
     private fun invert(): CoordinateProgression {
         return CoordinateProgression(this.end, this.start)
+    }
+
+    // only works for horizontal lines
+    fun cutAtX(x: Int): Pair<CoordinateProgression, CoordinateProgression> {
+        return start..Coordinate(x, start.y) to Coordinate(x.extend(1), start.y)..end
+    }
+
+    // only works for horizontal lines
+    fun cutAtY(y: Int): Pair<CoordinateProgression, CoordinateProgression> {
+        return start..Coordinate(start.x, y) to Coordinate(start.x, y.extend(1))..end
+    }
+
+    fun beforeLast(): Coordinate {
+        return this.invert().take(2).last()
+    }
+
+    fun extendBy1(): CoordinateProgression {
+        return if(this.isVertical()) start..(end.copy(y = end.y.extend(1)))
+        else start..(end.copy(end.x.extend(1)))
+    }
+
+    fun tail(): CoordinateProgression {
+        return this.take(2).last()..this.end
     }
 }
 

@@ -36,7 +36,49 @@ class Day18Test {
                 L 4
                 U 4
             """.trimIndent()
-            expectThat(dig(example)).isEqualTo(16)
+            expectThat(dig(example)).isEqualTo(25)
+        }
+
+        //  ..#####
+        //  ..#...#
+        //  ###...#
+        //  #.....#
+        //  #######
+        @Test
+        fun `square with an attachment`() {
+            val example = """
+                R 4
+                D 4
+                L 6
+                U 2
+                R 2
+                U 2
+            """.trimIndent()
+            println(toGrid(example))
+            expectThat(dig(example)).isEqualTo(25 + 6)
+        }
+
+        //  #####..
+        //  #...#..
+        //  #...###
+        //  #.....#
+        //  #.....#
+        //  #...###
+        //  #...#..
+        //  #####..
+        @Test
+        fun `square with an attachment on the right`() {
+            val example = """
+                R 4
+                D 2
+                R 2
+                D 3
+                L 2
+                D 2
+                L 4
+                U 7
+            """.trimIndent()
+            expectThat(dig(example)).isEqualTo(40 + 8)
         }
 
         //  #####
@@ -54,7 +96,7 @@ class Day18Test {
                 L 1
                 U 3
             """.trimIndent()
-            expectThat(dig(example)).isEqualTo(16 - 1)
+            expectThat(dig(example)).isEqualTo(25 - 1)
         }
 
         //  #####
@@ -72,7 +114,7 @@ class Day18Test {
                 L 2
                 U 2
             """.trimIndent()
-            expectThat(dig(example)).isEqualTo(16 - 4)
+            expectThat(dig(example)).isEqualTo(25 - 4)
         }
 
         //  ###..
@@ -90,7 +132,7 @@ class Day18Test {
                 L 4
                 U 4
             """.trimIndent()
-            expectThat(dig(example)).isEqualTo(16 - 4)
+            expectThat(dig(example)).isEqualTo(25 - 4)
         }
 
         //  #####
@@ -108,9 +150,16 @@ class Day18Test {
                 L 4
                 U 4
             """.trimIndent()
-            expectThat(dig(example)).isEqualTo(16 - 4)
+            expectThat(dig(example)).isEqualTo(25 - 4)
         }
 
+        //  ...####
+        //  ...#..#
+        //  ...#..#
+        //  ####..#
+        //  #.....#
+        //  #.....#
+        //  #######
         @Test
         fun `square with a piece missing on the top left`() {
             val example = """
@@ -122,20 +171,28 @@ class Day18Test {
                 U 6
             """.trimIndent()
             println(toGrid(example))
-            expectThat(dig(example)).isEqualTo(36 - 9)
+            expectThat(dig(example)).isEqualTo(49 - 9)
         }
 
+        //  ########
+        //  #......#..
+        //  #.####.#
+        //  #.#..#.#..
+        //  ###..###..
         @Test
-        fun `polygon with an attachment`() {
+        fun `a part taken out`() {
             val example = """
-                R 4
+                R 7
                 D 4
-                L 5
-                U 1
-                R 1
-                U 3
+                L 2
+                U 2
+                L 3
+                D 2
+                L 2
+                U 4
             """.trimIndent()
-            expectThat(dig(example)).isEqualTo(16 + 1)
+            println(toGrid(example))
+            expectThat(dig(example)).isEqualTo((8 * 5) - 4)
         }
 
         @Test
@@ -148,7 +205,7 @@ class Day18Test {
                 R 1
                 D 3
             """.trimIndent()
-            expectThat(dig(example)).isEqualTo(16 + 1)
+            expectThat(dig(example)).isEqualTo(25 + 1)
         }
 
         //  ########
@@ -180,35 +237,16 @@ class Day18Test {
             expectThat(dig(example)).isEqualTo((8 * 10) - 11)
         }
 
-        //  ########
-        //  #......#..
-        //  #.####.#
-        //  #.#..#.#..
-        //  ###..###..
-        @Test
-        fun `another one`() {
-            val example = """
-                R 7
-                D 4
-                L 2
-                U 2
-                L 3
-                D 2
-                L 2
-                U 4
-            """.trimIndent()
-            println(toGrid(example))
-            expectThat(dig(example)).isEqualTo((8 * 5) - 4)
-        }
 
         @Test
         internal fun `example 1`() {
+            println(toGrid(example))
             expectThat(dig(example)).isEqualTo(62)
         }
 
         @Test
         internal fun `part 1`() {
-            println(toGrid(input))
+//            println(toGrid(input))
             expectThat(dig(input)).isEqualTo(68115)
         }
     }
