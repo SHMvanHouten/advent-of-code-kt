@@ -1,6 +1,7 @@
 package com.github.shmvanhouten.adventofcode2023.day19
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
+import com.github.shmvanhouten.adventofcode.utility.strings.blocks
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expect
@@ -117,14 +118,34 @@ class Day19Test {
     @Nested
     inner class Part2 {
 
+        private val exampleWorkFlows = """
+            px{a<2006:qkq,m>2090:A,rfg}
+            pv{a>1716:R,A}
+            lnx{m>1548:A,A}
+            rfg{s<537:gd,x>2440:R,A}
+            qs{s>3448:A,lnx}
+            qkq{x<1416:A,crn}
+            crn{x>2662:A,R}
+            in{s<1351:px,qqz}
+            qqz{s>2770:qs,m<1801:hdj,R}
+            gd{a>3333:R,R}
+            hdj{m>838:A,pv}
+        """.trimIndent().lines().let { toWorkFlows(it) }.associateBy { it.id }.mapValues { it.value.workFlow }
+        // s < 1351 && a >= 2006 && m > 2090 -> accepted (x = 1..4000)
+        //    =  1350 * (4000 - 2006) * (4000 - 2091) * 3999
+        // s < 1351 && a >= 2006 && m <= 2090 && s >= 537 && x <= 2440 -> accepted
+
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 1`() {
+            val ranges = permuteThrough(startingRange(), exampleWorkFlows, exampleWorkFlows["in"]!!)
+            expectThat(ranges.filter { it.accepted!! }.sumOf { it.count() }).isEqualTo(167409079868000)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            val workFlows = toWorkFlows(input.blocks().first().lines()).associateBy { it.id }.mapValues { it.value.workFlow }
+            val ranges = permuteThrough(startingRange(), workFlows, workFlows["in"]!!)
+            expectThat(ranges.filter { it.accepted!! }.sumOf { it.count() }).isEqualTo(122112157518711)
         }
     }
 
