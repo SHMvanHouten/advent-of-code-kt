@@ -9,11 +9,6 @@ class CoordinateProgression(val start: Coordinate, val end: Coordinate) : Iterab
     }
     val size by lazy { this.count() }
 
-    val extend: Int.(Int) -> Int by lazy {
-        if(direction) Int::plus
-        else Int::minus
-    }
-
     override fun iterator(): Iterator<Coordinate> {
         return if (start.y == end.y) HorizontalIterator(start.x, end.x, start.y)
         else if(start.x == end.x) VerticalIterator(start.y, end.y, start.x)
@@ -76,25 +71,6 @@ class CoordinateProgression(val start: Coordinate, val end: Coordinate) : Iterab
 
     private fun invert(): CoordinateProgression {
         return CoordinateProgression(this.end, this.start)
-    }
-
-    // only works for horizontal lines
-    fun cutAtX(x: Int): Pair<CoordinateProgression, CoordinateProgression> {
-        return start..Coordinate(x, start.y) to Coordinate(x.extend(1), start.y)..end
-    }
-
-    // only works for horizontal lines
-    fun cutAtY(y: Int): Pair<CoordinateProgression, CoordinateProgression> {
-        return start..Coordinate(start.x, y) to Coordinate(start.x, y.extend(1))..end
-    }
-
-    fun beforeLast(): Coordinate {
-        return this.invert().take(2).last()
-    }
-
-    fun extendBy1(): CoordinateProgression {
-        return if(this.isVertical()) start..(end.copy(y = end.y.extend(1)))
-        else start..(end.copy(end.x.extend(1)))
     }
 
     fun tail(): CoordinateProgression {

@@ -261,7 +261,6 @@ class Day18Test {
 
         @Test
         internal fun `part 2`() {
-            // ballpark 71262483231402
             expectThat(digHex(input)).isEqualTo(71262565063800)
         }
     }
