@@ -1,8 +1,7 @@
 package com.github.shmvanhouten.adventofcode2023.day20
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import com.github.shmvanhouten.adventofcode.utility.compositenumber.leastCommonMultiple
-import org.junit.jupiter.api.Disabled
+import com.github.shmvanhouten.adventofcode2023.day12.tail
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expect
@@ -119,30 +118,19 @@ class Day20Test {
     inner class Part2 {
 
         @Test
-        fun `in order to hit rx, we must press the button x times`() {
-            val input = """
-                &ql -> rx
-                &fh -> ql
-                &mf -> ql
-                broadcaster ->
-            """.trimIndent()
-        }
-
-        @Test
         fun `turn input into directed graph visualisation`() {
-            val modules = Machine(input).modules
-            val moduleIdsAndType = modules.values.associate { it.id to "${it.id}${it.type}" }
+            val ids = input.lines().map { it.split(" -> ", ", ").map { "\"$it\"" } }
+            val idTranslateTable = ids.map { it.first() }.associateBy { it.filter { it.isLetter() || it == '"' } }
             println("digraph {")
-            modules.values.map { "\"${moduleIdsAndType[it.id]}\" -> ${it.targets.map { "\"" + (moduleIdsAndType[it] ?: it) + "\"" }.joinToString(", ")}" }
-                .onEach(::println)
+            ids.map { """${it.first()} -> ${it.tail().map { idTranslateTable[it]?:it }.joinToString(", ") }""" }.onEach(::println)
             println("}")
             // From command line run:
             // brew install graphviz
-            // dot -Tsvg scratch_116.txt > day20.svg
+            // copy the output
+            // pbPaste | dot -Tsvg > day20.svg
         }
 
         @Test
-        @Disabled("runs very very long, just used for getting the lcms")
         internal fun `part 2`() {
             // 0110 28530946 - 14265473 = 14265473
             // 1100 28937134 - 14468567 = 14468567
@@ -150,12 +138,12 @@ class Day20Test {
             // 0101 43789323 - 14596441 - 14596441 = 14596441
             // 0011 29441266 - 14720633 = 14720633
             // 1001 14930207
-            println(leastCommonMultiple(listOf(14265473, 14930207)))
-            println(leastCommonMultiple(listOf(14468567, 14720633)))
             val machine = Machine(input)
-            for (i in 1..Int.MAX_VALUE) {
-                if(machine.button()) error(i)
+            var result = -1L
+            while (result == -1L) {
+                result = machine.button()
             }
+            expectThat(result).isEqualTo(212986464842911)
         }
     }
 
