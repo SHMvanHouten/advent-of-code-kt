@@ -369,6 +369,13 @@ open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
         return grid.flatten()
     }
 
+    fun middleCoordinate(): Coordinate {
+        if (this.width % 2 == 0 || this.height % 2 == 0) error("Grid does not have a precise middle point")
+        return Coordinate(this.width / 2, this.height / 2)
+    }
+
+    fun isSquare(): Boolean = this.width == this.height
+
     val bottomRightLocation: Coordinate by lazy { Coordinate(width - 1, height - 1) }
     val width: Int by lazy { grid.first().size }
 
@@ -385,3 +392,12 @@ open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
 }
 
 data class CoordinateIndexedValue<T, C: Coord>(val location: C, val item: T)
+
+fun Grid<Char>.toString(special: Collection<Coordinate>, specialChar: Char = 'O'): String {
+    return grid.mapIndexed { y, row ->
+        row.mapIndexed { x, c ->
+            if (special.contains(Coordinate(x, y))) specialChar
+            else c
+        }.joinToString("")
+    }.joinToString("\n")
+}
