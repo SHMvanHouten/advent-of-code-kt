@@ -4,9 +4,12 @@ import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import strikt.api.expectThat
 import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
+import strikt.assertions.isLessThan
 
 class Day21Test {
 
@@ -130,8 +133,9 @@ class Day21Test {
                 .isEqualTo(expected.toLong())
         }
 
-        @Test
-        fun `an example where the middle row and column are clear like in the input 48 times`() {
+        @ParameterizedTest
+        @ValueSource(ints = [50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100])
+        fun `an example where the middle row and column are clear like in the input x times`(value: Int) {
             val map = """
                 _________
                 _##..###_
@@ -143,25 +147,48 @@ class Day21Test {
                 _#......_
                 _________
             """.trimIndent()
-            val biggerMap = map.expand(13)
+            val biggerMap = map.expand(57)
             val grid = charGrid(biggerMap)
 
             val expected = generateSequence(setOf(grid.middleCoordinate())) { steppedOn ->
                 grid.takeStep(steppedOn).first
-            }.drop(48).first()
+            }.drop(value).first()
+                .size
+            expectThat(takeStepsOnInfinitelyRepeating(value, charGrid(map.replace('_', '.'))))
+                .isEqualTo(expected.toLong())
+        }
+
+
+        @Test
+        fun `an example where the middle row and column are clear like in the input 29 times`() {
+            val map = """
+                _________
+                _##..###_
+                _.#....._
+                _#.....#_
+                _......._
+                _##....._
+                _..#...#_
+                _#......_
+                _________
+            """.trimIndent()
+            val biggerMap = map.expand(5)
+            val grid = charGrid(biggerMap)
+
+            val expected = generateSequence(setOf(grid.middleCoordinate())) { steppedOn ->
+                grid.takeStep(steppedOn).first
+            }.drop(15).first()
                 .also { println(printWithCoordinates(grid, it)) }
                 .size
-//                .take(20)
-//                .onEach {
-//                    println(printWithCoordinates(grid, it))
-//                }``````````````````````````
-            expectThat(takeStepsOnInfinitelyRepeating(48, charGrid(map.replace('_', '.'))))
+            expectThat(takeStepsOnInfinitelyRepeating(15, charGrid(map.replace('_', '.'))))
                 .isEqualTo(expected.toLong())
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(takeStepsOnInfinitelyRepeating(26501365, charGrid(input)))
+                .isLessThan(605574542946349)
+                .isEqualTo(1L)
         }
     }
 

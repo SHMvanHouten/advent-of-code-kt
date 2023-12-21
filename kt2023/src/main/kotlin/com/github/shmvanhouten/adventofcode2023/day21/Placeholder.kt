@@ -23,9 +23,9 @@ fun takeStepsOnInfinitelyRepeating(steps: Int, grid: Grid<Char>, startingPositio
     check(grid.isSquare())
 
     val reachesEdgesAfter = grid.width/2 + 1
-    val amountOfStepsIntoPerimiterGrids = (steps - reachesEdgesAfter) % grid.width // + 1 (but first step is already counted)
+    val amountOfStepsIntoPerimiterGrids = (steps - reachesEdgesAfter) % grid.width // + 1 //(but first step is already counted)
 
-    val nrOfFilledGrids = (steps * 2 / grid.width) - 1
+    val nrOfFilledGrids = (steps * 2 / grid.width) - 1L
     val filledOutGridsSameAsMiddle = ((nrOfFilledGrids/2) + 1) + (nrOfFilledGrids/2).downTo(1).sumOf { it * 2 }
     val filledOutGridsDiffFromMiddle = (nrOfFilledGrids/2) + ((nrOfFilledGrids/2) - 1).downTo(1).sumOf { it * 2 }
     var numberSoFar = filledOutGridsSameAsMiddle * numberOfStepsInFilledOutGrid(grid) {(steps + it) % 2 == 0}
@@ -48,7 +48,7 @@ fun takeStepsOnInfinitelyRepeating(steps: Int, grid: Grid<Char>, startingPositio
             grid.takeSteps(grid.width + (amountOfStepsIntoPerimiterGrids / 2) - 1, bottomRight(grid))  //.also {println("coming in from bottom right (TL)") println(printWithCoordinates(grid, it)) }
                     .size
 
-    numberSoFar += diagonalSecondBreachEdges * (nrOfFilledGrids/2) // todo: this is 5 for 48 steps
+    numberSoFar += diagonalSecondBreachEdges * (nrOfFilledGrids/2)
 //
     val diagonalFirstBreachEdges = grid.takeSteps((amountOfStepsIntoPerimiterGrids / 2) - 1, topLeft(grid))  //.also {        println("coming in from topLeft (BR)") println(printWithCoordinates(grid, it)) }
         .size +
@@ -59,7 +59,7 @@ fun takeStepsOnInfinitelyRepeating(steps: Int, grid: Grid<Char>, startingPositio
             grid.takeSteps((amountOfStepsIntoPerimiterGrids/ 2) - 1, bottomRight(grid))  //.also {println("coming in from bottomRight (TL)") println(printWithCoordinates(grid, it)) }
                 .size
 
-    numberSoFar += diagonalFirstBreachEdges * ((nrOfFilledGrids/2) + 1)   // todo: this is 6 for 48 steps
+    numberSoFar += diagonalFirstBreachEdges * ((nrOfFilledGrids/2) + 1)
 
     return numberSoFar
 }
