@@ -83,7 +83,55 @@ class Day21Test {
             //     |
 
         @Test
+        fun `draw me a box of 5`() {
+            val map = """
+                _____
+                _#.#_
+                _..._
+                _#.#_
+                _____
+            """.trimIndent()
+            val biggerMap = map.expand(15)
+            val grid = charGrid(biggerMap)
+
+            val expected = generateSequence(setOf(grid.middleCoordinate())) { steppedOn ->
+                grid.takeStep(steppedOn).first
+            }.drop(30).first()
+                .also { println(printWithCoordinates(grid, it)) }
+                .size
+        }
+
+        @Test
         fun `an example where the middle row and column are clear like in the input`() {
+            val map = """
+                _________
+                _##..###_
+                _.#....._
+                _#.....#_
+                _......._
+                _##....._
+                _..#...#_
+                _#......_
+                _________
+            """.trimIndent()
+            val biggerMap = map.expand(7)
+            val grid = charGrid(biggerMap)
+
+            val expected = generateSequence(setOf(grid.middleCoordinate())) { steppedOn ->
+                grid.takeStep(steppedOn).first
+            }.drop(30).first()
+                .also { println(printWithCoordinates(grid, it)) }
+                .size
+//                .take(20)
+//                .onEach {
+//                    println(printWithCoordinates(grid, it))
+//                }
+            expectThat(takeStepsOnInfinitelyRepeating(30, charGrid(map.replace('_', '.'))))
+                .isEqualTo(expected.toLong())
+        }
+
+        @Test
+        fun `an example where the middle row and column are clear like in the input 48 times`() {
             val map = """
                 _________
                 _##..###_
@@ -100,14 +148,14 @@ class Day21Test {
 
             val expected = generateSequence(setOf(grid.middleCoordinate())) { steppedOn ->
                 grid.takeStep(steppedOn).first
-            }.drop(30).first()
+            }.drop(48).first()
                 .also { println(printWithCoordinates(grid, it)) }
                 .size
 //                .take(20)
 //                .onEach {
 //                    println(printWithCoordinates(grid, it))
-//                }
-            expectThat(takeStepsOnInfinitelyRepeating(30, charGrid(map.replace('_', '.'))))
+//                }``````````````````````````
+            expectThat(takeStepsOnInfinitelyRepeating(48, charGrid(map.replace('_', '.'))))
                 .isEqualTo(expected.toLong())
         }
 

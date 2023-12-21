@@ -23,12 +23,13 @@ fun takeStepsOnInfinitelyRepeating(steps: Int, grid: Grid<Char>, startingPositio
     check(grid.isSquare())
 
     val reachesEdgesAfter = grid.width/2 + 1
-    val timesGridEdgeIsBreached = (steps - reachesEdgesAfter)/grid.width + 1
     val amountOfStepsIntoPerimiterGrids = (steps - reachesEdgesAfter) % grid.width // + 1 (but first step is already counted)
 
-    val numberOfCompletelyFilledOutGrids = (timesGridEdgeIsBreached * 4) //+ 1 // (our starting grid)
-    var numberSoFar = 9 * numberOfStepsInFilledOutGrid(grid) {(steps + it) % 2 == 0}
-    numberSoFar += 4 * numberOfStepsInFilledOutGrid(grid) {(steps + it) % 2 == 1} // todo: how do we divide up these (9 + 4 = numberOfCompletelyFilledOutGrids)
+    val nrOfFilledGrids = (steps * 2 / grid.width) - 1
+    val filledOutGridsSameAsMiddle = ((nrOfFilledGrids/2) + 1) + (nrOfFilledGrids/2).downTo(1).sumOf { it * 2 }
+    val filledOutGridsDiffFromMiddle = (nrOfFilledGrids/2) + ((nrOfFilledGrids/2) - 1).downTo(1).sumOf { it * 2 }
+    var numberSoFar = filledOutGridsSameAsMiddle * numberOfStepsInFilledOutGrid(grid) {(steps + it) % 2 == 0}
+    numberSoFar += filledOutGridsDiffFromMiddle * numberOfStepsInFilledOutGrid(grid) {(steps + it) % 2 == 1}
 
     // these check out for an even number of steps... (but don't see why uneven would be different)
     val topAndSideEdges = grid.takeSteps(amountOfStepsIntoPerimiterGrids, middleLeft(grid)).size +
@@ -36,59 +37,29 @@ fun takeStepsOnInfinitelyRepeating(steps: Int, grid: Grid<Char>, startingPositio
             grid.takeSteps(amountOfStepsIntoPerimiterGrids, middleRight(grid)).size +
             grid.takeSteps(amountOfStepsIntoPerimiterGrids, bottomMiddle(grid)).size
     numberSoFar += topAndSideEdges
-//
-//    val middleSecondBreachEdges = grid.takeSteps(grid.width.roofDiv(2) + 1 + amountOfStepsIntoPerimiterGrids, middleLeft(grid)).size +
-//            grid.takeSteps(grid.width.roofDiv(2) + 1 + amountOfStepsIntoPerimiterGrids, topMiddle(grid)).size +
-//            grid.takeSteps(grid.width.roofDiv(2) + 1 + amountOfStepsIntoPerimiterGrids, middleRight(grid)).size +
-//            grid.takeSteps(grid.width.roofDiv(2) + 1 + amountOfStepsIntoPerimiterGrids, bottomMiddle(grid)).size
-//    numberSoFar += middleSecondBreachEdges
 
 
-    val diagonalSecondBreachEdges = grid.takeSteps(grid.width + (amountOfStepsIntoPerimiterGrids / 2) - 1, topLeft(grid))
-//        .also {
-//            println("coming in from top left (BR)")
-//            println(printWithCoordinates(grid, it)) }
+    val diagonalSecondBreachEdges = grid.takeSteps(grid.width + (amountOfStepsIntoPerimiterGrids / 2) - 1, topLeft(grid))  //.also {println("coming in from top left (BR)") println(printWithCoordinates(grid, it)) }
         .size +
-            grid.takeSteps(grid.width + (amountOfStepsIntoPerimiterGrids / 2) - 1, topRight(grid))
-//                .also {
-//                    println("coming in from topRight (BL)")
-//                    println(printWithCoordinates(grid, it)) }
+            grid.takeSteps(grid.width + (amountOfStepsIntoPerimiterGrids / 2) - 1, topRight(grid))  //.also {println("coming in from topRight (BL)") println(printWithCoordinates(grid, it)) }
                 .size +
-            grid.takeSteps(grid.width + (amountOfStepsIntoPerimiterGrids / 2) - 1, bottomLeft(grid))
-//                .also {
-//                    println("coming in from bottom left (TR)")
-//                    println(printWithCoordinates(grid, it)) }
+            grid.takeSteps(grid.width + (amountOfStepsIntoPerimiterGrids / 2) - 1, bottomLeft(grid))  //.also {println("coming in from bottom left (TR)") println(printWithCoordinates(grid, it)) }
                 .size +
-            grid.takeSteps(grid.width + (amountOfStepsIntoPerimiterGrids / 2) - 1, bottomRight(grid))
-//                .also {
-//                    println("coming in from bottom right (TL)")
-//                    println(printWithCoordinates(grid, it)) }
+            grid.takeSteps(grid.width + (amountOfStepsIntoPerimiterGrids / 2) - 1, bottomRight(grid))  //.also {println("coming in from bottom right (TL)") println(printWithCoordinates(grid, it)) }
                     .size
 
-    numberSoFar += diagonalSecondBreachEdges * 2 // todo: 2 should be calculated
+    numberSoFar += diagonalSecondBreachEdges * (nrOfFilledGrids/2) // todo: this is 5 for 48 steps
 //
-    val diagonalFirstBreachEdges = grid.takeSteps((amountOfStepsIntoPerimiterGrids / 2) - 1, topLeft(grid))
-        .also {
-                    println("coming in from topLeft (BR)")
-                    println(printWithCoordinates(grid, it)) }
+    val diagonalFirstBreachEdges = grid.takeSteps((amountOfStepsIntoPerimiterGrids / 2) - 1, topLeft(grid))  //.also {        println("coming in from topLeft (BR)") println(printWithCoordinates(grid, it)) }
         .size +
-            grid.takeSteps((amountOfStepsIntoPerimiterGrids/ 2) - 1, topRight(grid))
-                .also {
-                    println("coming in from topRight (BL)")
-                    println(printWithCoordinates(grid, it)) }
+            grid.takeSteps((amountOfStepsIntoPerimiterGrids/ 2) - 1, topRight(grid))  //.also {println("coming in from topRight (BL)") println(printWithCoordinates(grid, it)) }
                 .size +
-            grid.takeSteps((amountOfStepsIntoPerimiterGrids/ 2) - 1, bottomLeft(grid))
-                .also {
-                    println("coming in from bottomLeft (TR)")
-                    println(printWithCoordinates(grid, it)) }
+            grid.takeSteps((amountOfStepsIntoPerimiterGrids/ 2) - 1, bottomLeft(grid))  //.also {println("coming in from bottomLeft (TR)") println(printWithCoordinates(grid, it)) }
                 .size +
-            grid.takeSteps((amountOfStepsIntoPerimiterGrids/ 2) - 1, bottomRight(grid))
-                .also {
-                    println("coming in from bottomRight (TL)")
-                    println(printWithCoordinates(grid, it)) }
+            grid.takeSteps((amountOfStepsIntoPerimiterGrids/ 2) - 1, bottomRight(grid))  //.also {println("coming in from bottomRight (TL)") println(printWithCoordinates(grid, it)) }
                 .size
 
-    numberSoFar += diagonalFirstBreachEdges * 3 // todo: 3 should be calculated
+    numberSoFar += diagonalFirstBreachEdges * ((nrOfFilledGrids/2) + 1)   // todo: this is 6 for 48 steps
 
     return numberSoFar
 }
