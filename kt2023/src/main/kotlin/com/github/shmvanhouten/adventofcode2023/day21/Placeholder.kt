@@ -23,11 +23,10 @@ fun Grid<Char>.takeSteps(targetSteps: Int = 1, startingPosition: Coordinate = th
 fun takeStepsOnInfinitelyRepeating(steps: Int, grid: Grid<Char>): Long {
     check(grid.isSquare())
 
-    // val nrOfFilledGrids = ((steps * 2.toDouble() / grid.width) - 1).roundToUnevenLong()
-    val nrOfFilledGrids = (steps * 2 / grid.width) - 1L
+     val nrOfFilledGrids = ((steps * 2.toDouble() / grid.width) - 1).roundToUnevenLong()
+//    val nrOfFilledGrids = (steps * 2 / grid.width) - 1L
     val filledOutGridsSameAsMiddle = ((nrOfFilledGrids/2) + 1) + (nrOfFilledGrids/2).downTo(1).sumOf { it * 2 }
     val filledOutGridsDiffFromMiddle = (nrOfFilledGrids/2) + ((nrOfFilledGrids/2) - 1).downTo(1).sumOf { it * 2 }
-
 
     var numberSoFar: Long = if(nrOfFilledGrids % 4 == 3L) {
         filledOutGridsDiffFromMiddle * numberOfStepsInFilledOutGrid(grid) {(steps + it) % 2 == 0} +
@@ -77,11 +76,9 @@ fun takeStepsOnInfinitelyRepeating(steps: Int, grid: Grid<Char>): Long {
 
 private fun Double.roundToUnevenLong(): Long {
     val long = this.roundToLong()
-    return long // todo
-//    return if(long %2 == 0L) {
-//        if(this > long.toDouble()) long + 1
-//        else long -1
-//    } else long
+    return if(long %2 == 0L) {
+        long - 1
+    } else long
 }
 
 fun numberOfStepsInFilledOutGrid(grid: Grid<Char>, isEven: (Int) -> Boolean): Long {
@@ -130,4 +127,4 @@ fun printWithCoordinates(
     grid: Grid<Char>,
     it: Set<Coordinate>,
 ) = grid.toString(it, 'O')
-    .replace("_", "${red}.$resetToBlack") + "\n\n"
+    .replace("_", "${red}_$resetToBlack") + "\n\n"

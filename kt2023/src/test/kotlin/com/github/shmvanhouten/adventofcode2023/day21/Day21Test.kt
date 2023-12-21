@@ -1,7 +1,9 @@
 package com.github.shmvanhouten.adventofcode2023.day21
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
+import com.github.shmvanhouten.adventofcode.utility.compositenumber.primeFactors
 import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -9,7 +11,6 @@ import org.junit.jupiter.params.provider.ValueSource
 import strikt.api.expectThat
 import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
-import strikt.assertions.isLessThan
 
 class Day21Test {
 
@@ -84,25 +85,6 @@ class Day21Test {
             //   /+x+\
             //    /+\
             //     |
-
-        @Test
-        fun `draw me a box of 5`() {
-            val map = """
-                _____
-                _#.#_
-                _..._
-                _#.#_
-                _____
-            """.trimIndent()
-            val biggerMap = map.expand(15)
-            val grid = charGrid(biggerMap)
-
-            val expected = generateSequence(setOf(grid.middleCoordinate())) { steppedOn ->
-                grid.takeStep(steppedOn).first
-            }.drop(30).first()
-                .also { println(printWithCoordinates(grid, it)) }
-                .size
-        }
 
         @Test
         fun `an example where the middle row and column are clear like in the input`() {
@@ -183,7 +165,6 @@ class Day21Test {
                 .isEqualTo(expected.toLong())
         }
 
-
         @Test
         fun `an example where the middle row and column are clear like in the input 51 times`() {
             val map = """
@@ -210,9 +191,53 @@ class Day21Test {
         }
 
         @Test
+        @Disabled
+        fun `lets look at the outputs`() {
+            val grid = charGrid(input.expand(101))
+            val expected = generateSequence(setOf(grid.middleCoordinate())) { steppedOn ->
+                grid.takeStep(steppedOn).first
+            }.drop(65).withIndex()
+                .filter { it.index % 131 == 0 }
+//                .first().value.size.also { println(it) }
+                .map { it.value.size }
+                .zipWithNext()
+//                .map { it.second - it .first }
+                .zipWithNext()
+//                .forEach { println(it) }
+                .forEach { println("${it.first} -> ${it.second} 29578") }
+        }
+
+        @Test
+        fun `part 2 - increases by 29578 every 131 steps`() {
+
+
+            println(26501365 / 131) // 202300
+            println(26501365 % 131)
+            println(primeFactors(29578))
+//            val grid = charGrid(input.expand(3))
+//            generateSequence(setOf(grid.middleCoordinate())) { steppedOn ->
+//                grid.takeStep(steppedOn).first
+//            }.drop(65).first().count().also(::println)
+            // at 65 we are at 3755
+            // 33494 - 3755 = 29.739
+            // 92811 - 33494 = 59.317     59317 - 29739 = 29587
+            // 181706 - 92811 = 88.895
+            //(181706, 300179) -> (300179, 448230) 29578
+            //(300179, 448230) -> (448230, 625859) 29578
+
+            // 202300 * 131 * 3755 * 4 = 2912534768
+
+            // 2b - a + 29578
+            expectThat(generateSequence(3755L to 33494L) { (a, b) ->
+                b to (2 * b - a + 29578)
+            }.drop(202300).first().first).isEqualTo(605247138198755)
+        }
+
+        @Test
         internal fun `part 2`() {
             expectThat(takeStepsOnInfinitelyRepeating(26501365, charGrid(input)))
-                .isLessThan(605574540114156)
+                .isEqualTo(605247138198755)
+                /////////// 605253121857894
                 .isEqualTo(1L)
         }
     }
