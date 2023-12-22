@@ -8,13 +8,12 @@ import strikt.api.expect
 import strikt.api.expectThat
 import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
+import strikt.assertions.isGreaterThan
+import strikt.assertions.isLessThan
 
 class Day22Test {
 
-    @Nested
-    inner class Part1 {
-
-        val example = """
+    private val example = """
             1,0,1~1,2,1
             0,0,2~2,0,2
             0,2,3~2,2,3
@@ -24,15 +23,19 @@ class Day22Test {
             1,1,8~1,1,9
         """.trimIndent()
 
+
+    @Nested
+    inner class Part1 {
+
         @Test
         fun `the ground is at 0, so a single brick will fall down to z = 1`() {
             val bricks = parse("1,0,7~1,1,7")
-            expectThat(drop(bricks).first)
+            expectThat(drop(bricks))
                 .isEqualTo(
                     listOf(DroppedBrick(
+                        0,
                         Coordinate3DProgression("1,0,1".coordinate3d(), "1,1,1".coordinate3d()),
-                        emptyList(),
-                        0
+                        emptyList()
                     ))
                 )
         }
@@ -43,10 +46,10 @@ class Day22Test {
                 1,0,2~1,0,3
                 1,1,4~1,1,5
             """.trimIndent())
-            expectThat(drop(bricks).first)
+            expectThat(drop(bricks))
                 .isEqualTo(listOf(
-                    DroppedBrick(to3dRange("1,0,1~1,0,2"), emptyList(), 0),
-                    DroppedBrick(to3dRange("1,1,1~1,1,2"), emptyList(), 1)
+                    DroppedBrick(0, to3dRange("1,0,1~1,0,2"), emptyList()),
+                    DroppedBrick(1, to3dRange("1,1,1~1,1,2"), emptyList())
                 ))
         }
 
@@ -56,7 +59,7 @@ class Day22Test {
                 1,0,5~1,1,5
                 1,1,3~1,1,3
             """.trimIndent())
-            val dropped = drop(bricks).first
+            val dropped = drop(bricks)
             expectThat(dropped.map { it.toSimpleBrick() })
                 .isEqualTo(parse("""
                     1,0,2~1,1,2
@@ -72,7 +75,7 @@ class Day22Test {
                 1,0,5~1,4,5
                 0,2,3~3,2,3
             """.trimIndent())
-            expectThat(drop(bricks).first.map { it.toSimpleBrick() })
+            expectThat(drop(bricks).map { it.toSimpleBrick() })
                 .isEqualTo(parse("""
                     1,0,2~1,4,2
                     0,2,1~3,2,1
@@ -82,7 +85,7 @@ class Day22Test {
         @Test
         internal fun `example bricks drop to`() {
             val bricks = parse(example)
-            val dropped = drop(bricks).first
+            val dropped = drop(bricks)
             expectThat(dropped.map { it.toSimpleBrick() }).isEqualTo(parse("""
                 1,0,1~1,2,1
                 0,0,2~2,0,2
@@ -97,7 +100,7 @@ class Day22Test {
         @Test
         fun `example 1`() {
             val bricks = drop(parse(example))
-            val safe = safeToBeDisintegrated(bricks.first, bricks.second)
+            val safe = safeToBeDisintegrated(bricks)
             expect {
                 that(safe).hasSize(5)
                 that(safe.map { it.id }).isEqualTo(listOf(1,2,3,4,6))
@@ -107,7 +110,7 @@ class Day22Test {
         @Test
         internal fun `part 1`() {
             val bricks = drop(parse(input))
-            expectThat(safeToBeDisintegrated(bricks.first, bricks.second).size)
+            expectThat(safeToBeDisintegrated(bricks).size)
                 .isEqualTo(503)
         }
     }
@@ -119,12 +122,15 @@ class Day22Test {
 
         @Test
         internal fun `example 1`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(countTotalFalling(drop(parse(example)))).isEqualTo(7)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(countTotalFalling(drop(parse(input))))
+                .isLessThan(113922)
+                .isGreaterThan(51379)
+                .isEqualTo(1)
         }
     }
 
@@ -133,5 +139,5 @@ class Day22Test {
 }
 
 private fun DroppedBrick.toSimpleBrick(): Brick {
-    return Brick(this.locations, this.id)
+    return Brick(this.id, this.locations)
 }
