@@ -4,6 +4,16 @@ import kotlin.math.abs
 
 class CoordinateProgression(val start: Coordinate, val end: Coordinate) : Iterable<Coordinate> {
 
+    val xRange: IntRange by lazy {
+        if(start.x < end.x) start.x..end.x
+        else end.x..start.x
+    }
+
+    val yRange: IntRange by lazy {
+        if(start.y < end.y) start.y..end.y
+        else end.y..start.y
+    }
+
     val direction: Boolean by lazy {
         this.isVertical() && this.start.y < this.end.y || this.start.x < end.x
     }
