@@ -62,7 +62,6 @@ fun countNumberOfBricksThatWouldFall(
             if(alreadyKnownToFall.contains(support)) {
                 val known = alreadyKnownToFall[support]!!
                 removed += known.first
-                supports += supportMap[support]!!.filter { it !in removed }
                 supports += known.second
             } else {
                 removed += support
@@ -93,21 +92,12 @@ open class Brick(val id: Int, val locations: Coordinate3DProgression) {
 
     fun isInTheSamePlaneAs(other: Brick): Boolean {
         return this.plane.any { it in other.plane }
-        // todo; make more efficient
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+    override fun equals(other: Any?): Boolean =
+        this === other || javaClass == other?.javaClass && this.id == (other as Brick).id
 
-        other as Brick
-
-        return id == other.id
-    }
-
-    override fun hashCode(): Int {
-        return id
-    }
+    override fun hashCode(): Int = id
 
     override fun toString(): String {
         return "$id : $locations"

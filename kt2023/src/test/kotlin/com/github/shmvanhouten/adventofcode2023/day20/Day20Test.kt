@@ -122,12 +122,13 @@ class Day20Test {
             val ids = input.lines().map { it.split(" -> ", ", ").map { "\"$it\"" } }
             val idTranslateTable = ids.map { it.first() }.associateBy { it.filter { it.isLetter() || it == '"' } }
             println("digraph {")
-            ids.map { """${it.first()} -> ${it.tail().map { idTranslateTable[it]?:it }.joinToString(", ") }""" }.onEach(::println)
+            ids.map { id -> """${id.first()} -> ${id.tail().joinToString(", ") { idTranslateTable[it] ?: it }}""" }.onEach(::println)
             println("}")
             // From command line run:
             // brew install graphviz
             // copy the output
             // pbPaste | dot -Tsvg > day20.svg
+            // todo: use Kraphviz
         }
 
         @Test

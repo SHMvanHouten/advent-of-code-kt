@@ -69,16 +69,11 @@ class Coordinate3DProgression(val start: Coordinate3d, val end: Coordinate3d) : 
 
         other as Coordinate3DProgression
 
-        if (start != other.start) return false
-        if (end != other.end) return false
-
-        return true
+        return start == other.start && end == other.end
     }
 
     override fun hashCode(): Int {
-        var result = start.hashCode()
-        result = 31 * result + end.hashCode()
-        return result
+        return 31 * start.hashCode() + end.hashCode()
     }
 
 

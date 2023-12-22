@@ -259,10 +259,10 @@ class Day18Test {
             expectThat(digHex(example)).isEqualTo(952408144115)
         }
 
-        @Test
-        internal fun `part 2`() {
-            expectThat(digHex(input)).isEqualTo(71262565063800)
-        }
+@Test
+internal fun `part 2`() {
+    expectThat(digHex(input)).isEqualTo(71262565063800)
+}
     }
 
     private val input by lazy { readFile("/input-day18.txt")}

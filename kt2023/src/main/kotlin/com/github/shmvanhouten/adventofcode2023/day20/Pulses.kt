@@ -1,14 +1,7 @@
 package com.github.shmvanhouten.adventofcode2023.day20
 
-import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.compositenumber.leastCommonMultiple
 import com.github.shmvanhouten.adventofcode.utility.strings.substringBetween
-
-fun main() {
-    readFile("/input-day20.txt")
-        .lines()
-        .onEach(::println)
-}
 
 class Machine(input: String) {
     private val modules = parse(input).also(::init)

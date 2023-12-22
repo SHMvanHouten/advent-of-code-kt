@@ -17,20 +17,20 @@ fun toPart(line: String): Part {
 
 data class WorkFlow(val id: String, val workFlow: String) {
     fun applyTo(part: Part): String = workFlow.applyTo(part)
-}
 
-fun String.applyTo(part: Part): String {
-    if(this.all { it.isLetter() }) return this
-    val partValue = part[this.first()]
-    val op = when(this[1]) {
-        '<' -> {a: Int, b: Int -> a < b}
-        '>' -> {a, b -> a > b}
-        else -> error("unknown op $this")
+    private fun String.applyTo(part: Part): String {
+        if(this.all { it.isLetter() }) return this
+        val partValue = part[this.first()]
+        val op = when(this[1]) {
+            '<' -> {a: Int, b: Int -> a < b}
+            '>' -> {a, b -> a > b}
+            else -> error("unknown op $this")
+        }
+        val compare = this.substringBefore(':').filter { it.isDigit() }.toInt()
+
+        return if (op(partValue, compare)) substringBetween(":", ",")
+        else this.substringAfter(',').applyTo(part)
     }
-    val compare = this.substringBefore(':').filter { it.isDigit() }.toInt()
-
-    return if (op(partValue, compare)) substringBetween(":", ",")
-    else this.substringAfter(',').applyTo(part)
 }
 
 fun Map<String, WorkFlow>.applyTo(part: Part): Boolean {
