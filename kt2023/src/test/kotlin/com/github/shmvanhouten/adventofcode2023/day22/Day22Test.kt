@@ -8,8 +8,6 @@ import strikt.api.expect
 import strikt.api.expectThat
 import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
-import strikt.assertions.isGreaterThan
-import strikt.assertions.isLessThan
 
 class Day22Test {
 
@@ -125,12 +123,36 @@ class Day22Test {
             expectThat(countTotalFalling(drop(parse(example)))).isEqualTo(7)
         }
 
+        /**
+         * z4
+         * z4 .FFFF
+         * z3 .D..E
+         * z2 .B..C
+         * z1 .AAAA
+         * z0 ~~~~~~~~~~~~~
+         */
+        @Test
+        fun `big brick O`() {
+            val input = """
+                1,0,1~4,0,1
+                1,0,2~1,0,2
+                4,0,2~4,0,2
+                1,0,3~1,0,3
+                4,0,3~4,0,3
+                1,0,5~4,0,5
+            """.trimIndent()
+            val bricks = parse(input)
+            val dropped = drop(bricks)
+            expectThat(dropped.map { it.toSimpleBrick() })
+                .isEqualTo(bricks)
+
+            expectThat(countTotalFalling(dropped)).isEqualTo(7)
+        }
+
         @Test
         internal fun `part 2`() {
             expectThat(countTotalFalling(drop(parse(input))))
-                .isLessThan(113922)
-                .isGreaterThan(51379)
-                .isEqualTo(1)
+                .isEqualTo(98431)
         }
     }
 

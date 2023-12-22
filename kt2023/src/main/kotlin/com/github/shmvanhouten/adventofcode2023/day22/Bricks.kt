@@ -30,10 +30,6 @@ fun drop(bricks: List<Brick>): List<DroppedBrick> {
     return droppedBricks
 }
 
-//fun cascadeFallBackwards(bricks: List<DroppedBrick>): Long {
-//
-//}
-
 fun countTotalFalling(bricks: List<DroppedBrick>): Int {
     val bricksByLayer = bricks.groupBy { it.locations.start.z }
     val supportMap = bricks.associateWith { brick ->
@@ -41,11 +37,11 @@ fun countTotalFalling(bricks: List<DroppedBrick>): Int {
     }
 
     var total = 0
-    val alreadyKnownToFall = mutableMapOf<DroppedBrick, Set<DroppedBrick>>()
+    val alreadyKnownToFall = mutableMapOf<DroppedBrick, Pair<Set<DroppedBrick>, Set<DroppedBrick>>>()
 
     bricks.sortedByDescending { it.locations.start.z }.forEach { brick ->
-        val fellBricks = countNumberOfBricksThatWouldFall(brick, supportMap, alreadyKnownToFall)
-        alreadyKnownToFall += brick to fellBricks
+        val (fellBricks, stoppedFromFalling) = countNumberOfBricksThatWouldFall(brick, supportMap, alreadyKnownToFall)
+        alreadyKnownToFall += brick to (fellBricks to stoppedFromFalling)
         total += fellBricks.size - 1
     }
 
@@ -55,25 +51,29 @@ fun countTotalFalling(bricks: List<DroppedBrick>): Int {
 fun countNumberOfBricksThatWouldFall(
     brick: DroppedBrick,
     supportMap: Map<DroppedBrick, List<DroppedBrick>>,
-    alreadyKnownToFall: MutableMap<DroppedBrick, Set<DroppedBrick>>
-): Set<DroppedBrick> {
+    alreadyKnownToFall: MutableMap<DroppedBrick, Pair<Set<DroppedBrick>, Set<DroppedBrick>>>
+): Pair<Set<DroppedBrick>, Set<DroppedBrick>> {
     val supports = ArrayDeque(supportMap[brick]!!)
     val removed = mutableSetOf(brick)
+    val blockedFromFalling = mutableSetOf<DroppedBrick>()
     while (supports.isNotEmpty()) {
         val support = supports.removeFirst()
         if(support.supportedBy.all { it in removed }) {
             if(alreadyKnownToFall.contains(support)) {
                 val known = alreadyKnownToFall[support]!!
-                removed += known
+                removed += known.first
                 supports += supportMap[support]!!.filter { it !in removed }
+                supports += known.second
             } else {
                 removed += support
                 supports += supportMap[support]!!
             }
+        } else {
+            blockedFromFalling += support
         }
     }
 
-    return removed
+    return removed to blockedFromFalling
 }
 
 
