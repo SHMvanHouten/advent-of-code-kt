@@ -14,27 +14,51 @@ fun main() {
 fun longestPath(input: String): Int {
     val grid = charGrid(input)
     val goal = grid.lastCoordinateMatching { it == '.' }!!
-    val start = grid.firstCoordinateMatching { it == '.' }!!
     val finishedPaths = mutableSetOf<Path>()
-    val unfinished = mutableSetOf(Path(setOf(start)))
+    val unfinished = mutableSetOf(Path(emptySet(), Coordinate(1, 0), Coordinate(1, 1), 1))
     while (unfinished.isNotEmpty()) {
         val path = unfinished.last()
         unfinished.remove(path)
-        val currentStep = path.last()
-        val char = grid[currentStep]
-        if (char.isSlope()) {
-            val slipped = currentStep.moveInDirection(char)
-            if(slipped !in path.steps) unfinished += path + slipped
-        } else if(currentStep == goal) finishedPaths += path
-        else {
-            unfinished += currentStep.getSurroundingManhattan()
-                .filter { grid.contains(it) && grid[it] != '#' }
-                .filter { it !in path.steps }
-                .map { path + it }
+        var previousStep = path.previous
+        var currentStep: Coordinate? = path.last
+        var size = path.size
+        while (currentStep != null) {
+//            val char = grid[currentStep]
+//            if (char.isSlope()) {
+//                val slipped = currentStep.moveInDirection(char)
+//                if(slipped == path.previous) currentStep = null
+//                else {
+//                    size++
+//                    previousStep = currentStep
+//                    currentStep = slipped
+//                }
+//            } else
+            if (currentStep == goal) {
+                finishedPaths += path.copy(size = size)
+                currentStep = null
+            } else {
+                val nextSteps = currentStep.getSurroundingManhattan()
+                    .filter { grid[it] != '#' }
+                    .filter { it != previousStep }
+                    .filter { it !in path.memorableSteps }
+                if (nextSteps.size > 1) {// is branching path
+                    unfinished += nextSteps.map {
+                        Path(path.memorableSteps + currentStep!!, currentStep!!, it, size + 1)
+                    }
+                    currentStep = null
+                } else if(nextSteps.isEmpty()) {
+                    currentStep = null
+                } else {
+                    size += 1
+                    previousStep = currentStep
+                    currentStep = nextSteps.first()
+                }
+
+            }
         }
 
     }
-    return finishedPaths.maxOf { it.steps.size } - 1
+    return finishedPaths.maxOf { it.size }
 }
 
 private fun Char.isSlope(): Boolean = this != '.'
@@ -47,9 +71,6 @@ private fun Coordinate.moveInDirection(char: Char): Coordinate = when(char) {
     else -> error("unknown char $char")
 }
 
-data class Path(val steps: Set<Coordinate>) {
-    fun last(): Coordinate = steps.last()
-    operator fun plus(loc: Coordinate): Path {
-        return Path(steps + loc)
-    }
+data class Path(val memorableSteps: Set<Coordinate>, val previous: Coordinate, val last: Coordinate, val size: Int) {
+
 }
