@@ -39,12 +39,12 @@ class Day23Test {
 
         @Test
         internal fun `example 1`() {
-            expectThat(longestPath(example)).isEqualTo(94)
+            expectThat(longestSlipperyPath(example)).isEqualTo(94)
         }
 
         @Test
         internal fun `part 1`() {
-            expectThat(longestPath(input)).isEqualTo(2282)
+            expectThat(longestSlipperyPath(input)).isEqualTo(2282)
         }
     }
 
@@ -54,13 +54,13 @@ class Day23Test {
         @Test
         internal fun `example 2`() {
             val newEx = example.replace('>', '.').replace('v', '.').replace('<', '.').replace('^', '.')
-            expectThat(longestPath(newEx)).isEqualTo(154)
+            expectThat(longestGrippyPath(newEx)).isEqualTo(154)
         }
 
         @Test
         internal fun `part 2`() {
             val newIn = input.replace('>', '.').replace('v', '.').replace('<', '.').replace('^', '.')
-            expectThat(longestPath(newIn)).isEqualTo(6646)
+            expectThat(longestGrippyPath(newIn)).isEqualTo(6646)
         }
     }
 
