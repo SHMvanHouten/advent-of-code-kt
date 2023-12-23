@@ -262,6 +262,15 @@ open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
         return null
     }
 
+    fun lastCoordinateMatching(matchingFunction: (T) -> Boolean): Coordinate? {
+        grid.withIndex().reversed().map {(y, row) ->
+            row.withIndex().reversed().map { (x, t) ->
+                if(matchingFunction(t)) return Coordinate(x, y)
+            }
+        }
+        return null
+    }
+
     fun horizontalLineFrom(coord: Coordinate, length: Int): List<T> {
         return grid[coord.y].subList(coord.x, coord.x + length).toList()
     }
