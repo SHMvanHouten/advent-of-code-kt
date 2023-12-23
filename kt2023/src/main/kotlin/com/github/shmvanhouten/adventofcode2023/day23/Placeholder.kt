@@ -16,9 +16,10 @@ fun longestPath(input: String): Int {
     val grid = charGrid(input)
     val goal = grid.lastCoordinateMatching { it == '.' }!!
     val firstNode = createNode(Coordinate(1, 0), Coordinate(1, 1), grid)
-    val nodes = mutableMapOf(firstNode.first to listOf(firstNode), firstNode.last to listOf(firstNode.reversed()))
+    val reversedFirst = firstNode.reversed()
+    val nodes = mutableMapOf((firstNode.first to firstNode.second) to firstNode, (reversedFirst.first to reversedFirst.second) to reversedFirst)
     var biggestFinishedPath: Path? = null
-    val incompletePaths = ArrayDeque(listOf(Path(setOf(firstNode))))
+    val incompletePaths = mutableListOf(Path(listOf(firstNode)))
 
     while (incompletePaths.isNotEmpty()) {
         val path = incompletePaths.removeLast()
@@ -28,7 +29,7 @@ fun longestPath(input: String): Int {
             val nextLocations = path.last.getSurroundingManhattan()
                 .filter { grid[it] != '#' }
                 .filter { it != path.penultimateStep }
-            val discoveredNodes = nodes[location] ?: emptyList()
+            val discoveredNodes = nextLocations.mapNotNull { nodes[location to it] }
             val newNodes = nextLocations
                 .filter { loc -> discoveredNodes.none { it.second == loc } }
                 .map { createNode(path.last, it, grid) }
@@ -40,8 +41,8 @@ fun longestPath(input: String): Int {
 
             newNodes
                 .flatMap { node ->
-                    listOf(node, node.reversed()).map { it.first to it }
-                }.forEach { (start, node) -> nodes.merge(start, listOf(node)) { n, a -> n + a } }
+                    listOf(node, node.reversed())
+                }.forEach { node -> nodes[node.first to node.second] = node }
         }
     }
 
@@ -77,6 +78,7 @@ data class Node(val steps: List<Coordinate>, val length: Int = steps.size - 1) {
 
     val first: Coordinate = steps.first()
     val second: Coordinate = steps[1]
+    val penultimate: Coordinate = steps[steps.lastIndex - 1]
     val last: Coordinate = steps.last()
 
 
@@ -92,13 +94,13 @@ private fun Coordinate.moveInDirection(char: Char): Coordinate = when(char) {
     else -> error("unknown char $char")
 }
 
-data class Path(val nodes: Set<Node>, val length: Int = nodes.sumOf { it.length }) {
+data class Path(val nodes: List<Node>, val length: Int = nodes.sumOf { it.length }) {
     fun lastNode(): Node = this.nodes.last()
     operator fun plus(node: Node): Path {
         return Path(nodes + node, length + node.length)
     }
 
-    val penultimateStep: Coordinate by lazy {this.nodes.last().steps.reversed().drop(1).first()}
+    val penultimateStep: Coordinate by lazy {this.nodes.last().penultimate}
 
     val last: Coordinate = nodes.last().last
 
