@@ -3,6 +3,7 @@ package com.github.shmvanhouten.adventofcode2023.day23
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction.*
+import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 
 fun main() {
@@ -14,51 +15,71 @@ fun main() {
 fun longestPath(input: String): Int {
     val grid = charGrid(input)
     val goal = grid.lastCoordinateMatching { it == '.' }!!
-    val finishedPaths = mutableSetOf<Path>()
-    val unfinished = mutableSetOf(Path(emptySet(), Coordinate(1, 0), Coordinate(1, 1), 1))
-    while (unfinished.isNotEmpty()) {
-        val path = unfinished.last()
-        unfinished.remove(path)
-        var previousStep = path.previous
-        var currentStep: Coordinate? = path.last
-        var size = path.size
-        while (currentStep != null) {
-//            val char = grid[currentStep]
-//            if (char.isSlope()) {
-//                val slipped = currentStep.moveInDirection(char)
-//                if(slipped == path.previous) currentStep = null
-//                else {
-//                    size++
-//                    previousStep = currentStep
-//                    currentStep = slipped
-//                }
-//            } else
-            if (currentStep == goal) {
-                finishedPaths += path.copy(size = size)
-                currentStep = null
-            } else {
-                val nextSteps = currentStep.getSurroundingManhattan()
-                    .filter { grid[it] != '#' }
-                    .filter { it != previousStep }
-                    .filter { it !in path.memorableSteps }
-                if (nextSteps.size > 1) {// is branching path
-                    unfinished += nextSteps.map {
-                        Path(path.memorableSteps + currentStep!!, currentStep!!, it, size + 1)
-                    }
-                    currentStep = null
-                } else if(nextSteps.isEmpty()) {
-                    currentStep = null
-                } else {
-                    size += 1
-                    previousStep = currentStep
-                    currentStep = nextSteps.first()
-                }
+    val firstNode = createNode(Coordinate(1, 0), Coordinate(1, 1), grid)
+    val nodes = mutableMapOf(firstNode.first to listOf(firstNode), firstNode.last to listOf(firstNode.reversed()))
+    var biggestFinishedPath: Path? = null
+    val incompletePaths = ArrayDeque(listOf(Path(setOf(firstNode))))
 
-            }
+    while (incompletePaths.isNotEmpty()) {
+        val path = incompletePaths.removeLast()
+        val location = path.last
+        if(location == goal) biggestFinishedPath = if(path.length > (biggestFinishedPath?.length ?: 0)) path else biggestFinishedPath
+        else {
+            val nextLocations = path.last.getSurroundingManhattan()
+                .filter { grid[it] != '#' }
+                .filter { it != path.penultimateStep }
+            val discoveredNodes = nodes[location] ?: emptyList()
+            val newNodes = nextLocations
+                .filter { loc -> discoveredNodes.none { it.second == loc } }
+                .map { createNode(path.last, it, grid) }
+
+            incompletePaths += discoveredNodes
+                .filter { node -> node.last !in path.nodes.map { it.first } }
+                .map { node -> path + node }
+            incompletePaths += newNodes.map { path + it }
+
+            newNodes
+                .flatMap { node ->
+                    listOf(node, node.reversed()).map { it.first to it }
+                }.forEach { (start, node) -> nodes.merge(start, listOf(node)) { n, a -> n + a } }
         }
-
     }
-    return finishedPaths.maxOf { it.size }
+
+    return biggestFinishedPath!!.length
+}
+
+private fun Grid<Char>.possiblePathsFrom(location: Coordinate): List<Coordinate> = location.getSurroundingManhattan()
+    .filter { this.contains(it) && this[it] != '#' }
+
+fun createNode(prev: Coordinate, loc: Coordinate, grid: Grid<Char>): Node {
+    val steps = mutableListOf(prev, loc)
+    while (true) {
+        val next = grid.possiblePathsFrom(steps.last())
+            .filter { it !in steps }
+        if(next.size > 1) {
+            return Node(steps)
+        } else if(next.isEmpty()) {
+            return Node(steps)
+        } else {
+            steps += next
+        }
+    }
+}
+
+data class Node(val steps: List<Coordinate>, val length: Int = steps.size - 1) {
+    fun reversed(): Node {
+        return Node(steps.reversed(), length)
+    }
+
+    override fun toString(): String {
+        return "${steps.first()}-${steps.last()} : ${steps.size}"
+    }
+
+    val first: Coordinate = steps.first()
+    val second: Coordinate = steps[1]
+    val last: Coordinate = steps.last()
+
+
 }
 
 private fun Char.isSlope(): Boolean = this != '.'
@@ -71,6 +92,17 @@ private fun Coordinate.moveInDirection(char: Char): Coordinate = when(char) {
     else -> error("unknown char $char")
 }
 
-data class Path(val memorableSteps: Set<Coordinate>, val previous: Coordinate, val last: Coordinate, val size: Int) {
+data class Path(val nodes: Set<Node>, val length: Int = nodes.sumOf { it.length }) {
+    fun lastNode(): Node = this.nodes.last()
+    operator fun plus(node: Node): Path {
+        return Path(nodes + node, length + node.length)
+    }
 
+    val penultimateStep: Coordinate by lazy {this.nodes.last().steps.reversed().drop(1).first()}
+
+    val last: Coordinate = nodes.last().last
+
+    override fun toString(): String {
+        return "${nodes.first().first} - $last : $length"
+    }
 }
