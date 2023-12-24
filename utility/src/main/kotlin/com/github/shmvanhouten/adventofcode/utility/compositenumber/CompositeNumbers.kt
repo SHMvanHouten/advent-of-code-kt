@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode.utility.compositenumber
 
+import java.math.BigDecimal
 import java.math.BigInteger
 
 fun primeFactors(number: Long): List<Long> {
@@ -9,6 +10,21 @@ fun primeFactors(number: Long): List<Long> {
     var divisor = 2L
     while (remainder > 1) {
         while (remainder % divisor == 0L) {
+            factors.add(divisor)
+            remainder /= divisor
+        }
+        divisor++
+    }
+    return factors
+}
+
+fun primeFactors(number: BigDecimal): List<BigDecimal> {
+    val factors = mutableListOf<BigDecimal>()
+    var remainder = number
+
+    var divisor = 2.toBigDecimal()
+    while (remainder > BigDecimal.ONE) {
+        while (remainder % divisor == BigDecimal.ZERO) {
             factors.add(divisor)
             remainder /= divisor
         }
