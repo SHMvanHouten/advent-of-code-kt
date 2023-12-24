@@ -3,7 +3,7 @@ package com.github.shmvanhouten.adventofcode.utility.coordinate
 import com.github.shmvanhouten.adventofcode.utility.lambda.identity
 
 fun toCoordinate(input: String): Coordinate {
-    val (x, y) = input.split(",")
+    val (x, y) = input.split(",").map { it.trim() }
         .map { it.toInt() }
     return Coordinate(x, y)
 }
