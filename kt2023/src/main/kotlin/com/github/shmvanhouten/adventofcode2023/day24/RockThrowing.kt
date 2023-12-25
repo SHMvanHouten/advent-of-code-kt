@@ -1,24 +1,32 @@
 package com.github.shmvanhouten.adventofcode2023.day24
 
+import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.compositenumber.greatestCommonDivisor
 import java.math.BigDecimal
-import java.math.RoundingMode
+import java.math.BigDecimal.ONE
+import java.math.BigDecimal.ZERO
+import java.math.BigInteger
+
+fun main() {
+    println(readFile("/input-day24.txt"))
+}
 
 fun solve(map: List<HailStone3d>): BigCoordinate3d {
     val range = (-306..306).filter { it != 0 }.map { it.toBigDecimal() }
-    return  range.asSequence().flatMap { z ->
-        range.asSequence().flatMap { y ->
-            range.asSequence().mapNotNull { x ->
-                map.intersectAtGivenVelocityDifference(BigCoordinate3d(x, y, z))?.let { BigCoordinate3d(x, y, z) to it }
-            }.filter { (first, it) ->
-                it.x.toString().substringAfter(".").all { it == '0' }
-                        && it.y.toString().substringAfter(".").all { it == '0' }
-                        && it.z.toString().substringAfter(".").all { it == '0' }
-            }
-                .onEach { println(it) }
-                .map { it.second }
-        }
-    }.first()
+    return BigCoordinate3d(ONE, ONE, ONE)
+//    return  range.asSequence().flatMap { z ->
+//        range.asSequence().flatMap { y ->
+//            range.asSequence().mapNotNull { x ->
+//                map.intersectAtGivenVelocityDifference(BigCoordinate3d(x, y, z))?.let { BigCoordinate3d(x, y, z) to it }
+//            }.filter { (first, it) ->
+//                it.x.toString().substringAfter(".").all { it == '0' }
+//                        && it.y.toString().substringAfter(".").all { it == '0' }
+//                        && it.z.toString().substringAfter(".").all { it == '0' }
+//            }
+//                .onEach { println(it) }
+//                .map { it.second }
+//        }
+//    }.first()
 }
 
 fun solve(stones: List<HailStone2d>): Sequence<BigCoordinate> {
@@ -54,16 +62,54 @@ fun List<HailStone2d>.intersectAtGivenVelocityDifference(velocity: BigCoordinate
     return adjustedStones.first().crossPoint(adjustedStones[1])
 }
 
-fun List<HailStone3d>.intersectAtGivenVelocityDifference(velocity: BigCoordinate3d): BigCoordinate3d? {
-    val adjustedStones = this.map { it.copy(velocity = it.velocity - velocity) }
-    val map = adjustedStones
-        .map { HailStone2d(location = it.location.justxy(), velocity= it.velocity.justxy()) }
-//    map.subList(1, map.size).forEach {
-//        println(map.first().crossPoint(it))
-//    }
-    val result2d = map.first().crossPoint(map[1])
-    return if(result2d == null) null else adjustedStones.first().extrapolateZFrom(result2d)
+fun List<Rock>.intersectAtGivenVelocityDifference(velocity: Coordinate3): Coordinate3 {
+    val adjustedForVelocity = this.map { it.copy(velocity = it.velocity - velocity) }
+    val coordinateThatStartsOnSameDimensionAsTarget = adjustedForVelocity
+        .first { it.velocity.x == BigInteger.ZERO || it.velocity.y == BigInteger.ZERO || it.velocity.z == BigInteger.ZERO }
+    if(coordinateThatStartsOnSameDimensionAsTarget.velocity.x == BigInteger.ZERO) {
+        val x = coordinateThatStartsOnSameDimensionAsTarget.loc.x
+        val otherRock = (adjustedForVelocity - coordinateThatStartsOnSameDimensionAsTarget).first()
+        val steps = stepsToGetTo(x, otherRock.loc.x, otherRock.velocity.x)
+        return otherRock.loc + (otherRock.velocity * steps)
+    }
+    else if(coordinateThatStartsOnSameDimensionAsTarget.velocity.y == BigInteger.ZERO) {
+        val y = coordinateThatStartsOnSameDimensionAsTarget.loc.y
+        val otherRock = (adjustedForVelocity - coordinateThatStartsOnSameDimensionAsTarget).first()
+        val steps = stepsToGetTo(y, otherRock.loc.y, otherRock.velocity.y)
+        return otherRock.loc + (otherRock.velocity * steps)
+    }
+    else if(coordinateThatStartsOnSameDimensionAsTarget.velocity.z == BigInteger.ZERO) {
+        val z = coordinateThatStartsOnSameDimensionAsTarget.loc.z
+        val otherRock = (adjustedForVelocity - coordinateThatStartsOnSameDimensionAsTarget).first()
+        val steps = stepsToGetTo(z, otherRock.loc.z, otherRock.velocity.z)
+        return otherRock.loc + (otherRock.velocity * steps)
+    }
+
+    return Coordinate3(BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO)
+
 }
+
+fun stepsToGetTo(target: BigInteger, loc: BigInteger, vel: BigInteger): BigInteger {
+    return (target - loc) / vel
+}
+
+private fun List<Pair<BigInteger, BigInteger>>.findIntersection(): BigInteger {
+    // x1 = a + tb
+    // x2 = c + td
+    // find t where x1==x2
+    // a + tb = c + td
+    // tb−td=c−a
+    // t(b−d)=c−a
+    // t = (c-a)/(b-d)
+    // possible points = any point where r1.loc
+
+    println(this.filter { it.second < BigInteger.ZERO }.minOf { it.first })
+    println(this.filter { it.second < BigInteger.ZERO }.maxOf { it.first })
+    println(this.filter { it.second > BigInteger.ZERO }.minOf { it.first })
+    println(this.filter { it.second > BigInteger.ZERO }.maxOf { it.first })
+    return this.first().first
+}
+
 
 //
 //fun <T> permuteCombinations(items: List<T>): List<Pair<T, T>> {
@@ -136,21 +182,18 @@ data class HailStone2d(val location: BigCoordinate, val velocity: BigCoordinate)
     }
 
     fun crossPoint(other: HailStone2d): BigCoordinate? {
-        // todo: either has velocity 0 in either direction
-        if(velocity.x.setScale(0) == BigDecimal.ZERO || other.velocity.x.setScale(0) == BigDecimal.ZERO) return null
-        else {
-            val slopeThis = velocity.y / velocity.x
-            val slopeOther = other.velocity.y / other.velocity.x
+        // todo: this cannot handle 1/3's, etc.
+        if (velocity.x.setScale(0) == ZERO || other.velocity.x.setScale(0) == ZERO) {
+            return null
+        } else {
 
-            if (slopeThis.setScale(3, RoundingMode.HALF_UP) == slopeOther.setScale(3, RoundingMode.HALF_UP)) return null
-            else {
-                val yInterceptThis = location.y - slopeThis * location.x
-                val yInterceptOther = other.location.y - slopeOther * other.location.x
+            if (velocity.y / velocity.x == other.velocity.y / other.velocity.x) return null
 
-                val intersectionX = (yInterceptOther - yInterceptThis) / (slopeThis - slopeOther)
-                val intersectionY = slopeThis * intersectionX + yInterceptThis
-                return BigCoordinate(intersectionX, intersectionY)
-            }
+            val intersectionX =
+                (other.location.y - other.velocity.y / other.velocity.x * other.location.x - (location.y - velocity.y / velocity.x * location.x)) / (velocity.y / velocity.x - other.velocity.y / other.velocity.x)
+            val intersectionY =
+                velocity.y / velocity.x * intersectionX + (location.y - velocity.y / velocity.x * location.x)
+            return BigCoordinate(intersectionX, intersectionY)
         }
     }
 }
@@ -193,6 +236,10 @@ data class BigCoordinate(val x: BigDecimal, val y: BigDecimal) {
 data class BigCoordinate3d(val x: BigDecimal, val y: BigDecimal, val z: BigDecimal) {
     operator fun minus(subtract: BigCoordinate3d): BigCoordinate3d {
         return BigCoordinate3d(x - subtract.x, y - subtract.y, z - subtract.z)
+    }
+
+    operator fun plus(add: BigCoordinate3d): BigCoordinate3d {
+        return BigCoordinate3d(x + add.x, y + add.y, z + add.z)
     }
 
     fun justxy(): BigCoordinate {

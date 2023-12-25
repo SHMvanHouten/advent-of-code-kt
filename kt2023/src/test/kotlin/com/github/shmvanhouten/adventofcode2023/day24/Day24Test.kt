@@ -16,7 +16,6 @@ import java.math.BigDecimal
 
 class Day24Test {
 
-
     @Nested
     inner class Part1 {
 
@@ -155,7 +154,6 @@ class Day24Test {
                 .asSequence()
                 .onEach { println(it) }
                 .map { (key, value) -> mapCombinations(value.map { it.first.toBigInteger()}) { a, b -> (b - a) } }
-//                .onEach { println(it) }
                 .forEach { println(it.greatestCommonDivisor()) }
 
             println(primeFactors(318))
@@ -165,18 +163,17 @@ class Day24Test {
 
             val velocity = BigCoordinate3d((-44).toBigDecimal(), 305.toBigDecimal(), (75).toBigDecimal())
 
-
-            // diff = 6
-            // diff = 8
-            // diff = 1
         }
 
         @Test
         fun `given we know the velocities of our stone, the location must be where all others intersect`() {
-            val velocity = BigCoordinate3d((-3).toBigDecimal(), 1.toBigDecimal(), 2.toBigDecimal())
-            expectThat(example.lines().map { toHailStone3d(it) }
-                .intersectAtGivenVelocityDifference(velocity))
-                .isEqualTo(BigCoordinate3d(24.toBigDecimal(), 13.toBigDecimal(), 10.toBigDecimal()))
+            val velocity = Coordinate3((-3).toBigInteger(), 1.toBigInteger(), 2.toBigInteger())
+            val result = example.lines().map { toRock(it) }
+                .intersectAtGivenVelocityDifference(velocity)
+            expectThat(result)
+                .isEqualTo(Coordinate3(24.toBigInteger(), 13.toBigInteger(), 10.toBigInteger()))
+            expectThat(result.x + result.y + result.z)
+                .isEqualTo(47.toBigInteger())
         }
 
         @Test
@@ -206,10 +203,14 @@ class Day24Test {
 //                println(input.lines().map { toHailStone3d(it) }
 //                    .intersectAtGivenVelocityDifference(velocity))
 //            }
-            val velocity = BigCoordinate3d((-44).toBigDecimal(), (305).toBigDecimal(), (75).toBigDecimal())
-            expectThat(input.lines().map { toHailStone3d(it) }
-                .intersectAtGivenVelocityDifference(velocity))
-                .isEqualTo(BigCoordinate3d(1.toBigDecimal(), 1.toBigDecimal(), 1.toBigDecimal()))
+
+            val velocity = Coordinate3((44).toBigInteger(), (305).toBigInteger(), (75).toBigInteger())
+            val result = input.lines().map { toRock(it) }
+                .intersectAtGivenVelocityDifference(velocity)
+            expectThat(result)
+                .isEqualTo(Coordinate3(234382970331570.toBigInteger(), 100887864960615.toBigInteger(), 231102671115832.toBigInteger()))
+            expectThat(result.x + result.y + result.z)
+                .isEqualTo(566373506408017.toBigInteger())
         }
     }
 
