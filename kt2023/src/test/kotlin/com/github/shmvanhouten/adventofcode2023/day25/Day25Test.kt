@@ -1,6 +1,8 @@
 package com.github.shmvanhouten.adventofcode2023.day25
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
+import com.github.shmvanhouten.adventofcode.utility.collectors.productOf
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expect
@@ -59,7 +61,6 @@ class Day25Test {
             }
         }
 
-
         @Test
         fun `for our other input, the target nodes are znv to ddj, mtq to jtr, pzq to rrz`() {
             val result = findNodesToCutBetween(readFile("/input-day25-backup.txt"))
@@ -95,6 +96,23 @@ class Day25Test {
             )
             expectThat(result).hasSize(2)
             expectThat(result.first().size * result[1].size).isEqualTo(525264)
+        }
+
+        @Test
+        fun `part 1 for real`() {
+            val result = findAndCutIntoTwoGroups(input)
+            expectThat(result).hasSize(2)
+            expectThat(result.first().size * result[1].size).isEqualTo(525264)
+        }
+
+        @Test
+        @Disabled("slow")
+        fun `part 1 other input for real`() {
+            val result = findAndCutIntoTwoGroups(readFile("/input-day25-backup.txt"))
+            expectThat(result).hasSize(2)
+            expectThat(result.first().size * result[1].size.toLong()).isEqualTo(
+                removeConnections(readFile("/input-day25-backup.txt"), listOf("znv" to "ddj", "mtq" to "jtr", "pzq" to "rrz")).productOf { it.size }
+            )
         }
     }
 
