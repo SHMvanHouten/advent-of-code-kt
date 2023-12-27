@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expect
 import strikt.api.expectThat
+import strikt.assertions.contains
 import strikt.assertions.get
 import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
@@ -29,6 +30,45 @@ class Day25Test {
 
     @Nested
     inner class Part1 {
+
+        @Test
+        fun `sort nodePairs by distance descending`() {
+            val result = sortNodePairsByDistanceDescending(example)
+            val farthest = result.maxBy { it.value }
+            expectThat(farthest.key).isEqualTo("rhn" to "frs")
+            expectThat(farthest.value).isEqualTo(4)
+        }
+
+        @Test
+        fun `for our example, the target nodes are hfx to pzl, bvb to cmg, nvd to jqt`() {
+            val result = findNodesToCutBetween(example)
+            expect {
+                that(result).contains("hfx" to "pzl")
+                that(result).contains("bvb" to "cmg")
+                that(result).contains("nvd" to "jzt")
+            }
+        }
+
+        @Test
+        fun `for our input, the target nodes are bqq to rxt, btp to qxr, bgl to vfx`() {
+            val result = findNodesToCutBetween(input)
+            expect {
+                that(result).contains("bqq" to "rxt")
+                that(result).contains("btp" to "qxr")
+                that(result).contains("bgl" to "vfx")
+            }
+        }
+
+
+        @Test
+        fun `for our other input, the target nodes are znv to ddj, mtq to jtr, pzq to rrz`() {
+            val result = findNodesToCutBetween(readFile("/input-day25-backup.txt"))
+            expect {
+                that(result).contains("znv" to "ddj")
+                that(result).contains("mtq" to "jtr")
+                that(result).contains("pzq" to "rrz")
+            }
+        }
 
         @Test
         internal fun `example 1`() {
