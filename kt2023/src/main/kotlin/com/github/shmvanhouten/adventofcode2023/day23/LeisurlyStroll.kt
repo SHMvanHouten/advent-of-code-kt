@@ -101,18 +101,7 @@ data class Node(val steps: List<Coordinate>, val length: Int = steps.size - 1) {
 
 }
 
-private fun Char.isSlope(): Boolean = this != '.'
-
-private fun Coordinate.moveInDirection(char: Char): Coordinate = when(char) {
-    '>' -> this.move(EAST)
-    'v' -> this.move(SOUTH)
-    '<' -> this.move(WEST)
-    '^' -> this.move(NORTH)
-    else -> error("unknown char $char")
-}
-
 data class Path(val nodes: List<Node>, val length: Int = nodes.sumOf { it.length }) {
-    fun lastNode(): Node = this.nodes.last()
     operator fun plus(node: Node): Path {
         return Path(nodes + node, length + node.length)
     }

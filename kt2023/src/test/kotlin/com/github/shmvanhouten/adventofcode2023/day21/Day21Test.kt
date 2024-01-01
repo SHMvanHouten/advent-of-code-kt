@@ -237,8 +237,6 @@ class Day21Test {
         internal fun `part 2`() {
             expectThat(takeStepsOnInfinitelyRepeating(26501365, charGrid(input)))
                 .isEqualTo(605247138198755)
-                /////////// 605253121857894
-                .isEqualTo(1L)
         }
     }
 

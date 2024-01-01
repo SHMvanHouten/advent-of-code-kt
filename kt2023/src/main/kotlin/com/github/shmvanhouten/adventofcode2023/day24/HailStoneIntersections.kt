@@ -49,16 +49,10 @@ data class HailStone2d(val location: BigCoordinate, val velocity: BigCoordinate)
     }
 
     private fun crossPointIsInFuture(crossPoint: BigCoordinate): Boolean {
-        val xIsInFuture = if (velocity.x.isNegative()) crossPoint.x < location.x
-        else crossPoint.x > location.x
-        val yIsInFuture = if (velocity.y.isNegative()) crossPoint.y < location.y
-        else crossPoint.y > location.y
+        val xIsInFuture = (crossPoint.x - location.x).sign == velocity.x.sign
+        val yIsInFuture = (crossPoint.y - location.y).sign == velocity.y.sign
         return xIsInFuture && yIsInFuture
     }
-}
-
-private fun BigDecimal.isNegative(): Boolean {
-    return this < ZERO
 }
 
 fun toHailStone2d(string: String): HailStone2d {
@@ -78,3 +72,12 @@ data class BigCoordinate(val x: BigDecimal, val y: BigDecimal) {
         return BigCoordinate(x - subtract.x, y - subtract.y)
     }
 }
+
+private val BigDecimal.sign: Int
+    get() {
+        return when {
+            this < ZERO -> -1
+            this > ZERO -> 1
+            else -> 0
+        }
+    }
