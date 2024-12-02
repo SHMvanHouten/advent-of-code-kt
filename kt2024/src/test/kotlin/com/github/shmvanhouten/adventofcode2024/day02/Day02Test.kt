@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isGreaterThan
 
 class Day02Test {
 
@@ -46,14 +47,25 @@ class Day02Test {
     @Nested
     inner class Part2 {
 
-        @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        @ParameterizedTest
+        @CsvSource(value = [
+            "7 6 4 2 1, true",
+            "1 2 7 8 9, false",
+            "9 7 6 2 1, false",
+            "1 3 2 4 5, true",
+            "8 6 4 4 1, true",
+            "1 3 6 7 9, true",
+            "29 32 30 31 34 35 37, true"
+        ])
+        internal fun `a report is safe or unsafe`(reportString: String, isSafe: Boolean) {
+            val report = reportString.parse()
+            expectThat(report.isSafeDampened()).isEqualTo(isSafe)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(input.lines().map { it.parse() }.count { it.isSafeDampened() }).isGreaterThan(597)
+            expectThat(input.lines().map { it.parse() }.count { it.isSafeDampened() }).isEqualTo(612)
         }
     }
 

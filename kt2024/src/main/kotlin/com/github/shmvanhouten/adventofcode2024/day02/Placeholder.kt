@@ -44,6 +44,15 @@ fun List<Int>.isSafe(): Boolean {
     return true
 }
 
+fun List<Int>.isSafeDampened(): Boolean {
+
+    return List(size) { index ->
+        val mutable = toMutableList()
+        mutable.removeAt(index)
+        mutable
+    }.any { it.isSafe() }
+}
+
 enum class Dir {
     UP,
     DOWN
