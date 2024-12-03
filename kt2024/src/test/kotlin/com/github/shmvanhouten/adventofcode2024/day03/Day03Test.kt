@@ -12,13 +12,8 @@ class Day03Test {
     inner class Part1 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
-        }
-
-        @Test
         internal fun `part 1`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(calculateAllProducts(input)).isEqualTo(168539636L)
         }
     }
 
@@ -26,13 +21,8 @@ class Day03Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
-        }
-
-        @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(calculateProductsInDoRanges(input)).isEqualTo(97529391L)
         }
     }
 
