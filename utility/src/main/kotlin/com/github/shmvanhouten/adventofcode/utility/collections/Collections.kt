@@ -14,3 +14,5 @@ fun <T> Collection<T>.joinToEvenlySpaced(
     }
     return buffer.toString()
 }
+
+fun <T> Collection<T>.countDuplicates(): Int = distinct().count { pos -> this.count { it == pos } == 2 }

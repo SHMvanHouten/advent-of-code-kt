@@ -12,13 +12,13 @@ class Day04Test {
     inner class Part1 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 1`() {
+            expectThat(findXMasses(example)).isEqualTo(18)
         }
 
         @Test
         internal fun `part 1`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(findXMasses(input)).isEqualTo(2547)
         }
     }
 
@@ -26,16 +26,27 @@ class Day04Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 1`() {
+            expectThat(findCrossMasses(example)).isEqualTo(9)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(findCrossMasses(input)).isEqualTo(1939)
         }
     }
 
     private val input by lazy { readFile("/input-day04.txt")}
-
+    private val example = """
+    MMMSXXMASM
+    MSAMXMSMSA
+    AMXSXMAAMM
+    MSAMASMSMX
+    XMASAMXAMM
+    XXAMMXXAMA
+    SMSMSASXSS
+    SAXAMASAAA
+    MAMMMXMMMM
+    MXMXAXMASX
+""".trimIndent()
 }
