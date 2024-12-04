@@ -6,30 +6,54 @@ import com.github.shmvanhouten.adventofcode.utility.coordinate.RelativePosition
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 
+private val example = """
+    MMMSXXMASM
+    MSAMXMSMSA
+    AMXSXMAAMM
+    MSAMASMSMX
+    XMASAMXAMM
+    XXAMMXXAMA
+    SMSMSASXSS
+    SAXAMASAAA
+    MAMMMXMMMM
+    MXMXAXMASX
+""".trimIndent()
+
 fun main() {
     val input = readFile("/input-day04.txt")
-    val p1 = part1(input)
-    println(p1)
+    val p2 = part2(input)
+    println(p2)
+    println(part2(example))
 }
 
-fun part1(input: String): Int {
+fun part2(input: String): Int {
     val grid = charGrid(input)
-    return grid.withIndex()
-        .filter { it.item == 'X' }
-        .sumOf { countXMases(it.location, grid) }
+    val aposes = grid.withIndex()
+        .filter { it.item == 'M' }
+        .flatMap { countXMases(it.location, grid) }
+    return aposes
+        .count { pos -> aposes.count { it == pos } == 2 }/2
 }
 
-fun countXMases(location: Coordinate, grid: Grid<Char>): Int {
-    return RelativePosition.entries.count { grid.readsXmasInDirection(location, it) }
+fun countXMases(location: Coordinate, grid: Grid<Char>): List<Coordinate> {
+    val aposes = listOf(
+        RelativePosition.NORTH_EAST,
+        RelativePosition.NORTH_WEST,
+        RelativePosition.SOUTH_EAST,
+        RelativePosition.SOUTH_WEST,
+    ).mapNotNull { grid.readsXmasInDirection(location, it) }
+    return aposes
 }
 
-fun Grid<Char>.readsXmasInDirection(location: Coordinate, direction: RelativePosition): Boolean {
-    val mpos = location.move(direction)
-    val apos = location.move(direction, 2)
-    val spos = location.move(direction, 3)
-    return this[location] == 'X'
-            && this.contains(mpos) && this[mpos] == 'M'
-            && this.contains(apos) && this[apos] == 'A'
-            && this.contains(spos) && this[spos] == 'S'
+fun Grid<Char>.readsXmasInDirection(location: Coordinate, direction: RelativePosition): Coordinate? {
+    val apos = location.move(direction, 1)
+    val spos = location.move(direction, 2)
+    return if(this[location] == 'M'
+        && this.contains(apos) && this[apos] == 'A'
+        && this.contains(spos) && this[spos] == 'S') {
+        apos
+    } else {
+        null
+    }
 }
 
