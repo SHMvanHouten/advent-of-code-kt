@@ -13,12 +13,12 @@ class Day05Test {
 
         @Test
         internal fun `example 1`() {
-            expectThat(part1(example)).isEqualTo(143)
+            expectThat(sumCorrectlyOrderedLists(example)).isEqualTo(143)
         }
 
         @Test
         internal fun `part 1`() {
-            expectThat(part1(input)).isEqualTo(6260)
+            expectThat(sumCorrectlyOrderedLists(input)).isEqualTo(6260)
         }
     }
 
@@ -27,12 +27,12 @@ class Day05Test {
 
         @Test
         internal fun `example 2`() {
-            expectThat(part2(example)).isEqualTo(123)
+            expectThat(reorderIncorrectlyOrderedLists(example)).isEqualTo(123)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(part2(input)).isEqualTo(5346)
+            expectThat(reorderIncorrectlyOrderedLists(input)).isEqualTo(5346)
         }
     }
 

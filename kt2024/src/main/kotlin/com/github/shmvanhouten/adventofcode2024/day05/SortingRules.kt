@@ -2,46 +2,43 @@ package com.github.shmvanhouten.adventofcode2024.day05
 
 import com.github.shmvanhouten.adventofcode.utility.strings.blocks
 
-fun part1(input: String): Int {
+fun sumCorrectlyOrderedLists(input: String): Int {
     val (rules, updates) = parse(input)
     return updates.filter { isCorrectlyOrdered(it, rules) }
         .sumOf { it[it.size/2] }
-        .also { println(it) }
 }
 
-fun part2(input: String): Int {
+fun reorderIncorrectlyOrderedLists(input: String): Int {
     val (rules, updates) = parse(input)
     return updates.filter {!isCorrectlyOrdered(it, rules) }
-        .map { reorder(it, rules) }
+        .map { it.sortedWith { l, r -> rules.compare(l, r) } }
         .sumOf { it[it.size/2] }
 }
 
-private fun reorder(update: List<Int>, rules: Rules): List<Int> {
-    return update.sortedWith{l, r ->
-        if(comesBefore(l, r, rules)) -1
-        else 1
-    }
-}
-
-fun isCorrectlyOrdered(update: List<Int>, rules: Rules): Boolean {
+private fun isCorrectlyOrdered(update: List<Int>, rules: Rules): Boolean =
     update.subList(0, update.lastIndex)
-        .forEachIndexed { index, i ->
-            if(update.subList(index + 1, update.size).any { comesBefore(it, i, rules) }) {
-                return false
-            }
-    }
-    return true
-}
+        .withIndex()
+        .none { (index, i) ->
+            update.subList(index + 1, update.size)
+                .any { rules.comesBefore(it, i) }
+        }
 
-fun comesBefore(one: Int, other: Int, rules: Map<Int, List<Int>>): Boolean {
-    return rules[one]?.contains(other)?: false
-            || !(rules[other]?.contains(one)?: false)
-}
+private fun Rules.comesBefore(one: Int, other: Int): Boolean =
+    this[one]?.contains(other)?: false
+        || !(this[other]?.contains(one)?: false)
 
-fun parse(input: String): Pair<Rules, Updates> {
+private fun Rules.compare(l: Int, r: Int) =
+    if (this.comesBefore(l, r)) -1
+    else 1
+
+private fun parse(input: String): Pair<Rules, Updates> {
     val (rawRules, rawUpdates) = input.blocks()
-    return rawRules.lines().map { it.split('|').map { it.toInt() } }.map { (f, s) -> f to s }.groupBy ({ it.first }, {it.second}) to
-            rawUpdates.lines().map { it.split(',').map { it.toInt() } }
+    return Pair(
+        rawRules.lines()
+            .map { it.split('|').map(String::toInt) }
+            .map { (f, s) -> f to s }
+            .groupBy({ it.first }, { it.second }),
+        rawUpdates.lines().map { it -> it.split(',').map(String::toInt) })
 }
 
 typealias Rules = Map<Int, List<Int>>
