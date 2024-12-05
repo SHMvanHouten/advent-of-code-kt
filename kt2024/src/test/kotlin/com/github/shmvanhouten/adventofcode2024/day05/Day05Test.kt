@@ -12,13 +12,13 @@ class Day05Test {
     inner class Part1 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 1`() {
+            expectThat(part1(example)).isEqualTo(143)
         }
 
         @Test
         internal fun `part 1`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(part1(input)).isEqualTo(6260)
         }
     }
 
@@ -26,16 +26,45 @@ class Day05Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 2`() {
+            expectThat(part2(example)).isEqualTo(123)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(part2(input)).isEqualTo(5346)
         }
     }
 
     private val input by lazy { readFile("/input-day05.txt")}
+    private val example = """
+    47|53
+    97|13
+    97|61
+    97|47
+    75|29
+    61|13
+    75|53
+    29|13
+    97|29
+    53|29
+    61|53
+    97|53
+    61|29
+    47|13
+    75|47
+    97|75
+    47|61
+    75|61
+    47|29
+    75|13
+    53|13
 
+    75,47,61,53,29
+    97,61,53,29,13
+    75,29,13
+    75,97,47,61,53
+    61,13,29
+    97,13,75,29,47
+""".trimIndent()
 }

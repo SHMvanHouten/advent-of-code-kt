@@ -1,20 +1,26 @@
 package com.github.shmvanhouten.adventofcode2024.day05
 
-import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.strings.blocks
 
-fun main() {
-    part1(example)
-    part1(readFile("/input-day05.txt"))
-
-
-}
-
-private fun part1(input: String) {
+fun part1(input: String): Int {
     val (rules, updates) = parse(input)
-    updates.filter { isCorrectlyOrdered(it, rules) }
+    return updates.filter { isCorrectlyOrdered(it, rules) }
         .sumOf { it[it.size/2] }
         .also { println(it) }
+}
+
+fun part2(input: String): Int {
+    val (rules, updates) = parse(input)
+    return updates.filter {!isCorrectlyOrdered(it, rules) }
+        .map { reorder(it, rules) }
+        .sumOf { it[it.size/2] }
+}
+
+private fun reorder(update: List<Int>, rules: Rules): List<Int> {
+    return update.sortedWith{l, r ->
+        if(comesBefore(l, r, rules)) -1
+        else 1
+    }
 }
 
 fun isCorrectlyOrdered(update: List<Int>, rules: Rules): Boolean {
@@ -40,34 +46,3 @@ fun parse(input: String): Pair<Rules, Updates> {
 
 typealias Rules = Map<Int, List<Int>>
 typealias Updates = List<List<Int>>
-
-private val example = """
-    47|53
-    97|13
-    97|61
-    97|47
-    75|29
-    61|13
-    75|53
-    29|13
-    97|29
-    53|29
-    61|53
-    97|53
-    61|29
-    47|13
-    75|47
-    97|75
-    47|61
-    75|61
-    47|29
-    75|13
-    53|13
-
-    75,47,61,53,29
-    97,61,53,29,13
-    75,29,13
-    75,97,47,61,53
-    61,13,29
-    97,13,75,29,47
-""".trimIndent()
