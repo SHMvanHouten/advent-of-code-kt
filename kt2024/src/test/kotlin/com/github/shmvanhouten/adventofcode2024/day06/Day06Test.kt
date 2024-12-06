@@ -26,13 +26,13 @@ class Day06Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 1`() {
+            expectThat(findLocationsToLoopGuard(example).count()).isEqualTo(6)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(findLocationsToLoopGuard(input).count()).isEqualTo(6)
         }
     }
 
