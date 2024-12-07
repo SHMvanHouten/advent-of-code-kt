@@ -12,13 +12,8 @@ class Day01Test {
     inner class Part1 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
-        }
-
-        @Test
         internal fun `part 1`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(findIdDistances(input)).isEqualTo(3508942)
         }
     }
 
@@ -26,13 +21,8 @@ class Day01Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
-        }
-
-        @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(sumSimilarityScores(input)).isEqualTo(26593248)
         }
     }
 

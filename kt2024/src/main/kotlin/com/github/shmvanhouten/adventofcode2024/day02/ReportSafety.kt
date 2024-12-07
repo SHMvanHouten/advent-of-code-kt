@@ -1,14 +1,7 @@
 package com.github.shmvanhouten.adventofcode2024.day02
 
-import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.strings.words
 import kotlin.math.abs
-
-fun main() {
-    readFile("/input-day02.txt")
-        .lines()
-        .onEach(::println)
-}
 
 fun String.parse(): List<Int> {
     return words().map { it.toInt() }

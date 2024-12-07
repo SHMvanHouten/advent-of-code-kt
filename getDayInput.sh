@@ -32,7 +32,7 @@ fun main() {
         .lines()
         .onEach(::println)
 }
-" > ./"${source_folder}"/Placeholder.kt
+" > ./"${source_folder}/Placeholder${DD}.kt"
 
 echo "package com.github.shmvanhouten.adventofcode${year}.day${DD}
 
@@ -79,6 +79,6 @@ class Day${DD}Test {
 git add .
 
 idea ./"${test_folder}"/Day"${DD}"Test.kt
-idea ./"${source_folder}"/Placeholder.kt
+idea ./"${source_folder}/Placeholder${DD}".kt
 
 open "${url}"
