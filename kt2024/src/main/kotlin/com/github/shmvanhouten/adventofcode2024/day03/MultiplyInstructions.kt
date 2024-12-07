@@ -1,11 +1,9 @@
 package com.github.shmvanhouten.adventofcode2024.day03
 
-import com.github.shmvanhouten.adventofcode.utility.collectors.product
-import com.github.shmvanhouten.adventofcode.utility.strings.substringBetween
-
 // PART 1
 fun calculateAllProducts(input: String): Long {
-    return findProducts(input).map { it.second }
+    return findProducts(input)
+        .map { it.second }
         .sum()
 }
 
@@ -23,11 +21,12 @@ fun calculateProductsInDoRanges(
 }
 
 private fun findProducts(input: String): Sequence<Pair<String, Long>> {
-    return Regex("""mul\((\d)*,(\d)*\)""")
+    return Regex("""mul\((?<first>\d*),(?<second>\d*)\)""")
         .findAll(input)
-        .map { it.value }
-        .map { it to it.calculateProduct() }
+        .map { it.value to ((it.groups["first"].toLong()) * (it.groups["second"].toLong())) }
 }
+
+private fun MatchGroup?.toLong() = this!!.value.toLong()
 
 private fun findDoRanges(input: String): List<IntRange> {
 
@@ -54,10 +53,6 @@ private fun sortDoAndDontRanges(input: String) =
     (input.indicesOfAll("do()").map { it to true } + input.indicesOfAll("don't()")
         .map { it to false })
         .sortedBy { it.first }
-
-private fun String.calculateProduct(): Long {
-    return substringBetween("mul(", ")").split(',').map { it.toLong() }.product()
-}
 
 private fun String.indicesOfAll(element: String): List<Int> {
     return generateSequence(indexOf(element)) { indexOf(element, it + 1) }
