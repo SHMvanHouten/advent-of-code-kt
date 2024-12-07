@@ -14,6 +14,11 @@ fun part1(input: String) = input.lines()
     .filter { isAValidLine(it) }
     .sumOf { it.first }
 
+fun part2(input: String) = input.lines()
+    .map { it.parse() }
+    .filter { isAValidLine(it) }
+    .sumOf { it.first }
+
 fun isAValidLine(line: String) = isAValidLine(line.parse())
 
 fun isAValidLine(line: Pair<Long, List<Long>>): Boolean {
@@ -36,12 +41,20 @@ fun List<Long>.permute(): List<Long> {
     if(size < 2) error("cannot permute list of less than 2")
     if(size == 2) {
         val (first, second) = this
-        return listOf(first + second, first * second)
+        return listOf(first + second, first * second, concated(first, second))
     }
     val (first, second, rest) = this.extractFirstTwo()
     return (listOf((first + second)) + rest).permute() +
-        (listOf((first * second)) + rest).permute()
+        (listOf((first * second)) + rest).permute() +
+            concat(first, second, rest)
 }
+
+fun concat(first: Long, second: Long, rest: List<Long>): List<Long> {
+    val concated = concated(first, second)
+    return (listOf(concated) + rest).permute()
+}
+
+fun concated(first: Long, second: Long): Long = (first.toString() + second.toString()).toLong()
 
 fun <T>List<T>.extractFirstTwo(): Triple<T, T, List<T>> {
     val remaining = if(size == 2) {
@@ -51,9 +64,3 @@ fun <T>List<T>.extractFirstTwo(): Triple<T, T, List<T>> {
     }
     return Triple(first(), this[1], remaining)
 }
-
-fun <T>List<T>.head(): Pair<T, List<T>> {
-    return this.first() to this.tail()
-}
-
-fun <T>List<T>.tail(): List<T> = subList(1, size)

@@ -56,13 +56,13 @@ class Day07Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example p 2`() {
+            expectThat(part2(example)).isEqualTo(11387)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(part2(input)).isEqualTo(11387)
         }
     }
 
