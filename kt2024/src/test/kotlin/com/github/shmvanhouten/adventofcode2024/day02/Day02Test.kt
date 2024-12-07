@@ -7,7 +7,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import strikt.assertions.isGreaterThan
 
 class Day02Test {
 
@@ -64,7 +63,6 @@ class Day02Test {
 
         @Test
         internal fun `part 2`() {
-            expectThat(input.lines().map { it.parse() }.count { it.isSafeDampened() }).isGreaterThan(597)
             expectThat(input.lines().map { it.parse() }.count { it.isSafeDampened() }).isEqualTo(612)
         }
     }
