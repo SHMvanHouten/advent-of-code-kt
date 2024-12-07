@@ -21,28 +21,22 @@ fun findLocationsToLoopGuard(input: String): List<Coordinate> {
     val mutableGrid = grid.toMutableGrid()
 
     return (listVisitedLocations(guardLocation, grid) - guardLocation)
-        .filter {isALoopWithObstacleAt(mutableGrid, guardLocation, obstacle = it)}
+        .filter { isALoopWithObstacleAt(mutableGrid, guardLocation, obstacle = it) }
 }
 
 private fun listVisitedLocations(
     guardLocation: Coordinate,
     grid: Grid<Boolean>
-): MutableSet<Coordinate> {
-    val positions = mutableSetOf<Coordinate>()
-    var currentPosition = guardLocation
-    var currentDirection = Direction.NORTH
-    while (true) {
-        positions += currentPosition
-        val nextPos = currentPosition.move(currentDirection)
-        if (!grid.contains(nextPos)) {
-            return positions
-        } else if (grid[nextPos]) {
-            currentDirection = currentDirection.turnRight()
-        } else {
-            currentPosition = nextPos
-        }
+): Set<Coordinate> = generateSequence(guardLocation to Direction.NORTH) { (currentPosition, currentDirection) ->
+    val nextPos = currentPosition.move(currentDirection)
+    if(grid.getOrNull(nextPos) == true) {
+        currentPosition to currentDirection.turnRight()
+    } else {
+        nextPos to currentDirection
     }
-}
+}.takeWhile { (p, _) -> grid.contains(p) }
+    .map { it.first }
+    .toSet()
 
 private fun isALoopWithObstacleAt(grid: MutableGrid<Boolean>, guardLocation: Coordinate, obstacle: Coordinate): Boolean {
     grid[obstacle] = true
@@ -53,7 +47,7 @@ private fun isALoopWithObstacleAt(grid: MutableGrid<Boolean>, guardLocation: Coo
 
 private fun isALoop(
     guardLocation: Coordinate,
-    grid: MutableGrid<Boolean>
+    grid: Grid<Boolean>
 ): Boolean {
     val positionsWithDirections = mutableSetOf<Pair<Coordinate, Direction>>()
     var currentPosition = guardLocation
