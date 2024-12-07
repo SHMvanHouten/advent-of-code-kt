@@ -32,7 +32,7 @@ class Day06Test {
 
         @Test
         internal fun `part 2`() {
-            expectThat(findLocationsToLoopGuard(input).count()).isEqualTo(6)
+            expectThat(findLocationsToLoopGuard(input).count()).isEqualTo(2162)
         }
     }
 
