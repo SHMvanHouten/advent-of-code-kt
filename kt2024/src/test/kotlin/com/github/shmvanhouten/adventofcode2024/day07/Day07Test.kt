@@ -7,6 +7,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isFalse
+import strikt.assertions.isTrue
 
 class Day07Test {
 
@@ -23,7 +25,7 @@ class Day07Test {
             ]
         )
         fun `valid sums can be obtained by multiplying and adding`(line: String) {
-            expectThat(isAValidLine(line)).isEqualTo(true)
+            expectThat(isAValidLine(line)).isTrue()
         }
 
         @ParameterizedTest
@@ -38,17 +40,17 @@ class Day07Test {
             ]
         )
         fun `invalid sums`(line: String) {
-            expectThat(isAValidLine(line)).isEqualTo(false)
+            expectThat(isAValidLine(line)).isFalse()
         }
 
         @Test
         internal fun `example 1`() {
-            expectThat(part1(example)).isEqualTo(3749)
+            expectThat(sumValidEquations(example)).isEqualTo(3749)
         }
 
         @Test
         internal fun `part 1`() {
-            expectThat(part1(input)).isEqualTo(3749)
+            expectThat(sumValidEquations(input)).isEqualTo(4122618559853)
         }
     }
 
@@ -57,12 +59,12 @@ class Day07Test {
 
         @Test
         internal fun `example p 2`() {
-            expectThat(part2(example)).isEqualTo(11387)
+            expectThat(sumValidEquationsIncludingConcat(example)).isEqualTo(11387)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(part2(input)).isEqualTo(11387)
+            expectThat(sumValidEquationsIncludingConcat(input)).isEqualTo(227615740238334)
         }
     }
 
