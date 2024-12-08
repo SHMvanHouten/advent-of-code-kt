@@ -8,6 +8,8 @@ import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 
 fun main() {
     val input = readFile("/input-day08.txt")
+    println(part1(example))
+    println(part1(example).size)
     println(part1(input))
     println(part1(input).size)
 }
@@ -25,7 +27,9 @@ fun part1(input: String): List<Coordinate> {
 
 fun listResultingAntinodes(a: Coordinate, b: Coordinate, charGrid: Grid<Char>): List<Coordinate> {
     val dif = b - a
-    return listOf(a - dif, b + dif).filter { charGrid.contains(it) }
+    val sequence1 = generateSequence(a) { it + dif }.takeWhile { charGrid.contains(it) }
+    val sequence2 = generateSequence(a) { it - dif }.takeWhile { charGrid.contains(it) }
+    return return (sequence1 + sequence2).toList()
 }
 
 private val example = """
