@@ -15,4 +15,8 @@ fun <T> Collection<T>.joinToEvenlySpaced(
     return buffer.toString()
 }
 
-fun <T> Collection<T>.countDuplicates(): Int = distinct().count { pos -> this.count { it == pos } == 2 }
+fun <T> Collection<T>.countDuplicates(minNrOfDuplications: Int = 2): Int =
+    this.groupingBy { it }.eachCount()
+        .count { (_, v) -> v >= minNrOfDuplications }
+
+fun <T> Collection<T>.doesNotContain(e: T) = !this.contains(e)

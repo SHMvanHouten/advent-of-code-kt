@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2024.day05
 
+import com.github.shmvanhouten.adventofcode.utility.collections.doesNotContain
 import com.github.shmvanhouten.adventofcode.utility.strings.blocks
 
 fun sumCorrectlyOrderedLists(input: String): Int {
@@ -11,7 +12,7 @@ fun sumCorrectlyOrderedLists(input: String): Int {
 fun reorderIncorrectlyOrderedLists(input: String): Int {
     val (rules, updates) = parse(input)
     return updates.filter {!isCorrectlyOrdered(it, rules) }
-        .map { it.sortedWith { l, r -> rules.compare(l, r) } }
+        .map { it.sortedWith(rules::compare) }
         .sumOf { it[it.size/2] }
 }
 
@@ -25,7 +26,7 @@ private fun isCorrectlyOrdered(update: List<Int>, rules: Rules): Boolean =
 
 private fun Rules.comesBefore(one: Int, other: Int): Boolean =
     this[one]?.contains(other)?: false
-        || !(this[other]?.contains(one)?: false)
+        || this[other]?.doesNotContain(one)?: false
 
 private fun Rules.compare(l: Int, r: Int) =
     if (this.comesBefore(l, r)) -1
