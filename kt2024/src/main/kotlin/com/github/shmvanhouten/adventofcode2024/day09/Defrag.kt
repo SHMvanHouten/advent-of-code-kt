@@ -13,7 +13,7 @@ fun toFileBlocks(input: String): List<Block> {
         if(index.isEven()) {
             FileBlock(index / 2, c.digitToInt())
         } else {
-            EmptyBlock(c.digitToInt())
+            EmptyBlock(length = c.digitToInt())
         }
 
     }
@@ -41,18 +41,18 @@ fun mergeToSingleBlock(fileBlocks: List<Block>): List<Id> {
 }
 
 fun defrag(fileBlocks: List<Block>): MutableList<Block> {
-    val mutableBlocks = fileBlocks.toMutableList()
+    val mutableBlocks =  fileBlocks.toMutableList()
     for (fb in fileBlocks.filterIsInstance<FileBlock>().reversed()) {
         val indexOfEmptySpace = mutableBlocks.indexOfFirst { it is EmptyBlock && it.length >= fb.length }
         if(mutableBlocks.indexOf(fb) < indexOfEmptySpace) continue
         if(indexOfEmptySpace == -1) continue
-        mutableBlocks[mutableBlocks.indexOf(fb)] = EmptyBlock(fb.length)
+        mutableBlocks[mutableBlocks.indexOf(fb)] = EmptyBlock(length = fb.length)
 
-        if(mutableBlocks[indexOfEmptySpace].length == fb.length) {
+        val emptyBlock = mutableBlocks[indexOfEmptySpace]
+        if(emptyBlock.length == fb.length) {
             mutableBlocks[indexOfEmptySpace] = fb
         } else{
-            val emptyBlock = mutableBlocks[indexOfEmptySpace]
-            mutableBlocks[indexOfEmptySpace] = EmptyBlock(emptyBlock.length - fb.length)
+            mutableBlocks[indexOfEmptySpace] = EmptyBlock(length = emptyBlock.length - fb.length)
             mutableBlocks.add(indexOfEmptySpace, fb)
         }
     }
@@ -63,10 +63,10 @@ fun checkSum(blocks: List<Block>): Long {
     var index = 0
     var checkSum = 0L
     for (block in blocks) {
-        if(block is FileBlock) {
-            checkSum += (0..<block.length).map { it + index }.sumOf { it * block.id }
+        for (i in (0..<block.length)) {
+            checkSum += index * block.id
+            index++
         }
-        index += block.length
     }
     return checkSum
 }
@@ -75,8 +75,11 @@ fun checkSumIds(blocks: List<Id>): Long {
     return blocks.mapIndexed { index, c -> index * c.toLong() }.sum()
 }
 
-sealed interface Block {val length: Int}
-data class FileBlock(val id: Int, override val length: Int): Block {
+sealed interface Block {
+    val id: Int
+    val length: Int
+}
+data class FileBlock(override val id: Int, override val length: Int): Block {
     override fun toString(): String {
         return (0..<length).map { id }.joinToString("")
     }
@@ -100,7 +103,7 @@ data class FileBlock(val id: Int, override val length: Int): Block {
 
 
 }
-data class EmptyBlock(override val length: Int): Block {
+data class EmptyBlock(override val id: Int = 0, override val length: Int): Block {
     override fun toString(): String {
         return (0..<length).map { '.' }.joinToString("")
     }

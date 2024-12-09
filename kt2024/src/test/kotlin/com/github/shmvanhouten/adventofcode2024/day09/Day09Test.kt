@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import strikt.assertions.isGreaterThan
 
 class Day09Test {
 
@@ -43,7 +42,7 @@ class Day09Test {
     inner class Part2 {
 
         @Test
-        internal fun `example 1`() {
+        internal fun `example 2`() {
             val fileBlocks = toFileBlocks("2333133121414131402")
             val blocks = defrag(fileBlocks)
             expectThat(blocks.joinToString("")).isEqualTo("00992111777.44.333....5555.6666.....8888..")
@@ -54,9 +53,7 @@ class Day09Test {
         internal fun `part 2`() {
             val fileBlocks = toFileBlocks(input)
             val blocks = defrag(fileBlocks)
-            println(blocks.joinToString(""))
-            expectThat(checkSum(blocks)).isGreaterThan(5235269539255)
-            expectThat(checkSum(blocks)).isEqualTo(0)
+            expectThat(checkSum(blocks)).isEqualTo(6321896265143)
         }
     }
 
