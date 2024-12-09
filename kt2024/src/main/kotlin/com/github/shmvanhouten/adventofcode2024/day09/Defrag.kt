@@ -40,7 +40,38 @@ fun mergeToSingleBlock(fileBlocks: List<Block>): List<Id> {
     }.take(justFileBlocks.sumOf { it.length })
 }
 
-fun checkSum(blocks: List<Id>): Long {
+fun defrag(fileBlocks: List<Block>): MutableList<Block> {
+    val mutableBlocks = fileBlocks.toMutableList()
+    for (fb in fileBlocks.filterIsInstance<FileBlock>().reversed()) {
+        val indexOfEmptySpace = mutableBlocks.indexOfFirst { it is EmptyBlock && it.length >= fb.length }
+        if(mutableBlocks.indexOf(fb) < indexOfEmptySpace) continue
+        if(indexOfEmptySpace == -1) continue
+        mutableBlocks[mutableBlocks.indexOf(fb)] = EmptyBlock(fb.length)
+
+        if(mutableBlocks[indexOfEmptySpace].length == fb.length) {
+            mutableBlocks[indexOfEmptySpace] = fb
+        } else{
+            val emptyBlock = mutableBlocks[indexOfEmptySpace]
+            mutableBlocks[indexOfEmptySpace] = EmptyBlock(emptyBlock.length - fb.length)
+            mutableBlocks.add(indexOfEmptySpace, fb)
+        }
+    }
+    return mutableBlocks
+}
+
+fun checkSum(blocks: List<Block>): Long {
+    var index = 0
+    var checkSum = 0L
+    for (block in blocks) {
+        if(block is FileBlock) {
+            checkSum += (0..<block.length).map { it + index }.sumOf { it * block.id }
+        }
+        index += block.length
+    }
+    return checkSum
+}
+
+fun checkSumIds(blocks: List<Id>): Long {
     return blocks.mapIndexed { index, c -> index * c.toLong() }.sum()
 }
 
@@ -53,6 +84,21 @@ data class FileBlock(val id: Int, override val length: Int): Block {
     fun toIdList(): List<Id> {
         return (0..<length).map { id }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FileBlock
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id
+    }
+
+
 }
 data class EmptyBlock(override val length: Int): Block {
     override fun toString(): String {

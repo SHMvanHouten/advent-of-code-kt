@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isGreaterThan
 
 class Day09Test {
 
@@ -27,13 +28,13 @@ class Day09Test {
                 .isEqualTo("00...111...2...333.44.5555.6666.777.888899")
             val merged = mergeToSingleBlock(fileBlocks)
             expectThat(merged.joinToString("")).isEqualTo("0099811188827773336446555566")
-            expectThat(checkSum(merged)).isEqualTo(1928)
+            expectThat(checkSumIds(merged)).isEqualTo(1928)
         }
 
         @Test
         internal fun `part 1`() {
             val merged = mergeToSingleBlock(toFileBlocks(input))
-            val checkSum = checkSum(merged)
+            val checkSum = checkSumIds(merged)
             expectThat(checkSum).isEqualTo(6288599492129)
         }
     }
@@ -42,13 +43,20 @@ class Day09Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 1`() {
+            val fileBlocks = toFileBlocks("2333133121414131402")
+            val blocks = defrag(fileBlocks)
+            expectThat(blocks.joinToString("")).isEqualTo("00992111777.44.333....5555.6666.....8888..")
+            expectThat(checkSum(blocks)).isEqualTo(2858)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            val fileBlocks = toFileBlocks(input)
+            val blocks = defrag(fileBlocks)
+            println(blocks.joinToString(""))
+            expectThat(checkSum(blocks)).isGreaterThan(5235269539255)
+            expectThat(checkSum(blocks)).isEqualTo(0)
         }
     }
 
