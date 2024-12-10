@@ -40,13 +40,13 @@ class Day10Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 2`() {
+            expectThat(findTrailHeadScoresByDistinctPaths(example)).isEqualTo(81)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(findTrailHeadScoresByDistinctPaths(input)).isEqualTo(1694)
         }
     }
 
