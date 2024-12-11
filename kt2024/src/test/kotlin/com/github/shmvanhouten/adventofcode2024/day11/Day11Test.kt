@@ -13,12 +13,14 @@ class Day11Test {
 
         @Test
         internal fun `example 1`() {
-            expectThat(blink(example, 25).count()).isEqualTo(55312)
+            expectThat(blink("1", 25).count()).isEqualTo(55312)
         }
 
         @Test
         internal fun `part 1`() {
-            expectThat(blink(input, 25).count()).isEqualTo(175006)
+            val blink = blink(input, 25)
+            println(blink.distinct().count())
+            expectThat(blink.count()).isEqualTo(175006)
         }
     }
 
@@ -26,13 +28,13 @@ class Day11Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        fun `example 1`() {
+            expectThat(blinkCounting(example, 25)).isEqualTo(55312)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(blinkCounting(input, 75)).isEqualTo(207961583799296)
         }
     }
 
