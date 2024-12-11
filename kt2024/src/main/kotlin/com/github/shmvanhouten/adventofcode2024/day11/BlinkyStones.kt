@@ -9,49 +9,25 @@ import com.github.shmvanhouten.adventofcode.utility.strings.words
 // there are very few unique stones every time,
 // so we can just count each stone, and do the next step * count (in the end I chose this...)
 
-fun blinkCounting(input: String, target: Int): Long {
-    val stones = parse(input)
-    var stonesToCount: Map<Stone, Long> = stones.groupingBy { it }.eachCount().mapValues { it.value.toLong() }
-    repeat(target) {
-        val newStonesCount = mutableMapOf<Stone, Long>()
-        stonesToCount.entries.forEach { (stone, count) ->
-            applyRules(stone).groupingBy { it }.eachCount().mapValues { it.value * count }
-                .forEach { newStonesCount.merge(it.key, it.value, Long::plus) }
-
+fun blink(input: String, nrOfBlinks: Int): Long {
+    return generateSequence(
+        parse(input).groupingBy { it }.eachCount().mapValues { it.value.toLong() }
+    ) { stonesToCounts ->
+        stonesToCounts.entries.flatMap { (stone, count) ->
+            applyRules(stone).groupingBy { it }.eachCount()
+                .mapValues { it.value * count }.entries
+        }.groupingBy { it.key }.aggregate { _, acc, stoneToCount, _ ->
+            (acc ?: 0L) + stoneToCount.value
         }
-        stonesToCount = newStonesCount
-    }
-    return stonesToCount.values.sum()
-}
-
-fun blink(input: String, times: Int): List<Stone> = blink(parse(input), times)
-
-fun blink(stones: List<Stone>, times: Int): List<Stone> {
-    return generateSequence(stones) {
-        blink(it)
-    }
-        .onEach { println(it) }
-        .drop(times)
-        .first()
-}
-
-private fun blink(stones: List<Stone>): List<Stone> {
-    val newStones = mutableListOf<Stone>()
-    stones.forEach {
-        newStones.addAll(applyRules(it))
-    }
-    return newStones
+    }.drop(nrOfBlinks).first().values.sum()
 }
 
 private fun applyRules(
     stone: Stone
-): List<Stone> {
-
-    return when {
-        stone == 0L -> listOf(1)
-        hasEvenNumberOfDigits(stone) -> stone.split()
-        else -> listOf(stone * 2024)
-    }
+): List<Stone> = when {
+    stone == 0L -> listOf(1)
+    hasEvenNumberOfDigits(stone) -> stone.split()
+    else -> listOf(stone * 2024)
 }
 
 fun Stone.split(): List<Stone> {
