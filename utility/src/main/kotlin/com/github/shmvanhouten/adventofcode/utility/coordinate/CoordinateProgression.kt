@@ -86,6 +86,22 @@ class CoordinateProgression(val start: Coordinate, val end: Coordinate) : Iterab
     fun tail(): CoordinateProgression {
         return this.take(2).last()..this.end
     }
+
+    fun nextInLine(direction: Direction): Coordinate {
+        return if(this.isHorizontal()) {
+            this.end.getNeighbour(direction)
+        } else if(this.isVertical()) {
+            this.end.getNeighbour(direction)
+        } else {
+            TODO()
+        }
+    }
+
+    override fun toString(): String {
+        return "CoordinateProgression(start=$start, end=$end)"
+    }
+
+
 }
 
 private fun isNotAt45Degrees(start: Coordinate, end: Coordinate): Boolean =

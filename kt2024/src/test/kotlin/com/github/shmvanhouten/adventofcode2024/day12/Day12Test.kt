@@ -29,13 +29,26 @@ class Day12Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 2`() {
+            expectThat(calculatePlots(charGrid(example)).discountPrices().sum()).isEqualTo(1206L)
+        }
+
+        @Test
+        fun `e example`() {
+            val example = """
+                EEEEE
+                EXXXX
+                EEEEE
+                EXXXX
+                EEEEE
+            """.trimIndent()
+            val plots = calculatePlots(charGrid(example))
+            expectThat(plots.discountPrices().sum()).isEqualTo(236L)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(calculatePlots(charGrid(input)).discountPrices().sum()).isEqualTo(862486L)
         }
     }
 
