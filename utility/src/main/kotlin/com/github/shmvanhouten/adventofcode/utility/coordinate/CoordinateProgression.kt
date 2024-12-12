@@ -87,16 +87,6 @@ class CoordinateProgression(val start: Coordinate, val end: Coordinate) : Iterab
         return this.take(2).last()..this.end
     }
 
-    fun nextInLine(direction: Direction): Coordinate {
-        return if(this.isHorizontal()) {
-            this.end.getNeighbour(direction)
-        } else if(this.isVertical()) {
-            this.end.getNeighbour(direction)
-        } else {
-            TODO()
-        }
-    }
-
     override fun toString(): String {
         return "CoordinateProgression(start=$start, end=$end)"
     }
