@@ -31,6 +31,7 @@ fun boolGridFromCoordinates(locations: Set<Coordinate>): Grid<Boolean> {
     return Grid(grid)
 }
 
+
 fun boolGridFromPicture(input: String, targetChar: Char): Grid<Boolean> = gridTo(input) {it == targetChar}
 
 fun coordGrid(start: Coordinate, endExclusive: Coordinate): Grid<Coordinate> {

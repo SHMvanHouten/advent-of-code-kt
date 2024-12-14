@@ -179,6 +179,11 @@ data class Coordinate(val x: Int, val y: Int): Coord {
         return Coordinate3d(x, y, z)
     }
 
+    operator fun rem(divisor: Coordinate): Coordinate {
+        val (x, y) = this
+        return Coordinate(x % divisor.x, y % divisor.y)
+    }
+
 }
 
 fun Int.negate(): Int {
