@@ -12,6 +12,7 @@ sealed interface Coord {
 }
 
 data class Coordinate(val x: Int, val y: Int): Coord {
+
     fun getSurrounding(): Set<Coordinate> {
         return setOf(
             this + NORTH.coordinate,
