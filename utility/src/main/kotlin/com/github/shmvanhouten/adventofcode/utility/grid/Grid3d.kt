@@ -95,9 +95,9 @@ open class Grid3d<T>(
         return grid.getOrNull(coord.z)?.getOrNull(coord.on2dPlane) != null
     }
 
-    override fun firstCoordinateMatching(matchingFunction: (T) -> Boolean): Coordinate3d? {
+    override fun firstLocationOf(matchingFunction: (T) -> Boolean): Coordinate3d? {
         grid.forEachIndexed{z, g2 ->
-            val matching = g2.firstCoordinateMatching(matchingFunction)
+            val matching = g2.firstLocationOf(matchingFunction)
             if(matching != null) return matching.atDepth(z)
         }
         return null

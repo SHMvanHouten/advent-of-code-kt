@@ -67,7 +67,7 @@ sealed interface IGrid<T, C: Coord> {
     operator fun get(coord: C): T
 
     fun hasElementAt(coord: C): Boolean
-    fun firstCoordinateMatching(matchingFunction: (T) -> Boolean): C?
+    fun firstLocationOf(matchingFunction: (T) -> Boolean): C?
     fun replaceElements(orig: T, replacement: T): Grid<T>
     fun count(condition: (T) -> Boolean): Int
     fun first(condition: (T) -> Boolean): T?
@@ -258,7 +258,7 @@ open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
         }
     }
 
-    override fun firstCoordinateMatching(matchingFunction: (T) -> Boolean): Coordinate? {
+    override fun firstLocationOf(matchingFunction: (T) -> Boolean): Coordinate? {
         grid.forEachIndexed { y, row ->
                 row.forEachIndexed { x, t ->
                     if(matchingFunction(t)) return Coordinate(x, y)
@@ -415,3 +415,5 @@ fun Grid<Char>.toString(special: Collection<Coordinate>, specialChar: Char = 'O'
         }.joinToString("")
     }.joinToString("\n")
 }
+
+

@@ -8,14 +8,14 @@ import com.github.shmvanhouten.adventofcode.utility.grid.boolGridFromPicture
 import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 
 fun countVisitedLocations(input: String): Int {
-    val guardLocation = charGrid(input).firstCoordinateMatching { it == '^' }!!
+    val guardLocation = charGrid(input).firstLocationOf { it == '^' }!!
     val grid = boolGridFromPicture(input, '#')
 
     return listVisitedLocations(guardLocation, grid).count()
 }
 
 fun findLocationsToLoopGuard(input: String): List<Coordinate> {
-    val guardLocation = charGrid(input).firstCoordinateMatching { it == '^' }!!
+    val guardLocation = charGrid(input).firstLocationOf { it == '^' }!!
     val grid = boolGridFromPicture(input, '#')
 
     val mutableGrid = grid.toMutableGrid()

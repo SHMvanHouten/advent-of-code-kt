@@ -46,7 +46,7 @@ private fun moveThroughPipeMarkingAdjacentTiles(
 }.dropWhile { grid[it.first].tile != 'S' }.first().let { Unit }
 
 private fun getStartingPointAndDirection(grid: Grid<Char>): Pair<Coordinate, Direction> {
-    val startingPoint = grid.firstCoordinateMatching { it == 'S' }!!
+    val startingPoint = grid.firstLocationOf { it == 'S' }!!
     val startingDirection: Direction = pickFirstDirection(startingPoint, grid)
     return startingPoint to startingDirection
 }

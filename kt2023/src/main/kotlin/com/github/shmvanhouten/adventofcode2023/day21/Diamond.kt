@@ -6,7 +6,7 @@ import com.github.shmvanhouten.adventofcode.utility.grid.toString
 import kotlin.math.roundToLong
 
 
-fun Grid<Char>.takeSteps(targetSteps: Int = 1, startingPosition: Coordinate = this.firstCoordinateMatching { it == 'S' }!!): Set<Coordinate> {
+fun Grid<Char>.takeSteps(targetSteps: Int = 1, startingPosition: Coordinate = this.firstLocationOf { it == 'S' }!!): Set<Coordinate> {
     var positions = setOf(startingPosition)
     repeat(targetSteps) {
         positions = positions.flatMap {
@@ -94,7 +94,7 @@ fun numberOfStepsInFilledOutGrid(grid: Grid<Char>, isEven: (Int) -> Boolean): Lo
         .count { it == 'O' }.toLong()
 }
 
-fun Grid<Char>.takeStep(startingPositions: Set<Coordinate> = setOf(this.firstCoordinateMatching { it == 'S' }!!)): Pair<Set<Coordinate>, List<Coordinate>> {
+fun Grid<Char>.takeStep(startingPositions: Set<Coordinate> = setOf(this.firstLocationOf { it == 'S' }!!)): Pair<Set<Coordinate>, List<Coordinate>> {
     val (inside, outside) = startingPositions.flatMap {
         it.getSurroundingManhattan()
     }.partition { this.contains(it) }

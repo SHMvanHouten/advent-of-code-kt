@@ -8,7 +8,7 @@ import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 fun shortestPath(input: String): Path {
     val grid = charGrid(input)
     return shortestPathBackward(grid) {
-        current.coord == grid.firstCoordinateMatching { it == 'S' }
+        current.coord == grid.firstLocationOf { it == 'S' }
     }
 }
 
@@ -20,7 +20,7 @@ private fun shortestPathBackward(coords: Grid<Char>, finishCriterion: Path.() ->
     return shortestPathBackward(
         replaceStartAndEndWithHeights(coords),
         finishCriterion,
-        Point(coords.firstCoordinateMatching { it == 'E' }!!, height = 'z')
+        Point(coords.firstLocationOf { it == 'E' }!!, height = 'z')
     )
 }
 
