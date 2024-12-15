@@ -1,41 +1,23 @@
 package com.github.shmvanhouten.adventofcode2024.day13
 
-import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
-import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.strings.blocks
 import java.math.BigInteger
 
-fun main() {
-    parse(readFile("/input-day13.txt"))
-//    parse(example)
+fun calculateMinimumTokensToSpendToGetToPrize(clawMachines: List<ClawMachine>): BigInteger {
+    return clawMachines
         .mapNotNull { findCheapestWayToPrize(it) }
-        .onEach(::println)
-        .sum().also { println(it) }
+        .sum()
 }
 
-private fun findCheapestWayToPrize(clawMachine: ClawMachine): Int? {
+private fun findCheapestWayToPrize(clawMachine: ClawMachine): BigInteger? {
     val (buttonA, buttonB, prize) = clawMachine
-    val buttonAPressesAndResultingPrize = generateSequence(Coordinate(0, 0)) { it + buttonA }
-        .map { prize - it }
-        .takeWhile { prize.x > 0 && prize.y > 0 }
-        .take(100)
-        .toList()
-    return buttonAPressesAndResultingPrize.mapIndexedNotNull { aPresses, resPrize ->
-        val buttonBPresses = findButtonBsToPrize(buttonB, resPrize)
-        if(buttonBPresses != null) aPresses * 3 + buttonBPresses
-        else null
-    }.minOrNull()
+    val (buttonBPresses, rem) = (buttonA.x * prize.y - buttonA.y * prize.x).negate().divideAndRemainder(buttonA.y * buttonB.x - buttonA.x * buttonB.y)
+    if (rem != BigInteger.ZERO) return null
+    val buttonAPresses = (prize.x - buttonB.x * buttonBPresses) / buttonA.x
+    return (buttonAPresses * BigInteger.valueOf(3) + buttonBPresses)
 }
 
-fun findButtonBsToPrize(buttonB: Coordinate, resPrize: Coordinate): Int? {
-    val (divideX, remainderX) = resPrize.x.toBigInteger().divideAndRemainder(buttonB.x.toBigInteger())
-    val (divideY, remainderY) = resPrize.y.toBigInteger().divideAndRemainder(buttonB.y.toBigInteger())
-    return if(remainderX == BigInteger.ZERO && remainderY == BigInteger.ZERO && divideY.equals(divideX)) {
-        divideX.toInt()
-    } else null
-}
-
-private fun parse(input: String): List<ClawMachine> = input.blocks()
+fun parseClawMachines(input: String): List<ClawMachine> = input.blocks()
     .map { toClawMachine(it) }
 
 fun toClawMachine(input: String): ClawMachine {
@@ -47,39 +29,32 @@ fun toClawMachine(input: String): ClawMachine {
     )
 }
 
-fun toButton(raw: String): Coordinate {
+fun toButton(raw: String): Vec2 {
     val (x, y) = raw.substringAfter(": ").split(", ")
         .map { it.substringAfter("+") }
-    return Coordinate(x.toInt(), y.toInt())
+    return Vec2(x.toBigInteger(), y.toBigInteger())
 }
 
-fun toPrize(raw: String): Coordinate {
+fun toPrize(raw: String): Vec2 {
     val (x, y) = raw.substringAfter(": ").split(", ")
         .map { it.substringAfter("=") }
-        .map { it.toInt() }
-    return Coordinate(x, y)
+        .map { it.toBigInteger() }
+    return Vec2(x, y)
 }
 
+fun Collection<BigInteger>.sum() = reduce { acc, bigInteger -> acc.plus(bigInteger) }
+
 data class ClawMachine(
-    val buttonA: Coordinate,
-    val buttonB: Coordinate,
-    val prize: Coordinate
+    val buttonA: Vec2,
+    val buttonB: Vec2,
+    val prize: Vec2
 )
 
-private val example = """
-    Button A: X+94, Y+34
-    Button B: X+22, Y+67
-    Prize: X=8400, Y=5400
-
-    Button A: X+26, Y+66
-    Button B: X+67, Y+21
-    Prize: X=12748, Y=12176
-
-    Button A: X+17, Y+86
-    Button B: X+84, Y+37
-    Prize: X=7870, Y=6450
-
-    Button A: X+69, Y+23
-    Button B: X+27, Y+71
-    Prize: X=18641, Y=10279
-""".trimIndent()
+data class Vec2(
+    val x: BigInteger,
+    val y: BigInteger
+) {
+    fun plus(l: BigInteger): Vec2 {
+        return this.copy(x + l, y + l)
+    }
+}
