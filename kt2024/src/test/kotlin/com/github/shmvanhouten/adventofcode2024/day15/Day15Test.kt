@@ -1,6 +1,7 @@
 package com.github.shmvanhouten.adventofcode2024.day15
 
 import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
+import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -73,13 +74,83 @@ class Day15Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `widen grid`() {
+            expectThat(widenGrid(charGrid("""
+                #######
+                #...#.#
+                #.....#
+                #..OO@#
+                #..O..#
+                #.....#
+                #######
+            """.trimIndent())).toString()).isEqualTo("""
+                ##############
+                ##......##..##
+                ##..........##
+                ##....[][]@.##
+                ##....[]....##
+                ##..........##
+                ##############
+            """.trimIndent())
+        }
+
+        @Test
+        fun `example 1`() {
+            val example = """
+                #######
+                #...#.#
+                #.....#
+                #..OO@#
+                #..O..#
+                #.....#
+                #######
+
+                <vv<<^^<<^^
+            """.trimIndent()
+            val (_grid, instructions) = parse(example)
+            val grid = widenGrid(_grid)
+            val afterInstruction = followInstructionsWidenedGrid(grid, instructions)
+            expectThat(afterInstruction.toString()).isEqualTo(
+                """
+                    ##############
+                    ##...[].##..##
+                    ##...@.[]...##
+                    ##....[]....##
+                    ##..........##
+                    ##..........##
+                    ##############
+                """.trimIndent()
+            )
+        }
+
+        @Test
+        fun `example 2`() {
+            val (_grid, instructions) = parse(example)
+            val grid = widenGrid(_grid)
+            val afterInstruction = followInstructionsWidenedGrid(grid, instructions)
+            expectThat(afterInstruction.toString()).isEqualTo(
+                """
+                    ####################
+                    ##[].......[].[][]##
+                    ##[]...........[].##
+                    ##[]........[][][]##
+                    ##[]......[]....[]##
+                    ##..##......[]....##
+                    ##..[]............##
+                    ##..@......[].[][]##
+                    ##......[][]..[]..##
+                    ####################
+                """.trimIndent()
+            )
+            expectThat(getGPS(afterInstruction)).isEqualTo(9021)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            val (_grid, instructions) = parse(input)
+            val grid = widenGrid(_grid)
+            val afterInstruction = followInstructionsWidenedGrid(grid, instructions)
+            expectThat(getGPS(afterInstruction)).isEqualTo(1550677)
         }
     }
 
