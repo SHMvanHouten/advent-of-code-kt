@@ -13,12 +13,12 @@ class Day16Test {
 
         @Test
         internal fun `example 1`() {
-            expectThat(bestWayThroughMaze(example)).isEqualTo(7036)
+            expectThat(bestScoreThroughMaze(example)).isEqualTo(7036)
         }
 
         @Test
         internal fun `part 1`() {
-            expectThat(bestWayThroughMaze(input)).isEqualTo(7036)
+            expectThat(bestScoreThroughMaze(input)).isEqualTo(90440)
         }
     }
 
@@ -26,13 +26,13 @@ class Day16Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example pt 2`() {
+            expectThat(bestSeats(example)).isEqualTo(45)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(bestSeats(input)).isEqualTo(479)
         }
     }
 
