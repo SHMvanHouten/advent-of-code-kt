@@ -58,21 +58,13 @@ private fun MutableGrid<Char>.moveItemWidened(loc: Coordinate, dir: Direction, i
     }
     val newLoc = loc.move(dir)
     val itemAtNewLoc = this[newLoc]
-    if(itemAtNewLoc == WALL) {
-        return loc
-    } else if (itemAtNewLoc == LEFT_BOX || itemAtNewLoc == RIGHT_BOX) {
+    if (itemAtNewLoc == LEFT_BOX || itemAtNewLoc == RIGHT_BOX) {
         if(dir == Direction.NORTH || dir == Direction.SOUTH) {
             val otherHalfLoc = getOtherHalf(newLoc, itemAtNewLoc)
-            val thisHalfNewLoc = moveItemWidened(newLoc, dir)
-            val otherHalfNewLoc = moveItemWidened(otherHalfLoc, dir)
-            if(thisHalfNewLoc == newLoc || otherHalfNewLoc == otherHalfLoc) { // either half of box did not move
-                return loc
-            }
+            moveItemWidened(newLoc, dir)
+            moveItemWidened(otherHalfLoc, dir)
         } else {
-            val boxNewLoc = moveItemWidened(newLoc, dir)
-            if(boxNewLoc == newLoc) { // box did not move
-                return loc
-            }
+            moveItemWidened(newLoc, dir)
         }
     }
     this[loc] = EMPTY
@@ -96,8 +88,6 @@ private fun MutableGrid<Char>.canMove(loc: Coordinate, dir: Direction): Boolean 
         return true
     }
 }
-
-
 
 fun getOtherHalf(newLoc: Coordinate, item: Char): Coordinate {
     return when(item) {
