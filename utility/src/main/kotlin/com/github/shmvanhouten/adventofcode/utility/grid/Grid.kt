@@ -19,12 +19,14 @@ fun boolGridFromCoordinates(input: String): Grid<Boolean> {
     return boolGridFromCoordinates(locations)
 }
 
-fun boolGridFromCoordinates(locations: Set<Coordinate>): Grid<Boolean> {
+fun boolGridFromCoordinates(
+    locations: Set<Coordinate>,
+    maxX: Int = locations.maxOf { it.x },
+    maxY: Int = locations.maxOf { it.y }
+): Grid<Boolean> {
     if (locations.any { it.y < 0 || it.x < 0 }) error("grid with negative coordinates not implemented")
     val minX = 0
-    val maxX = locations.maxOf { it.x }
     val minY = 0
-    val maxY = locations.maxOf { it.y }
     val grid = (minY..maxY).map { y ->
         (minX..maxX).map { x -> locations.contains(Coordinate(x, y)) }
     }
