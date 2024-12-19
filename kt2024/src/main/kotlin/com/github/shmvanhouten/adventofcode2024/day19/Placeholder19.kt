@@ -17,6 +17,30 @@ fun countPossibleDesigns(input: String): List<String> {
     }
 }
 
+fun countWaysToCreateAllDesigns(input: String): Long {
+    val (availablePatterns, wantedLines) = parse(input)
+    return wantedLines.sumOf { countWaysToCreate(it, availablePatterns) }
+}
+
+fun countWaysToCreate(wanted: String, availableTowels: List<String>): Long {
+    val availablePatternsSoFar = mutableMapOf(0 to 1)
+    var found = 0L
+    while (availablePatternsSoFar.isNotEmpty()) {
+        val (sizeSoFar, waysToCreate) = availablePatternsSoFar.entries.first()
+        availablePatternsSoFar.remove(sizeSoFar)
+        val remaining = wanted.substring(sizeSoFar)
+        if(remaining.isEmpty()) found += waysToCreate
+        availableTowels
+            .filter(remaining::startsWith)
+            .map { sizeSoFar + it.length }
+            .forEach {
+                val waysToCreateAlready = availablePatternsSoFar.getOrDefault(it, 0)
+                availablePatternsSoFar[it] = (waysToCreateAlready + waysToCreate)
+            }
+    }
+    return found
+}
+
 fun isPossible(wanted: String, availableTowels: List<String>): Boolean {
     val availablePatternsSoFar = mutableSetOf(0)
     while (availablePatternsSoFar.isNotEmpty()) {
@@ -35,12 +59,5 @@ fun isPossible(wanted: String, availableTowels: List<String>): Boolean {
 
 fun parse(input: String): Pair<List<String>, List<String>> {
     val (patterns, wanted) = input.blocks()
-    return patterns.split(", ") to wanted.lines()
-}
-
-class LongStringPrefered: Comparator<String> {
-    override fun compare(o1: String?, o2: String?): Int {
-        return o2!!.length.compareTo(o1!!.length)
-    }
-
+    return patterns.split(", ").sortedBy { it.length } to wanted.lines()
 }
