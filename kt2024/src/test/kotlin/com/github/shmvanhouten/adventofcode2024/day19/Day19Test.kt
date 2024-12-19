@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import strikt.assertions.isGreaterThan
 
 class Day19Test {
 
@@ -43,8 +42,7 @@ class Day19Test {
 
         @Test
         internal fun `part 2`() {
-            expectThat(countWaysToCreateAllDesigns(input)).isGreaterThan(62267676975)
-            expectThat(countWaysToCreateAllDesigns(input)).isEqualTo(1)
+            expectThat(countWaysToCreateAllDesigns(input)).isEqualTo(769668867512623)
         }
     }
 

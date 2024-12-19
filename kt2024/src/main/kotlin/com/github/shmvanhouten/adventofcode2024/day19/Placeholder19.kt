@@ -11,30 +11,28 @@ fun main() {
 
 fun countPossibleDesigns(input: String): List<String> {
     val (availablePatterns, wantedLines) = parse(input)
-    return wantedLines.filter{
-        val possible = isPossible(it, availablePatterns)
-        possible
-    }
+    return wantedLines.filter { isPossible(it, availablePatterns) }
 }
 
 fun countWaysToCreateAllDesigns(input: String): Long {
     val (availablePatterns, wantedLines) = parse(input)
+
     return wantedLines.sumOf { countWaysToCreate(it, availablePatterns) }
 }
 
 fun countWaysToCreate(wanted: String, availableTowels: List<String>): Long {
-    val availablePatternsSoFar = mutableMapOf(0 to 1)
+    val availablePatternsSoFar = mutableMapOf("" to 1L)
     var found = 0L
     while (availablePatternsSoFar.isNotEmpty()) {
-        val (sizeSoFar, waysToCreate) = availablePatternsSoFar.entries.first()
-        availablePatternsSoFar.remove(sizeSoFar)
-        val remaining = wanted.substring(sizeSoFar)
+        val (stringSoFar, waysToCreate) = availablePatternsSoFar.entries.first()
+        availablePatternsSoFar.remove(stringSoFar)
+        val remaining = wanted.substringAfter(stringSoFar)
         if(remaining.isEmpty()) found += waysToCreate
         availableTowels
             .filter(remaining::startsWith)
-            .map { sizeSoFar + it.length }
+            .map { stringSoFar + it }
             .forEach {
-                val waysToCreateAlready = availablePatternsSoFar.getOrDefault(it, 0)
+                val waysToCreateAlready = availablePatternsSoFar.getOrDefault(it, 0L)
                 availablePatternsSoFar[it] = (waysToCreateAlready + waysToCreate)
             }
     }
