@@ -407,6 +407,10 @@ open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
 
 }
 
+fun Grid<Boolean>.toString(charOnTrue: Char, charOnFalse: Char, delimiter: String = ""): String {
+    return grid.joinToString("\n"){ row -> row.joinToString(delimiter) { if (it) charOnTrue.toString() else charOnFalse.toString() } }
+}
+
 data class CoordinateIndexedValue<T, C: Coord>(val location: C, val item: T)
 
 fun Grid<Char>.toString(special: Collection<Coordinate>, specialChar: Char = 'O'): String {

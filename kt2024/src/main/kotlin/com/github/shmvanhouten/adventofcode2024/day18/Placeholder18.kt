@@ -3,6 +3,7 @@ package com.github.shmvanhouten.adventofcode2024.day18
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.toCoordinate
 import com.github.shmvanhouten.adventofcode.utility.grid.boolGridFromCoordinates
+import com.github.shmvanhouten.adventofcode.utility.grid.toString
 import java.util.*
 
 
@@ -20,7 +21,6 @@ fun hasPath(nrOfBytes: Int, maxXAndY: Int, lines: List<String>): Boolean {
         maxX=maxXAndY,
         maxY=maxXAndY
     )
-//    println(grid.map { if(it) '#' else '.' })
 
     val end = grid.withIndex().last().location
     val bestPathsPerLocation = mutableMapOf<Coordinate, Int>()
@@ -47,7 +47,7 @@ fun shortestPathAfter(nrOfBytes: Int, maxXAndY: Int, lines: List<String>): Int {
             maxX=maxXAndY,
             maxY=maxXAndY
         )
-    println(grid.map { if(it) '#' else '.' })
+    println(grid.toString('#', '.'))
 
     val end = grid.withIndex().last().location
     val bestPathsPerLocation = mutableMapOf<Coordinate, Int>()
