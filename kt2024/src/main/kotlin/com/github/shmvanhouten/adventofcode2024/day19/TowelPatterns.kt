@@ -1,17 +1,10 @@
 package com.github.shmvanhouten.adventofcode2024.day19
 
-import com.github.shmvanhouten.adventofcode.utility.FileReader.readFile
 import com.github.shmvanhouten.adventofcode.utility.strings.blocks
-
-fun main() {
-    readFile("/input-day19.txt")
-        .lines()
-        .onEach(::println)
-}
 
 fun countPossibleDesigns(input: String): List<String> {
     val (availablePatterns, wantedLines) = parse(input)
-    return wantedLines.filter { isPossible(it, availablePatterns) }
+    return wantedLines.filter { countWaysToCreate(it, availablePatterns) > 0 }
 }
 
 fun countWaysToCreateAllDesigns(input: String): Long {
@@ -24,8 +17,7 @@ fun countWaysToCreate(wanted: String, availableTowels: List<String>): Long {
     val availablePatternsSoFar = mutableMapOf("" to 1L)
     var found = 0L
     while (availablePatternsSoFar.isNotEmpty()) {
-        val (stringSoFar, waysToCreate) = availablePatternsSoFar.entries.first()
-        availablePatternsSoFar.remove(stringSoFar)
+        val (stringSoFar, waysToCreate) = availablePatternsSoFar.removeFirst()
         val remaining = wanted.substringAfter(stringSoFar)
         if(remaining.isEmpty()) found += waysToCreate
         availableTowels
@@ -39,20 +31,10 @@ fun countWaysToCreate(wanted: String, availableTowels: List<String>): Long {
     return found
 }
 
-fun isPossible(wanted: String, availableTowels: List<String>): Boolean {
-    val availablePatternsSoFar = mutableSetOf(0)
-    while (availablePatternsSoFar.isNotEmpty()) {
-        val soFar = availablePatternsSoFar.first()
-        availablePatternsSoFar.remove(soFar)
-        val remaining = wanted.substring(soFar)
-        if(remaining.isEmpty()) return true
-        availablePatternsSoFar.addAll(
-            availableTowels
-                .filter(remaining::startsWith)
-                .map { soFar + it.length }
-        )
-    }
-    return false
+fun MutableMap<String, Long>.removeFirst(): Map.Entry<String, Long> {
+    val entry = entries.first()
+    remove(entry.key)
+    return entry
 }
 
 fun parse(input: String): Pair<List<String>, List<String>> {

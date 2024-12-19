@@ -35,7 +35,6 @@ class Day18Test {
 
         @Test
         internal fun `part 2`() {
-            // not 41,20
             expectThat(findIfStillTraversable(input, 1024, 70)).isEqualTo(Coordinate(58,44))
         }
 
