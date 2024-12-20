@@ -83,6 +83,10 @@ open class Grid3d<T>(
         }
     }
 
+    override fun isOnPerimiter(loc: Coordinate3d): Boolean {
+        TODO()
+    }
+
     operator fun get(x: Int, y: Int, z: Int): T {
         return get(Coordinate3d(x, y, z))
     }

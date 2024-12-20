@@ -83,6 +83,7 @@ sealed interface IGrid<T, C: Coord> {
     fun withIndex(): IGrid<CoordinateIndexedValue<T, C>, C>
     fun surroundWith(element: T): IGrid<T, C>
     fun perimeter(): Sequence<T>
+    fun isOnPerimiter(loc: C): Boolean
 }
 
 open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
@@ -150,6 +151,11 @@ open class Grid<T> (val grid: List<List<T>>) : IGrid<T, Coordinate> {
             }
             yieldAll(grid.last())
         }
+    }
+
+    override fun isOnPerimiter(loc: Coordinate): Boolean {
+        val (x, y) = loc
+        return x == 0 || y == 0 || x == grid.first().lastIndex || y == grid.lastIndex
     }
 
     operator fun get(x: Int, y: Int): T {
