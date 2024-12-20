@@ -55,8 +55,7 @@ private fun quickestPath(
     while (unfinishedPaths.isNotEmpty()) {
         val path = unfinishedPaths.poll()
         val lastLoc = path.lastLoc
-        if(existingPath.isNotEmpty() && path.length >= existingPath.length) return null
-//        if(lastLoc in existingPath.steps) return path.dropLast() + existingPath.pathFrom(lastLoc)
+        if(lastLoc in existingPath.steps) return path.dropLast() + existingPath.pathFrom(lastLoc)
         if (lastLoc == goal) return path
         unfinishedPaths.addAll(path.nextSteps(grid)
             .map { path.stepTo(it) })
@@ -141,6 +140,12 @@ data class CheatingResult(val cheat: Cheat, val grid: Grid<Char>, val quickestPa
     val gain = lengthToBeat - quickestPath.length
     override fun toString(): String {
         return cheat.toString() + quickestPath.length
+    }
+    fun print(): String {
+        val mutableGrid = grid.toMutableGrid()
+        quickestPath.steps.forEach { mutableGrid[it] = '0' }
+        cheat.removedWalls.forEachIndexed { i, c -> mutableGrid[c] = i.toChar() }
+        return mutableGrid.toString()
     }
 }
 
