@@ -24,19 +24,7 @@ fun possibleCheatsAlongPath(grid: Grid<Char>, quickestPath: Path): List<Cheat> {
         .flatMap { step -> adjacentInnerWalls(step, grid).map { step to it } }
         .distinct()
         .map { (step, wall) -> Cheat(wall to wall, steps[steps.indexOf(step) + 1]) }
-//        .map { (step, wall) -> (step to wall) to innerTiles(wall, grid).filter { it !in steps } }
-//        .flatMap { (stepToNextStep, nextCandidates) ->
-//            val (step, nextStep) = stepToNextStep
-//            nextCandidates
-//                .map { listOf(nextStep, it).sortedWith { a, b -> compareCoordinates(a, b) } }
-//                .map { (a, b) -> Cheat(a to b, steps[steps.indexOf(step) + 1]) }
-//        }
-        .distinct().toList()
-}
-
-fun innerTiles(loc: Coordinate, grid: Grid<Char>): List<Coordinate> {
-    return loc.getSurroundingManhattan()
-        .filter { !grid.isOnPerimiter(it) }
+        .toList()
 }
 
 fun adjacentInnerWalls(loc: Coordinate, grid: Grid<Char>): List<Coordinate> {
