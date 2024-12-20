@@ -14,7 +14,12 @@ fun findCheats(input: String): List<CheatingResult> {
     return possibleCheatsAlongPath(grid, quickestPath)
         .map { it to grid.applyCheat(it) }
         .mapNotNull { (cheat, grid) ->
-            toCheatingResult(cheat, grid, quickestPath(grid, start, goal, quickestPath.length), quickestPath.length)
+            val pathFromCheat = quickestPath(grid, cheat.removedWalls.first(), goal, quickestPath)
+            val index = quickestPath.steps.indexOf(cheat.stepToBlock)
+            if(pathFromCheat  != null){
+                val fullPath = Path(quickestPath.steps.subList(0, index) + pathFromCheat.steps)
+                toCheatingResult(cheat, grid, fullPath, quickestPath.length)
+            } else null
         }
 }
 
@@ -22,8 +27,7 @@ fun possibleCheatsAlongPath(grid: Grid<Char>, quickestPath: Path): List<Cheat> {
     val steps = quickestPath.steps
     return steps.subList(0, steps.lastIndex).asSequence()
         .flatMap { step -> adjacentInnerWalls(step, grid).map { step to it } }
-        .distinct()
-        .map { (step, wall) -> Cheat(wall to wall, steps[steps.indexOf(step) + 1]) }
+        .map { (step, wall) -> Cheat(listOf(wall), steps[steps.indexOf(step) + 1]) }
         .toList()
 }
 
@@ -41,30 +45,35 @@ fun quickestPath(input: String): Path {
     return quickestPath(grid, start, goal)!!
 }
 
-
 private fun quickestPath(
     grid: Grid<Char>,
     start: Coordinate,
     goal: Coordinate,
-    maxLength: Int = Int.MAX_VALUE
+    existingPath: Path = emptyPath()
 ): Path? {
     val unfinishedPaths = priorityQueueOf(Path(listOf(start)))
     while (unfinishedPaths.isNotEmpty()) {
         val path = unfinishedPaths.poll()
-        if(path.length >= maxLength) return null
-        if (path.lastLoc == goal) return path
+        val lastLoc = path.lastLoc
+        if(existingPath.isNotEmpty() && path.length >= existingPath.length) return null
+//        if(lastLoc in existingPath.steps) return path.dropLast() + existingPath.pathFrom(lastLoc)
+        if (lastLoc == goal) return path
         unfinishedPaths.addAll(path.nextSteps(grid)
             .map { path.stepTo(it) })
     }
     return null
 }
 
+fun emptyPath(): Path {
+    return Path(emptyList())
+}
+
 data class Path(
     val steps: List<Coordinate>
 ): Comparable<Path> {
     val length = steps.size - 1
-    val lastLoc = steps.last()
-    val beforeLastLoc = steps.getOrNull(steps.lastIndex - 1)
+    val lastLoc = steps.lastOrNull()?:Coordinate(-1,-1)
+    private val beforeLastLoc = steps.getOrNull(steps.lastIndex - 1)
     override fun compareTo(other: Path): Int = other.length.compareTo(this.length)
 
     fun nextSteps(grid: Grid<Char>): List<Coordinate> {
@@ -76,24 +85,25 @@ data class Path(
         return Path(steps + loc)
     }
 
-}
+    fun isNotEmpty(): Boolean = steps.isNotEmpty()
+    fun dropLast(): Path {
+        return Path(steps.subList(0, steps.lastIndex))
+    }
 
-private fun compareCoordinates(
-    a: Coordinate,
-    b: Coordinate
-): Int {
-    val compareTo = a.x.compareTo(b.x)
-    return if (compareTo != 0) compareTo
-    else a.y.compareTo(b.y)
+    fun pathFrom(lastLoc: Coordinate): Path {
+        return Path(steps.subList(steps.indexOf(lastLoc), steps.size))
+    }
+
+    operator fun plus(other: Path): Path {
+        return Path(steps + other.steps)
+    }
+
 }
 
 data class Cheat(
-    val removedWalls: Pair<Coordinate, Coordinate>,
+    val removedWalls: List<Coordinate>,
     val stepToBlock: Coordinate
 ) {
-    fun appliesTo(coordinate: Coordinate): Boolean =
-        removedWalls.first == coordinate || removedWalls.second == coordinate
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -107,6 +117,9 @@ data class Cheat(
         return removedWalls.hashCode()
     }
 
+    fun getStep(coordinate: Coordinate): Int? {
+        return removedWalls.withIndex().find { it.value == coordinate }?.index
+    }
 
 }
 
@@ -115,7 +128,8 @@ fun priorityQueueOf(path: Path): PriorityQueue<Path> = PriorityQueue<Path>(listO
 fun Grid<Char>.applyCheat(cheat: Cheat): Grid<Char> {
     return Grid(grid.mapIndexed { y, row ->
         row.mapIndexed { x, c ->
-            if(cheat.appliesTo(Coordinate(x, y))) '1'
+            val removedWall = cheat.getStep(Coordinate(x, y))
+            if(removedWall != null) removedWall.toChar()
             else if(cheat.stepToBlock == Coordinate(x, y)) '#'
             else c
         }
@@ -130,7 +144,7 @@ data class CheatingResult(val cheat: Cheat, val grid: Grid<Char>, val quickestPa
     }
 }
 
-fun toCheatingResult(cheat: Cheat, grid: Grid<Char>, quickestPath: Path?, lengthToBeat: Int): CheatingResult? {
+fun toCheatingResult(cheat: Cheat, grid: Grid<Char>, quickestPath: Path, lengthToBeat: Int): CheatingResult? {
     return if (quickestPath != null) CheatingResult(cheat, grid, quickestPath, lengthToBeat)
     else null
 }

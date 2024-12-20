@@ -28,8 +28,8 @@ class Day20Test {
         fun `there are 44 cheats that save time for the example`() {
             val findCheats = findCheats(example)
             expect {
-//                that(findCheats.filter { it.gain ==  2 })
-//                    .hasSize(14) fails for some reason, I don't think it is correct
+//                that(findCheats.filter { it.gain == 2 }).hasSize(14)
+                that(findCheats.filter { it.gain == 4 }).hasSize(14)
                 that(findCheats.filter{ it.gain == 6 }).hasSize(2)
                 that(findCheats.filter{ it.gain == 8 }).hasSize(4)
                 that(findCheats.filter{ it.gain == 10}).hasSize(2)
@@ -40,11 +40,6 @@ class Day20Test {
                 that(findCheats.filter{ it.gain == 40}).hasSize(1)
                 that(findCheats.filter{ it.gain == 64}).hasSize(1)
             }
-        }
-
-        @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
         }
 
         @Test
