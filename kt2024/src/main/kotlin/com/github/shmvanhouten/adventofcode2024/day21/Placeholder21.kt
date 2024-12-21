@@ -15,11 +15,17 @@ class NumericBot {
     fun buttonsToPress(sequence: String): List<Button> {
         var oldPos = numericGrid['A']!!
         return sequence.flatMap { c ->
-            val newPosition = numericGrid[c]!!
-            val result = sequenceToInput(oldPos, newPosition, numericGrid[' ']!!)
-            oldPos = newPosition
+            val newPos = numericGrid[c]!!
+            val result = sequenceToInput(oldPos, newPos, numericGrid[' ']!!, couldPassOverNullButton(oldPos, newPos))
+            oldPos = newPos
             result
         }
+    }
+
+    private fun couldPassOverNullButton(oldPos: Coordinate, newPos: Coordinate): Boolean {
+        val nullButton = numericGrid[' ']!!
+        return (oldPos.y == nullButton.y || newPos.y == nullButton.y)
+                && (oldPos.x == nullButton.x || newPos.x == nullButton.x)
     }
 }
 
@@ -28,7 +34,7 @@ class DirectionalBot {
         var oldPos = directionalGrid[A]!!
         return sequence.flatMap { b ->
             val newPosition = directionalGrid[b]!!
-            val result = sequenceToInput(oldPos, newPosition, directionalGrid[NONE]!!)
+            val result = sequenceToInput(oldPos, newPosition, directionalGrid[NONE]!!, true)
             oldPos = newPosition
             result
         }
@@ -67,25 +73,33 @@ class DirectionalBot {
     }
 }
 
-private fun sequenceToInput(oldPos: Coordinate, newPos: Coordinate, posToAvoid: Coordinate): List<Button> {
+private fun sequenceToInput(oldPos: Coordinate, newPos: Coordinate, posToAvoid: Coordinate, shouldCareAboutMissingB: Boolean): List<Button> {
     val sequence = mutableListOf<Button>()
-    if(posToAvoid.y == newPos.y || posToAvoid.x == oldPos.x) {
-        // prefer left and right
-        sequence.addAll(0.until(oldPos.x - newPos.x).map { LEFT })
-        sequence.addAll(0.until(newPos.x - oldPos.x).map { RIGHT })
-        sequence.addAll(0.until(oldPos.y - newPos.y).map { UP })
-        sequence.addAll(0.until(newPos.y - oldPos.y).map { DOWN })
-    } else if(posToAvoid.y == oldPos.y || posToAvoid.x == newPos.x) {
-        // prefer up and down
-        sequence.addAll(0.until(oldPos.y - newPos.y).map { UP })
-        sequence.addAll(0.until(newPos.y - oldPos.y).map { DOWN })
-        sequence.addAll(0.until(newPos.x - oldPos.x).map { RIGHT })
-        sequence.addAll(0.until(oldPos.x - newPos.x).map { LEFT })
+    if(shouldCareAboutMissingB) {
+        if (posToAvoid.y == newPos.y || posToAvoid.x == oldPos.x) {
+            // prefer left and right
+            sequence.addAll(0.until(oldPos.x - newPos.x).map { LEFT })
+            sequence.addAll(0.until(newPos.x - oldPos.x).map { RIGHT })
+            sequence.addAll(0.until(oldPos.y - newPos.y).map { UP })
+            sequence.addAll(0.until(newPos.y - oldPos.y).map { DOWN })
+        } else if (posToAvoid.y == oldPos.y || posToAvoid.x == newPos.x) {
+            // prefer up and down
+            sequence.addAll(0.until(oldPos.y - newPos.y).map { UP })
+            sequence.addAll(0.until(newPos.y - oldPos.y).map { DOWN })
+            sequence.addAll(0.until(newPos.x - oldPos.x).map { RIGHT })
+            sequence.addAll(0.until(oldPos.x - newPos.x).map { LEFT })
+        } else {
+            sequence.addAll(0.until(oldPos.x - newPos.x).map { LEFT })
+            sequence.addAll(0.until(newPos.y - oldPos.y).map { DOWN })
+            sequence.addAll(0.until(newPos.x - oldPos.x).map { RIGHT })
+            sequence.addAll(0.until(oldPos.y - newPos.y).map { UP })
+        }
     } else {
+        // prefer left to up
         sequence.addAll(0.until(oldPos.x - newPos.x).map { LEFT })
         sequence.addAll(0.until(newPos.y - oldPos.y).map { DOWN })
-        sequence.addAll(0.until(newPos.x - oldPos.x).map { RIGHT })
         sequence.addAll(0.until(oldPos.y - newPos.y).map { UP })
+        sequence.addAll(0.until(newPos.x - oldPos.x).map { RIGHT })
     }
 
     sequence.add(A)

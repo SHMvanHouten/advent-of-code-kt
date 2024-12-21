@@ -7,7 +7,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import strikt.assertions.isLessThan
 
 class Day21Test {
 
@@ -17,7 +16,7 @@ class Day21Test {
         @Test
         internal fun `bot 1 pushes numeric buttons`() {
             val numericBot = NumericBot()
-            expectThat(numericBot.buttonsToPress("029A").joinToString("") { it.va }).isEqualTo("<A^A>^^AvvvA")
+            expectThat(numericBot.buttonsToPress("029A").joinToString("") { it.va }).isEqualTo("<A^A^^>AvvvA")
         }
 
         @Test
@@ -64,10 +63,27 @@ class Day21Test {
             expectThat(example.lines().sumOf { calculateComplexity(it) }).isEqualTo(126384)
         }
 
+        @ParameterizedTest
+        @CsvSource(value = [
+            "789A, 68",
+            "968A, 60",
+            "286A, 68",
+            "349A, 64",
+            "170A, 64"
+        ])
+        fun `part 1 input`(sequence: String, expected: Int) {
+            val directionalBot = DirectionalBot()
+            val bot1Result = NumericBot().buttonsToPress(sequence)
+            val bot2Result = directionalBot.buttonsToPress(bot1Result)
+            val bot3Result = directionalBot.buttonsToPress(bot2Result)
+            println(printSequence(sequence, bot1Result, bot2Result, bot3Result))
+            expectThat(bot3Result.size)
+                .isEqualTo(expected)
+        }
+
         @Test
         internal fun `part 1`() {
-            expectThat(input.lines().sumOf { calculateComplexity(it) }).isLessThan(188078)
-            expectThat(input.lines().sumOf { calculateComplexity(it) }).isEqualTo(1)
+            expectThat(input.lines().sumOf { calculateComplexity(it) }).isEqualTo(176650)
         }
     }
 
