@@ -3,7 +3,28 @@ package com.github.shmvanhouten.adventofcode2024.day21
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Coordinate
 import com.github.shmvanhouten.adventofcode.utility.coordinate.Direction
 import com.github.shmvanhouten.adventofcode.utility.grid.Grid
-import com.github.shmvanhouten.adventofcode2024.day21.Button.*
+
+private const val UP: Button = "^"
+private const val A: Button = "A"
+private const val RIGHT: Button = ">"
+private const val DOWN: Button = "v"
+private const val LEFT: Button = "<"
+private const val NONE: Button = "?"
+
+val memo = mutableMapOf<List<Button>, List<Button>>()
+val buttonsToPressCountAtDepth = mutableMapOf<Sequence, Map<Int, Long>>()
+
+typealias Sequence = List<Button>
+
+fun calculateComplexityNBots(sequence: String, nrOfBots:Int = 25): Long {
+
+    val directionalBot = DirectionalBot()
+    val originalSequence = NumericBot().buttonsToPress(sequence)
+    return originalSequence.breakIntoSequencesUntilAs()
+        .sumOf {
+            directionalBot.buttonsToPress(it, nrOfBots)
+        } * sequence.substringBefore("A").toLong()
+}
 
 fun calculateComplexity(sequence: String): Long {
     return NumericBot().buttonsToPress(sequence)
@@ -31,13 +52,15 @@ class NumericBot {
 
 class DirectionalBot {
     fun buttonsToPress(sequence: List<Button>): List<Button> {
+        if(memo.contains(sequence)) return memo[sequence]!!
         var oldPos = directionalGrid[A]!!
-        return sequence.flatMap { b ->
+
+        return sequence.map { b ->
             val newPosition = directionalGrid[b]!!
             val result = sequenceToInput(oldPos, newPosition, directionalGrid[NONE]!!, true)
             oldPos = newPosition
             result
-        }
+        }.flatten()
     }
 
     fun pressDirectional(input: List<Button>): List<Button> {
@@ -54,6 +77,15 @@ class DirectionalBot {
             }
         }
         return buttons
+    }
+
+    fun buttonsToPress(sequence: List<Button>, nrOfBots: Int, depth: Int = 1): Long {
+        if(depth == nrOfBots) {
+            return buttonsToPress(sequence).size.toLong()
+        }
+        return buttonsToPress(sequence).breakIntoSequencesUntilAs().sumOf {
+            buttonsToPress(it, nrOfBots, depth + 1)
+        }
     }
 
     fun pressNumeric(input: List<Button>): String {
@@ -106,14 +138,7 @@ private fun sequenceToInput(oldPos: Coordinate, newPos: Coordinate, posToAvoid: 
     return sequence
 }
 
-enum class Button(val va: String) {
-    UP("^"),
-    A("A"),
-    RIGHT(">"),
-    DOWN("v"),
-    LEFT("<"),
-    NONE("?");
-}
+typealias Button = String
 
 fun fromVal(va: String): Button {
     return when(va) {
@@ -137,6 +162,19 @@ private val directionalGrid: Map<Button, Coordinate> = Grid(buildList {
     add(listOf(NONE,  UP,    A))
     add(listOf(LEFT, DOWN, RIGHT))
 }).toMap()
+
+fun List<Button>.breakIntoSequencesUntilAs(): List<List<Button>> {
+    return buildList {
+        var newList = mutableListOf<Button>()
+        this@breakIntoSequencesUntilAs.forEach {
+            newList+= it
+            if(it == "A") {
+                add(newList)
+                newList = mutableListOf()
+            }
+        }
+    }
+}
 
 fun <T> Grid<T>.toMap(): Map<T, Coordinate> { // todo move
     return grid.flatMapIndexed { y, row ->
