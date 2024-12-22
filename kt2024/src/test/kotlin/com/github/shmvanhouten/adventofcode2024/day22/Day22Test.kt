@@ -50,13 +50,46 @@ class Day22Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `with starting number 123, this is the sequence of associated changes`() {
+            expectThat(associatedChanges(123).subList(0, 9)).isEqualTo(
+                listOf(
+                    0 to -3,
+                    6 to 6,
+                    5 to -1,
+                    4 to -1,
+                    4 to 0,
+                    6 to 2,
+                    4 to -2,
+                    4 to 0,
+                    2 to -2,
+                )
+            )
+        }
+
+        @Test
+        fun `first occurrence of each sequence`() {
+            expectThat(firstOccurrenceOfEachSequenceToBananasBought(
+                associatedChanges(123).subList(0, 9))
+            ).isEqualTo(listOf(
+                listOf(-3, 6, -1, -1) to 4,
+                listOf(6, -1, -1, 0) to 4,
+                listOf(-1, -1, 0, 2) to 6,
+                listOf(-1, 0, 2, -2) to 4,
+                listOf(0, 2, -2, 0) to 4,
+                listOf(2, -2, 0, -2) to 2,
+            ))
+        }
+
+        @Test
+        fun `example 2`() {
+            expectThat(findMostBananas(listOf(1, 2, 3, 2024L)))
+                .isEqualTo(23)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(findMostBananas(input.lines().map { it.toLong() } ))
+                .isEqualTo(2272)
         }
     }
 
