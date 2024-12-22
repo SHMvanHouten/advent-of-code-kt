@@ -11,10 +11,7 @@ private const val DOWN: Button = "v"
 private const val LEFT: Button = "<"
 private const val NONE: Button = "?"
 
-val memo = mutableMapOf<List<Button>, List<Button>>()
-val buttonsToPressCountAtDepth = mutableMapOf<Sequence, Map<Int, Long>>()
 
-typealias Sequence = List<Button>
 
 fun calculateComplexityNBots(sequence: String, nrOfBots:Int = 25): Long {
 
@@ -60,13 +57,14 @@ class NumericBot {
 
 class DirectionalBot {
     fun buttonsToPress(sequence: List<Button>): List<Button> {
-        if(memo.contains(sequence)) return memo[sequence]!!
-        var oldPos = directionalGrid[A]!!
+        var oldButton = A
+        var oldPos = directionalGrid[oldButton]!!
 
         return sequence.map { b ->
             val newPosition = directionalGrid[b]!!
-            val result = sequenceToInput(oldPos, newPosition, directionalGrid[NONE]!!, true)
+            val result = sequenceToInput(oldPos, newPosition, directionalGrid[NONE]!!, (b == LEFT || oldButton == LEFT))
             oldPos = newPosition
+            oldButton = b
             result
         }.flatten()
     }
@@ -120,8 +118,8 @@ private fun sequenceToInput(oldPos: Coordinate, newPos: Coordinate, posToAvoid: 
             sequence.addAll(0.until(newPos.x - oldPos.x).map { RIGHT })
             sequence.addAll(0.until(oldPos.x - newPos.x).map { LEFT })
         } else {
-            sequence.addAll(0.until(oldPos.x - newPos.x).map { LEFT })
             sequence.addAll(0.until(newPos.y - oldPos.y).map { DOWN })
+            sequence.addAll(0.until(oldPos.x - newPos.x).map { LEFT })
             sequence.addAll(0.until(newPos.x - oldPos.x).map { RIGHT })
             sequence.addAll(0.until(oldPos.y - newPos.y).map { UP })
         }
@@ -138,17 +136,6 @@ private fun sequenceToInput(oldPos: Coordinate, newPos: Coordinate, posToAvoid: 
 }
 
 typealias Button = String
-
-fun fromVal(va: String): Button {
-    return when(va) {
-        "^" -> UP
-        "A" -> A
-        ">" -> RIGHT
-        "v" -> DOWN
-        "<" -> LEFT
-        else -> error("no button for $va")
-    }
-}
 
 private val numericGrid: Map<Char, Coordinate> = Grid(buildList {
     add(listOf('7', '8', '9'))

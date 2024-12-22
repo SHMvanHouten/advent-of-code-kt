@@ -9,6 +9,7 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isGreaterThan
 import strikt.assertions.isLessThan
+import strikt.assertions.isNotEqualTo
 
 class Day21Test {
 
@@ -52,7 +53,7 @@ class Day21Test {
 
         @Test
         fun reverse() {
-            val input = "<v<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A".map { fromVal(it.toString()) }
+            val input = "<v<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A".map { it.toString() }
             val bot3Result = DirectionalBot().pressDirectional(input)
             val bot2Result = DirectionalBot().pressDirectional(bot3Result)
             val bot1Result = DirectionalBot().pressNumeric(bot2Result)
@@ -175,9 +176,11 @@ class Day21Test {
 
         @Test
         internal fun `part 2`() {
-            expectThat(input.lines().sumOf { calculateComplexityNBots(it, 25) }).isLessThan(348796545149904)
+            expectThat(input.lines().sumOf { calculateComplexityNBots(it, 25) }).isLessThan(324387118329086)
+            expectThat(input.lines().sumOf { calculateComplexityNBots(it, 25) }).isNotEqualTo(259233593371816)
+            expectThat(input.lines().sumOf { calculateComplexityNBots(it, 25) }).isNotEqualTo(187634944720488)
             expectThat(input.lines().sumOf { calculateComplexityNBots(it, 25) }).isGreaterThan(137396351418306)
-            expectThat(input.lines().sumOf { calculateComplexityNBots(it, 25) }).isEqualTo(1)
+            expectThat(input.lines().sumOf { calculateComplexityNBots(it, 25) }).isEqualTo(217698355426872)
         }
 
         @Test
