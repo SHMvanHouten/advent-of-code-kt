@@ -54,12 +54,14 @@ class Day20Test {
 
         @Test
         internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+            val cheats = findCheats(example, cheatLength = 20)
+            expectThat(cheats.filter{it.gain == 76}).hasSize(1)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            val cheats = findCheats(input, 20)
+            expectThat(cheats.filter { it.gain >= 100 }).hasSize(1445)
         }
     }
 

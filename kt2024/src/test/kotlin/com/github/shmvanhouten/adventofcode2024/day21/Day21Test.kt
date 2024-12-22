@@ -175,9 +175,9 @@ class Day21Test {
 
         @Test
         internal fun `part 2`() {
-            expectThat(input.lines().sumOf { calculateComplexityNBots(it) }).isLessThan(348796545149904)
-            expectThat(input.lines().sumOf { calculateComplexityNBots(it) }).isGreaterThan(137396351418306)
-            expectThat(input.lines().sumOf { calculateComplexityNBots(it) }).isEqualTo(1)
+            expectThat(input.lines().sumOf { calculateComplexityNBots(it, 25) }).isLessThan(348796545149904)
+            expectThat(input.lines().sumOf { calculateComplexityNBots(it, 25) }).isGreaterThan(137396351418306)
+            expectThat(input.lines().sumOf { calculateComplexityNBots(it, 25) }).isEqualTo(1)
         }
 
         @Test

@@ -5,25 +5,25 @@ import com.github.shmvanhouten.adventofcode.utility.grid.Grid
 import com.github.shmvanhouten.adventofcode.utility.grid.charGrid
 import java.util.*
 
-fun findCheats(input: String): List<CheatingResult> {
+fun findCheats(input: String, cheatLength: Int = 2): List<CheatingResult> {
     val grid = charGrid(input)
     val start = grid.firstLocationOf { it == 'S' }!!
     val goal = grid.firstLocationOf { it == 'E' }!!
 
-    val quickestPath = quickestPath(grid, start, goal)!!
-    return possibleCheatsAlongPath(grid, quickestPath)
+    val quickestPath = quickestPath(grid, Path(listOf(start)), goal)!!
+    return possibleCheatsAlongPath(grid, quickestPath, cheatLength)
         .map { it to grid.applyCheat(it) }
         .mapNotNull { (cheat, grid) ->
-            val pathFromCheat = quickestPath(grid, cheat.removedWalls.first(), goal, quickestPath)
-            val index = quickestPath.steps.indexOf(cheat.stepToBlock)
+            val pathWithRemovedWall = Path(quickestPath.steps.sublistUntil(cheat.stepToBlock) + cheat.removedWalls.first())
+            val pathFromCheat = quickestPath(grid, pathWithRemovedWall, goal, quickestPath)
             if(pathFromCheat  != null){
-                val fullPath = Path(quickestPath.steps.subList(0, index) + pathFromCheat.steps)
-                toCheatingResult(cheat, grid, fullPath, quickestPath.length)
+                toCheatingResult(cheat, grid, pathFromCheat, quickestPath.length)
             } else null
-        }
+        }.filter { it.gain > 0 }
 }
 
-fun possibleCheatsAlongPath(grid: Grid<Char>, quickestPath: Path): List<Cheat> {
+// starting position of the cheat is the point on the path we start from
+fun possibleCheatsAlongPath(grid: Grid<Char>, quickestPath: Path, cheatLength: Int): List<Cheat> {
     val steps = quickestPath.steps
     return steps.subList(0, steps.lastIndex).asSequence()
         .flatMap { step -> adjacentInnerWalls(step, grid).map { step to it } }
@@ -42,16 +42,16 @@ fun quickestPath(input: String): Path {
     val start = grid.firstLocationOf { it == 'S' }!!
     val goal = grid.firstLocationOf { it == 'E' }!!
 
-    return quickestPath(grid, start, goal)!!
+    return quickestPath(grid, Path(listOf(start)), goal)!!
 }
 
 private fun quickestPath(
     grid: Grid<Char>,
-    start: Coordinate,
+    start: Path,
     goal: Coordinate,
     existingPath: Path = emptyPath()
 ): Path? {
-    val unfinishedPaths = priorityQueueOf(Path(listOf(start)))
+    val unfinishedPaths = priorityQueueOf(start)
     while (unfinishedPaths.isNotEmpty()) {
         val path = unfinishedPaths.poll()
         val lastLoc = path.lastLoc
@@ -152,4 +152,8 @@ data class CheatingResult(val cheat: Cheat, val grid: Grid<Char>, val quickestPa
 fun toCheatingResult(cheat: Cheat, grid: Grid<Char>, quickestPath: Path, lengthToBeat: Int): CheatingResult? {
     return if (quickestPath != null) CheatingResult(cheat, grid, quickestPath, lengthToBeat)
     else null
+}
+
+fun <T> List<T>.sublistUntil(element: T): List<T> {
+    return subList(0, indexOf(element))
 }
