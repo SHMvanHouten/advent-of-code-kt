@@ -42,13 +42,20 @@ class Day20Test {
                 that(findCheats.filter{ it.gain == 38}).hasSize(1)
                 that(findCheats.filter{ it.gain == 40}).hasSize(1)
                 that(findCheats.filter{ it.gain == 64}).hasSize(1)
+                that(findCheats.size).isEqualTo(44)
             }
         }
 
         @Test
+        fun `example 1 cheats2`() {
+            val cheatingPaths = findCheats2(example, 2, 1)
+            expectThat(cheatingPaths).isEqualTo(44)
+        }
+
+        @Test
         internal fun `part 1`() {
-            val cheats = findCheats(input)
-            expectThat(cheats.filter { it.gain >= 100 }.toList()).hasSize(1445)
+            val cheats = findCheats2(input)
+            expectThat(cheats).isEqualTo(1445)
         }
     }
 
@@ -104,9 +111,15 @@ class Day20Test {
         }
 
         @Test
+        fun `example 2`() {
+            val cheatingPaths = findCheats2(example, 20, 50)
+            expectThat(cheatingPaths).isEqualTo(285)
+        }
+
+        @Test
         internal fun `part 2`() {
-            val cheats = findCheats(input, 20)
-            expectThat(cheats.map { it.gain }.filter { it >= 100 }.toList()).hasSize(1445)
+            val cheats = findCheats2(input, 20)
+            expectThat(cheats).isEqualTo(1)
         }
     }
 
