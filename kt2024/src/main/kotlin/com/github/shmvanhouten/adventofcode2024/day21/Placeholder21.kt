@@ -20,10 +20,18 @@ fun calculateComplexityNBots(sequence: String, nrOfBots:Int = 25): Long {
 
     val directionalBot = DirectionalBot()
     val originalSequence = NumericBot().buttonsToPress(sequence)
-    return originalSequence.breakIntoSequencesUntilAs()
-        .sumOf {
-            directionalBot.buttonsToPress(it, nrOfBots)
-        } * sequence.substringBefore("A").toLong()
+    return generateSequence(
+        originalSequence.breakIntoSequencesUntilAs()
+            .groupingBy { it }.eachCount().mapValues { it.value.toLong() }
+    ) {sequencesToCounts ->
+        sequencesToCounts.entries.flatMap { (seq, count) ->
+            directionalBot.buttonsToPress(seq.map { it.toString() }).breakIntoSequencesUntilAs()
+                .groupingBy { it }.eachCount()
+                .mapValues { count * it.value }.entries
+        }.groupingBy { it.key }.aggregate { _, acc, seqToCount, _ ->
+            (acc ?: 0L) + seqToCount.value
+        }
+    }.drop(nrOfBots + 1).first().values.sum() * sequence.substringBefore("A").toLong()
 }
 
 fun calculateComplexity(sequence: String): Long {
@@ -77,15 +85,6 @@ class DirectionalBot {
             }
         }
         return buttons
-    }
-
-    fun buttonsToPress(sequence: List<Button>, nrOfBots: Int, depth: Int = 1): Long {
-        if(depth == nrOfBots) {
-            return buttonsToPress(sequence).size.toLong()
-        }
-        return buttonsToPress(sequence).breakIntoSequencesUntilAs().sumOf {
-            buttonsToPress(it, nrOfBots, depth + 1)
-        }
     }
 
     fun pressNumeric(input: List<Button>): String {
@@ -163,14 +162,14 @@ private val directionalGrid: Map<Button, Coordinate> = Grid(buildList {
     add(listOf(LEFT, DOWN, RIGHT))
 }).toMap()
 
-fun List<Button>.breakIntoSequencesUntilAs(): List<List<Button>> {
+fun List<Button>.breakIntoSequencesUntilAs(): List<String> {
     return buildList {
-        var newList = mutableListOf<Button>()
+        var newList = ""
         this@breakIntoSequencesUntilAs.forEach {
-            newList+= it
+            newList += it
             if(it == "A") {
                 add(newList)
-                newList = mutableListOf()
+                newList = ""
             }
         }
     }

@@ -7,6 +7,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isGreaterThan
+import strikt.assertions.isLessThan
 
 class Day21Test {
 
@@ -173,7 +175,9 @@ class Day21Test {
 
         @Test
         internal fun `part 2`() {
-            expectThat(input.lines().sumOf { calculateComplexityNBots(it) }).isEqualTo(176650)
+            expectThat(input.lines().sumOf { calculateComplexityNBots(it) }).isLessThan(348796545149904)
+            expectThat(input.lines().sumOf { calculateComplexityNBots(it) }).isGreaterThan(137396351418306)
+            expectThat(input.lines().sumOf { calculateComplexityNBots(it) }).isEqualTo(1)
         }
 
         @Test
