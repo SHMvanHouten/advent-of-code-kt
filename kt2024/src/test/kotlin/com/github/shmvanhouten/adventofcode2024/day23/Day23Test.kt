@@ -28,13 +28,13 @@ class Day23Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `example 2`() {
+            expectThat(findPassword(example)).isEqualTo("co,de,ka,ta")
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            expectThat(findPassword(input)).isEqualTo("cl,ei,fd,hc,ib,kq,kv,ky,rv,vf,wk,yx,zf")
         }
     }
 
