@@ -43,13 +43,36 @@ class Day24Test {
     inner class Part2 {
 
         @Test
-        internal fun `fixme`() {
-            expectThat(1).isEqualTo(1)
+        internal fun `playing with outputs`() {
+            expectThat(play(input)).isEqualTo(-1)
         }
 
         @Test
         internal fun `part 2`() {
-            expectThat(1).isEqualTo(1)
+            val input = input
+                .replace("x13 AND y13 -> z13", "mks XOR bhr -> z13")
+                .replace("mks XOR bhr -> vcv", "x13 AND y13 -> vcv")
+
+                .replace("csn XOR nmn -> vwp", "csn AND nmn -> vwp")
+                .replace("csn AND nmn -> z19", "csn XOR nmn -> z19")
+
+                .replace("vbw OR qkk -> z25", "mqj XOR pqn -> z25")
+                .replace("mqj XOR pqn -> mps", "vbw OR qkk -> mps")
+
+                .replace("x33 XOR y33 -> vjv", "x33 AND y33 -> vjv")
+                .replace("x33 AND y33 -> cqm", "x33 XOR y33 -> cqm")
+
+            expectThat(play(input)).isEqualTo(-1)
+            println(listOf(
+                "z13",
+                "vcv",
+                "vwp",
+                "z19",
+                "z25",
+                "mps",
+                "vjv",
+                "cqm",
+            ).sorted().joinToString(","))
         }
     }
 
