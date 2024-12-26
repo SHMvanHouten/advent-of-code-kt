@@ -63,6 +63,7 @@ class Day24Test {
                 .replace("x33 AND y33 -> cqm", "x33 XOR y33 -> cqm")
 
             expectThat(play(input)).isEqualTo(-1)
+
             println(listOf(
                 "z13",
                 "vcv",

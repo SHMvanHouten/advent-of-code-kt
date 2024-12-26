@@ -6,7 +6,7 @@ import com.github.shmvanhouten.adventofcode2024.day24.Operation.*
 fun play(input: String): Long {
     val (
         gates: Map<String, Int>,
-        connectionsByTarget: Map<String, Connection>,
+        _: Set<Connection>,
         connectionsByOrigin: Map<String, List<Connection>>
     ) = parseSystem(input)
 
@@ -57,7 +57,7 @@ fun play(input: String): Long {
                     continue
                 }
                 val secondAnd = secondXorAndAnd.first { it.operation == AND }
-                if(!(secondAnd.first == overflowBit || secondAnd.second == overflowBit)) {
+                if(!(secondAnd.input1 == overflowBit || secondAnd.input2 == overflowBit)) {
                     println("failed on second AND, was not with overflow $secondAnd")
                     ""
                 } else {
@@ -71,7 +71,7 @@ fun play(input: String): Long {
                 ""
             } else {
                 val theOr = theOrList.single()
-                if(!(theOr.first == secondAnd || theOr.second == secondAnd)) {
+                if(!(theOr.input1 == secondAnd || theOr.input2 == secondAnd)) {
                     println("expected theOr to be between secondAnd and firstAnd, was instead: $theOr")
                     ""
                 } else {
@@ -88,27 +88,21 @@ private fun String.currentZ(): String {
     return replace('x', 'z')
 }
 
-private fun String.nextZ(): String {
-    val nr = (this.substring(1).toInt() + 1).toString().padStart(2, '0')
-    return "z$nr".also { println(it) }
-}
-
 fun simulateSystem(input: String): Long {
     val (
-        gates: Map<String, Int>,
-        connectionsByTarget: Map<String, Connection>
+        inputs: Map<String, Int>,
+        logicGates: Set<Connection>
     ) = parseSystem(input)
-    val knownGates = gates.toMutableMap()
-    val unsolvedConnections = connectionsByTarget.keys.toMutableSet()
+    val knownInputs = inputs.toMutableMap()
+    val unsolvedConnections = logicGates.toMutableSet()
     while (unsolvedConnections.isNotEmpty()) {
         val nextConnection = unsolvedConnections.first { c ->
-            val connection = connectionsByTarget[c]!!
-            knownGates.contains(connection.first) && knownGates.contains(connection.second)
-        }.let { connectionsByTarget[it]!! }
-        unsolvedConnections.remove(nextConnection.target)
-        knownGates[nextConnection.target] = nextConnection.invoke(knownGates)
+            knownInputs.contains(c.input1) && knownInputs.contains(c.input2)
+        }
+        unsolvedConnections.remove(nextConnection)
+        knownInputs[nextConnection.target] = nextConnection.invoke(knownInputs)
     }
-    return knownGates
+    return knownInputs
         .filter { it.key.startsWith('z') }
         .entries.sortedByDescending { it.key }
         .map { it.value.digitToChar() }
@@ -116,25 +110,24 @@ fun simulateSystem(input: String): Long {
         .toLong(2)
 }
 
-private fun parseSystem(input: String): Triple<Map<String, Int>, Map<String, Connection>, Map<String, List<Connection>>> {
+private fun parseSystem(input: String): Triple<Map<String, Int>, Set<Connection>, Map<String, List<Connection>>> {
     val (startingValues, conns) = input.blocks()
     val gates = startingValues.lines().map { it.split(": ") }.associate { (f, s) -> f to s.toInt() }
     val (connectionsByTarget, connectionsByOrigin) = parseConnections(conns.lines())
     return Triple(gates, connectionsByTarget, connectionsByOrigin)
 }
 
-private fun parseConnections(lines: List<String>): Pair<Map<String, Connection>, Map<String, List<Connection>>> {
+private fun parseConnections(lines: List<String>): Pair<Set<Connection>, Map<String, List<Connection>>> {
     val connections = lines.map { toConnection(it) }
-    val reversed = connections.map { it.reverse() }
-    val both = connections + reversed
 
-    val connectionsByTarget = mutableMapOf<String, List<Connection>>()
+
+    val connectionsByInput = mutableMapOf<String, List<Connection>>()
     connections.forEach {
         val (first, second) = it
-        connectionsByTarget.merge(first, listOf(it), List<Connection>::plus)
-        connectionsByTarget.merge(second, listOf(it), List<Connection>::plus)
+        connectionsByInput.merge(first, listOf(it), List<Connection>::plus)
+        connectionsByInput.merge(second, listOf(it), List<Connection>::plus)
     }
-    return both.associateBy { it.target } to connectionsByTarget.toMap()
+    return connections.toSet() to connectionsByInput.toMap()
 }
 
 private fun toConnection(line: String): Connection {
@@ -149,17 +142,14 @@ private fun toConnection(line: String): Connection {
 }
 
 data class Connection(
-    val first: String,
-    val second: String,
+    val input1: String,
+    val input2: String,
     val operation: Operation,
     val target: String
 ) {
-    fun reverse(): Connection {
-        return this.copy(first = second, second = first)
-    }
 
     fun invoke(knownGates: MutableMap<String, Int>): Int {
-        return operation.invocation.invoke(knownGates[first]!!, knownGates[second]!!)
+        return operation.invocation.invoke(knownGates[input1]!!, knownGates[input2]!!)
     }
 
 }
