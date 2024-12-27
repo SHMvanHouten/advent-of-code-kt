@@ -64,6 +64,9 @@ class Day24Test {
 
             expectThat(play(input)).isEqualTo(-1)
 
+            val logicGateSystem = parseLogicGateSystem(input).setInput(4454, 27231)
+            expectThat(logicGateSystem.simulate()).isEqualTo(31685)
+
             println(listOf(
                 "z13",
                 "vcv",
