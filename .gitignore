@@ -4,6 +4,7 @@
 /.idea
 
 .session.txt
+/kt2020/target/
 /kt2021/target/
 /kt2022/target/
 /utility/target/

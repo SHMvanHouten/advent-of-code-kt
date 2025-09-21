@@ -2,7 +2,12 @@
 
 cookie=$(cat .session.txt)
 
+if [[ -z "$2" ]]
+then
 year=$(date +%Y)
+else
+year=$2
+fi
 
 if [[ -z "$1" ]]
 then
@@ -10,7 +15,7 @@ DD=$(date +%d)
 else
 DD=$(printf '%02d' "$1")
 fi
-echo "fetching input for day $DD"
+echo "fetching input for year $year and day $DD"
 
 url=https://adventofcode.com/${year}/day/$((10#$DD))
 
