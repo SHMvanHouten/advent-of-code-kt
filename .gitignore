@@ -12,3 +12,5 @@
 input-day*.txt
 
 scratch.*
+/kt2015/target/
+/**/target

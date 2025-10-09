@@ -12,9 +12,23 @@ class Day01Test {
     inner class Part1 {
 
         @Test
+        internal fun `example 1`() {
+            expectThat(findIdDistances(example)).isEqualTo(11)
+        }
+
+        @Test
         internal fun `part 1`() {
             expectThat(findIdDistances(input)).isEqualTo(3508942)
         }
+
+        private val example = """
+            3   4
+            4   3
+            2   5
+            1   3
+            3   9
+            3   3
+        """.trimIndent()
     }
 
     @Nested

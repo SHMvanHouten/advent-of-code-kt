@@ -4,7 +4,7 @@ fun findTwoNumbersThatAddUpTo2020(input: String): Pair<Int, Int> {
     return findTwoNumbersThatAddUpTo2020(input.lines().map { it.toInt() })
 }
 
-fun findTwoNumbersThatAddUpTo2020(input: List<Int>): Pair<Int, Int> {
+private fun findTwoNumbersThatAddUpTo2020(input: List<Int>): Pair<Int, Int> {
     return input.asSequence().flatMapIndexed { i, n ->
         input.subList(i + 1, input.size).map {
             n to it
@@ -16,7 +16,7 @@ fun findThreeNumbersThatAddUpTo2020(input: String): Triple<Int, Int, Int> {
     return findThreeNumbersThatAddUpTo2020(input.lines().map { it.toInt() })
 }
 
-fun findThreeNumbersThatAddUpTo2020(input: List<Int>): Triple<Int, Int, Int> {
+private fun findThreeNumbersThatAddUpTo2020(input: List<Int>): Triple<Int, Int, Int> {
     return input.asSequence().flatMapIndexed { i, n ->
         input.subList(i + 1, input.size).flatMapIndexed { i2, n2 ->
             input.subList(i + i2, input.size).map {
