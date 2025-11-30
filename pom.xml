@@ -14,6 +14,7 @@
         <module>kt2024</module>
         <module>kt2020</module>
         <module>kt2015</module>
+        <module>kt2025</module>
     </modules>
 
     <groupId>com.github.shmvanhouten.adventofcode</groupId>
